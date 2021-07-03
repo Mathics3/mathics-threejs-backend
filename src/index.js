@@ -29,7 +29,7 @@ function drawGraphics3d(
 	// TODO: shading, handling of VertexNormals
 
 	maxSize ||= 400;
-	innerWidthMultiplier ||= 0.6;
+	innerWidthMultiplier ||= 0.65;
 
 	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov;
 
@@ -85,9 +85,6 @@ function drawGraphics3d(
 
 		// initial light position in spherical polar coordinates
 		const temporaryPosition = new Vector3(...coords[0]);
-		console.log(temporaryPosition)
-		console.log(temporaryPosition.length())
-		console.log(radius)
 
 		const result = {
 			radius: radius * temporaryPosition.length(),

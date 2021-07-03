@@ -25,7 +25,7 @@ export default {
 		light.angle = angle;
 		group.add(light);
 
-		light.target.position.set(...target);
+		light.target.position.set(...target[0]);
 		group.add(light.target);
 
 		return group;
