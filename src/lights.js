@@ -17,11 +17,11 @@ export default {
 	Directional: ({ color }) => {
 		return new DirectionalLight(new Color(...color).getHex(), 1);
 	},
-	Spot: ({ angle, color, position, target }) => {
+	Spot: ({ angle, color, coords, target }) => {
 		const group = new Group();
 
 		const light = new SpotLight(new Color(...color).getHex());
-		light.position.set(...position);
+		light.position.set(...coords[0]);
 		light.angle = angle;
 		group.add(light);
 
@@ -30,13 +30,13 @@ export default {
 
 		return group;
 	},
-	Point: ({ color, position }, radius) => {
+	Point: ({ color, coords }, radius) => {
 		const group = new Group();
 
 		const colorHex = new Color(...color).getHex();
 
 		const light = new PointLight(colorHex);
-		light.position.set(...position);
+		light.position.set(...coords[0]);
 		group.add(light);
 
 		// add visible light sphere

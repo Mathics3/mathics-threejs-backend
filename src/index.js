@@ -78,36 +78,29 @@ function drawGraphics3d(
 
 	scene.add(camera);
 
-	function getInitialLightPosition(element) {
-		// initial light position in spherical polar coordinates
-		if (element.position instanceof Array) {
-			const temporaryPosition = new Vector3(...element.position);
-
-			const result = {
-				radius: radius * temporaryPosition.length(),
-				phi: 0,
-				theta: 0
-			};
-
-			if (temporaryPosition.lenght !== 0) {
-				result.phi = (Math.atan2(temporaryPosition.y, temporaryPosition.x) + 2 * Math.PI) % (2 * Math.PI);
-				result.theta = Math.asin(temporaryPosition.z / result.radius);
-			}
-
-			return result;
+	function getInitialLightPosition({ coords }) {
+		if (!(coords instanceof Array)) {
+			return;
 		}
-	}
 
-	function positionLights() {
-		lights.forEach((light, i) => {
-			if (light instanceof DirectionalLight) {
-				light.position.set(
-					initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.cos(phi + initialLightPosition[i].phi),
-					initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.sin(phi + initialLightPosition[i].phi),
-					initialLightPosition[i].radius * Math.cos(theta + initialLightPosition[i].theta)
-				).add(focus);
-			}
-		});
+		// initial light position in spherical polar coordinates
+		const temporaryPosition = new Vector3(...coords[0]);
+		console.log(temporaryPosition)
+		console.log(temporaryPosition.length())
+		console.log(radius)
+
+		const result = {
+			radius: radius * temporaryPosition.length(),
+			phi: 0,
+			theta: 0
+		};
+
+		if (temporaryPosition.lenght !== 0) {
+			result.phi = (Math.atan2(temporaryPosition.y, temporaryPosition.x) + 2 * Math.PI) % (2 * Math.PI);
+			result.theta = Math.asin(temporaryPosition.z / result.radius);
+		}
+
+		return result;
 	}
 
 	const lights = new Array(lighting.length);
@@ -120,6 +113,18 @@ function drawGraphics3d(
 
 		scene.add(lights[i]);
 	});
+
+	function positionLights() {
+		lights.forEach((light, i) => {
+			if (light instanceof DirectionalLight) {
+				light.position.set(
+					initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.cos(phi + initialLightPosition[i].phi),
+					initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.sin(phi + initialLightPosition[i].phi),
+					initialLightPosition[i].radius * Math.cos(theta + initialLightPosition[i].theta)
+				).add(focus);
+			}
+		});
+	}
 
 	const boundingBox = new Mesh(new BoxGeometry(
 		extent.xmax - extent.xmin,
