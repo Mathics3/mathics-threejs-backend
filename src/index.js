@@ -19,7 +19,7 @@ import {
 import primitiveFunctions from './primitives.js';
 import lightFunctions from './lights.js';
 
-export default function (
+function drawGraphics3d(
 	container,
 	{ axes, elements, extent, lighting, viewpoint },
 	maxSize,
@@ -646,3 +646,7 @@ export default function (
 	render();
 	positionTickNumbers();
 }
+
+window.drawGraphics3d = drawGraphics3d;
+
+export default drawGraphics3d;
