@@ -1,0 +1,24 @@
+{
+	"name": "@mathicsorg/mathics-threejs-backend",
+	"version": "0.1.0",
+	"description": "Mathics three.js backend for easily build 3d graphics",
+	"main": "src/index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Mathics3/mathics-threejs-backend.git"
+	},
+	"keywords": [
+		"graphics",
+		"3d",
+		"mathics",
+		"three.js",
+		"fast",
+		"easy"
+	],
+	"author": "The Mathics Team",
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://github.com/Mathics3/mathics-threejs-backend/issues"
+	},
+	"homepage": "https://github.com/Mathics3/mathics-threejs-backend"
+}
