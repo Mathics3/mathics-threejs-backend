@@ -109,13 +109,8 @@ export default {
 		const group = new Group();
 
 		for (let i = 0; i < coords.length / 2; i++) {
-			const startCoordinate = new Vector3(
-				...coords[i * 2][0]
-			);
-
-			const endCoordinate = new Vector3(
-				...coords[i * 2 + 1][0]
-			);
+			const startCoordinate = new Vector3(...coords[i * 2][0]);
+			const endCoordinate = new Vector3(...coords[i * 2 + 1][0]);
 
 			const cylinder = new Mesh(
 				new CylinderGeometry(
