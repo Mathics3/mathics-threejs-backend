@@ -11,38 +11,38 @@ import {
 } from '../vendors/threejs/three.min.js';
 
 export default {
-	Ambient: ({ color }) => {
-		return new AmbientLight(new Color(...color).getHex());
+	Ambient: ({ RGBAColor }) => {
+		return new AmbientLight(new Color(...RGBAColor).getHex());
 	},
-	Directional: ({ color }) => {
-		return new DirectionalLight(new Color(...color).getHex(), 1);
+	Directional: ({ RGBAColor }) => {
+		return new DirectionalLight(new Color(...RGBAColor).getHex(), 1);
 	},
-	Spot: ({ angle, color, coords, target }) => {
+	Spot: ({ Angle, Coords, RGBAColor, Target }) => {
 		const group = new Group();
 
-		const light = new SpotLight(new Color(...color).getHex());
-		light.position.set(...coords[0]);
-		light.angle = angle;
+		const light = new SpotLight(new Color(...RGBAColor).getHex());
+		light.position.set(...Coords[0]);
+		light.angle = Angle;
 		group.add(light);
 
-		light.target.position.set(...target[0]);
+		light.target.position.set(...Target[0]);
 		group.add(light.target);
 
 		return group;
 	},
-	Point: ({ color, coords }, radius) => {
+	Point: ({ Coords, RGBAColor }, radius) => {
 		const group = new Group();
 
-		const colorHex = new Color(...color).getHex();
+		const color = new Color(...RGBAColor).getHex();
 
-		const light = new PointLight(colorHex);
-		light.position.set(...coords[0]);
+		const light = new PointLight(color);
+		light.position.set(...Coords[0]);
 		group.add(light);
 
 		// add visible light sphere
 		const lightSphere = new Mesh(
 			new SphereGeometry(0.007 * radius, 16, 8),
-			new MeshBasicMaterial({ color: colorHex })
+			new MeshBasicMaterial({ color })
 		);
 		lightSphere.position.copy(light.position);
 
