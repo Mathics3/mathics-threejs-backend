@@ -109,13 +109,8 @@ export default {
 		const group = new Group();
 
 		for (let i = 0; i < coords.length / 2; i++) {
-			const startCoordinate = new Vector3(
-				...coords[i * 2][0]
-			);
-
-			const endCoordinate = new Vector3(
-				...coords[i * 2 + 1][0]
-			);
+			const startCoordinate = new Vector3(...coords[i * 2][0]);
+			const endCoordinate = new Vector3(...coords[i * 2 + 1][0]);
 
 			const cylinder = new Mesh(
 				new CylinderGeometry(
@@ -266,28 +261,28 @@ export default {
 						)
 					)
 				);
+
+				geometry.computeFaceNormals();
 			} else {
-				geometry = new Geometry();
+				geometry = new BufferGeometry();
 
-				const coordinates = [];
+				const coordinates = new Float32Array(coords.length * 3);
 
-				coords.forEach((coordinate) => {
-					coordinates.push(...coordinate[0]);
-					geometry.vertices.push(new Vector3(...coordinate[0]));
+				coords.forEach((coordinate, i) => {
+					coordinates[i * 3] = coordinate[0][0];
+					coordinates[i * 3 + 1] = coordinate[0][1];
+					coordinates[i * 3 + 2] = coordinate[0][2];
 				});
 
-				const triangles = earcut(coordinates);
+				geometry.setAttribute(
+					'position',
+					new BufferAttribute(coordinates, 3)
+				);
 
-				for (let i = 0; i < triangles.length; i += 3) {
-					geometry.faces.push(new Face3(
-						triangles[i],
-						triangles[i + 1],
-						triangles[i + 2]
-					));
-				}
+				geometry.setIndex(earcut(coordinates));
+
+				geometry.computeVertexNormals();
 			}
-
-			geometry.computeFaceNormals();
 		};
 
 		return new Mesh(geometry, new MeshLambertMaterial({
