@@ -18,6 +18,8 @@ import {
 	Points,
 	Quaternion,
 	ShaderMaterial,
+	Shape,
+	ShapeGeometry,
 	SphereGeometry,
 	Vector3,
 	Vector4
@@ -142,12 +144,19 @@ export default {
 		return group;
 	},
 	Line: ({ color, coords }) => {
+		const geometry = new BufferGeometry();
+		const points = new Float32Array(coords.length * 3);
+
+		coords.forEach((coordinate, i) => {
+			points[i * 3] = coordinate[0][0];
+			points[i * 3 + 1] = coordinate[0][1];
+			points[i * 3 + 2] = coordinate[0][2];
+		});
+
+		geometry.setAttribute('position', new BufferAttribute(points, 3));
+
 		return new Line(
-			new BufferGeometry().setFromPoints(
-				coords.map(
-					(coordinate) => new Vector3(...coordinate[0])
-				)
-			),
+			geometry,
 			new LineBasicMaterial({
 				color: new Color(...color).getHex()
 			})
@@ -159,10 +168,10 @@ export default {
 		const points = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) => {
-			points[i*3]=coordinate[0][0]
-			points[i*3+1]=coordinate[0][1]
-			points[i*3+2]=coordinate[0][2]
-		})
+			points[i * 3] = coordinate[0][0];
+			points[i * 3 + 1] = coordinate[0][1];
+			points[i * 3 + 2] = coordinate[0][2];
+		});
 
 		geometry.setAttribute('position', new BufferAttribute(points, 3));
 
@@ -200,13 +209,18 @@ export default {
 		let geometry;
 
 		if (coords.length === 3) { // triangle
-			geometry = new Geometry();
+			geometry = new BufferGeometry();
 
-			geometry.vertices = coords.map(
-				(coordinate) => new Vector3(...coordinate[0])
+			geometry.setAttribute(
+				'position',
+				new BufferAttribute(new Float32Array([
+					...coords[0][0],
+					...coords[1][0],
+					...coords[2][0]
+				]), 3)
 			);
 
-			geometry.faces.push(new Face3(0, 1, 2));
+			geometry.computeVertexNormals();
 		} else {
 			// boolean variables
 			let isXCoplanar = 1, isYCoplanar = 1, isZCoplanar = 1;
@@ -242,9 +256,7 @@ export default {
 						)
 				);
 
-				const polygonShape = new Shape(points);
-
-				geometry = new ShapeGeometry(polygonShape);
+				geometry = new ShapeGeometry(new Shape(points));
 
 				geometry.vertices = geometry.vertices.map(
 					(vertex) => vertex.applyQuaternion(
@@ -264,7 +276,7 @@ export default {
 					geometry.vertices.push(new Vector3(...coordinate[0]));
 				});
 
-				const triangles = earcut(coordinates, null, 3);
+				const triangles = earcut(coordinates);
 
 				for (let i = 0; i < triangles.length; i += 3) {
 					geometry.faces.push(new Face3(
@@ -274,9 +286,9 @@ export default {
 					));
 				}
 			}
-		};
 
-		geometry.computeFaceNormals();
+			geometry.computeFaceNormals();
+		};
 
 		return new Mesh(geometry, new MeshLambertMaterial({
 			color: new Color(...color).getHex(),
