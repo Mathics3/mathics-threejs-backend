@@ -1,5 +1,7 @@
 import {
+	ArrowHelper,
 	BoxGeometry,
+	BufferAttribute,
 	BufferGeometry,
 	Color,
 	CylinderGeometry,
@@ -15,7 +17,6 @@ import {
 	MeshLambertMaterial,
 	Points,
 	Quaternion,
-	ShaderLib,
 	ShaderMaterial,
 	SphereGeometry,
 	Vector3,
@@ -28,20 +29,20 @@ import earcut from '../vendors/earcut/earcut.min.js';
 
 export default {
 	Arrow: ({ color, coords }) => {
-		const group = new THREE.Group();
+		const group = new Group();
 
-		const colorHex = new THREE.Color(...color).getHex();
+		const colorHex = new Color(...color).getHex();
 
-		const startCoordinate = new THREE.Vector3(
+		const startCoordinate = new Vector3(
 			...coords[coords.length - 2][0]
 		);
 
-		const endCoordinate = new THREE.Vector3(
+		const endCoordinate = new Vector3(
 			...coords[coords.length - 1][0]
 		);
 
 		group.add(
-			new THREE.ArrowHelper(
+			new ArrowHelper(
 				endCoordinate.clone().sub(startCoordinate).normalize(),
 				startCoordinate,
 				startCoordinate.distanceTo(endCoordinate),
@@ -57,17 +58,17 @@ export default {
 			points[i * 3 + 2] = coords[i][0][2];
 		}
 
-		const linesGeometry = new THREE.BufferGeometry();
+		const linesGeometry = new BufferGeometry();
 
 		linesGeometry.setAttribute(
 			'position',
-			new THREE.BufferAttribute(points, 3)
+			new BufferAttribute(points, 3)
 		);
 
 		group.add(
-			new THREE.Line(
+			new Line(
 				linesGeometry,
-				new THREE.LineBasicMaterial({ color: colorHex })
+				new LineBasicMaterial({ color: colorHex })
 			)
 		);
 
@@ -153,11 +154,17 @@ export default {
 		);
 	},
 	Point: ({ color, coords, pointSize }, canvasSize) => {
-		const geometry = new Geometry();
+		const geometry = new BufferGeometry();
 
-		geometry.vertices = coords.map(
-			(coordinate) => new Vector3(...coordinate[0])
-		);
+		const points = new Float32Array(coords.length * 3);
+
+		coords.forEach((coordinate, i) => {
+			points[i*3]=coordinate[0][0]
+			points[i*3+1]=coordinate[0][1]
+			points[i*3+2]=coordinate[0][2]
+		})
+
+		geometry.setAttribute('position', new BufferAttribute(points, 3));
 
 		return new Points(
 			geometry,
@@ -167,7 +174,16 @@ export default {
 					size: { value: pointSize * canvasSize * 0.5 },
 					color: { value: new Vector4(...color, 1) },
 				},
-				vertexShader: ShaderLib.points.vertexShader,
+				vertexShader: `
+					uniform float size;
+
+					void main() {
+						#include <begin_vertex>
+						#include <project_vertex>
+
+						gl_PointSize = size;
+					}
+				`,
 				fragmentShader: `
 					uniform vec4 color;
 
