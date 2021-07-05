@@ -476,7 +476,6 @@ function drawGraphics3d(
 
 	const renderer = new WebGLRenderer({
 		antialias: true,
-		preserveDrawingBuffer: true,
 		alpha: true
 	});
 
