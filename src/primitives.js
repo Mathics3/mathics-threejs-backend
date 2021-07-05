@@ -1,6 +1,6 @@
 import {
 	ArrowHelper,
-	BoxGeometry,
+	BoxBufferGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Color,
@@ -18,7 +18,7 @@ import {
 	ShaderMaterial,
 	Shape,
 	ShapeGeometry,
-	SphereGeometry,
+	SphereBufferGeometry,
 	Vector3,
 	Vector4
 } from '../vendors/threejs/three.min.js';
@@ -82,7 +82,7 @@ export default {
 			const endCoordinate = new Vector3(...Coords[i * 2 + 1][0]);
 
 			const cuboid = new Mesh(
-				new BoxGeometry(
+				new BoxBufferGeometry(
 					...endCoordinate.clone().sub(startCoordinate).toArray()
 				),
 				new MeshLambertMaterial({
@@ -287,7 +287,7 @@ export default {
 	},
 	Sphere: ({ Coords, Radius, RGBColor }) => {
 		const spheres = new InstancedMesh(
-			new SphereGeometry(Radius, 48, 48),
+			new SphereBufferGeometry(Radius, 48, 48),
 			new MeshLambertMaterial({
 				color: new Color(...RGBColor).getHex()
 			}),
@@ -297,7 +297,7 @@ export default {
 		Coords.forEach((coordinate, i) =>
 			spheres.setMatrixAt(
 				i,
-				new Matrix4().setPosition(new Vector3(...coordinate[0]))
+				new Matrix4().setPosition(...coordinate[0])
 			)
 		);
 
