@@ -31,15 +31,15 @@ function drawGraphics3d(
 	maxSize ||= 400;
 	innerWidthMultiplier ||= 0.65;
 
-	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov;
+	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
+		hasAxes, isMouseDown = false,
+		theta, onMouseDownTheta, phi, onMouseDownPhi,
+		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier),
+		autoRescale = true;
 
-	let canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier);
 	container.style.width = canvasSize + 'px';
 	// to avoid overflow when a tick numbers is out of the parent element
 	container.style.height = canvasSize + 10 + 'px';
-
-	let hasAxes, isMouseDown = false,
-		theta, onMouseDownTheta, phi, onMouseDownPhi;
 
 	// where the camera is looking (initialized on center of the scene)
 	const focus = new Vector3(
@@ -638,8 +638,6 @@ function drawGraphics3d(
 	});
 
 	const onMouseDownPosition = new Vector2();
-
-	let autoRescale = true;
 
 	updateCameraPosition();
 	positionAxes();
