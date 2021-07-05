@@ -11,29 +11,26 @@ import {
 } from '../vendors/threejs/three.min.js';
 
 export default {
-	Ambient: ({ RGBAColor }) => {
-		return new AmbientLight(new Color(...RGBAColor).getHex());
+	Ambient: ({ RGBColor }) => {
+		return new AmbientLight(new Color(...RGBColor).getHex());
 	},
-	Directional: ({ RGBAColor }) => {
-		return new DirectionalLight(new Color(...RGBAColor).getHex(), 1);
+	Directional: ({ RGBColor }) => {
+		return new DirectionalLight(new Color(...RGBColor).getHex(), 1);
 	},
-	Spot: ({ Angle, Coords, RGBAColor, Target }) => {
-		const group = new Group();
-
-		const light = new SpotLight(new Color(...RGBAColor).getHex());
+	Spot: ({ Angle, Coords, RGBColor, Target }) => {
+		const light = new SpotLight(new Color(...RGBColor).getHex());
 		light.position.set(...Coords[0]);
 		light.angle = Angle;
-		group.add(light);
 
 		light.target.position.set(...Target[0]);
-		group.add(light.target);
+		light.target.updateMatrixWorld();
 
-		return group;
+		return light;
 	},
-	Point: ({ Coords, RGBAColor }, radius) => {
+	Point: ({ Coords, RGBColor }, radius) => {
 		const group = new Group();
 
-		const color = new Color(...RGBAColor).getHex();
+		const color = new Color(...RGBColor).getHex();
 
 		const light = new PointLight(color);
 		light.position.set(...Coords[0]);

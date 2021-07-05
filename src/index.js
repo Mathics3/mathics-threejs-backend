@@ -643,8 +643,10 @@ function drawGraphics3d(
 
 	updateCameraPosition();
 	positionAxes();
-	render(); // rendering twice updates camera.matrixWorldInverse so that scaleInView works properly
+
+	camera.updateMatrixWorld(); // without this scaleInView doesn't work
 	scaleInView();
+
 	render();
 	positionTickNumbers();
 }
