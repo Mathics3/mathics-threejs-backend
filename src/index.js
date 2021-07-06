@@ -18,10 +18,11 @@ import {
 
 import primitiveFunctions from './primitives.js';
 import lightFunctions from './lights.js';
+import calculateExtent from './extent.js';
 
 function drawGraphics3d(
 	container,
-	{ axes, elements, extent, lighting, viewpoint },
+	{ axes, elements, lighting, viewpoint },
 	maxSize,
 	innerWidthMultiplier
 ) {
@@ -41,6 +42,8 @@ function drawGraphics3d(
 	// to avoid overflow when a tick numbers is out of the parent element
 	container.style.height = canvasSize + 10 + 'px';
 
+	const extent = calculateExtent(elements);
+
 	// where the camera is looking (initialized on center of the scene)
 	const focus = new Vector3(
 		0.5 * (extent.xmin + extent.xmax),
@@ -48,7 +51,13 @@ function drawGraphics3d(
 		0.5 * (extent.zmin + extent.zmax)
 	);
 
-	const viewPoint = new Vector3(...viewpoint).sub(focus);
+	// scale the viewpoint so the camera doesn't be inside the bounding box
+	const viewPoint = new Vector3(
+		viewpoint[0] * (extent.xmax - extent.xmin),
+		viewpoint[1] * (extent.ymax - extent.ymin),
+		viewpoint[2] * (extent.zmax - extent.zmin)
+	).sub(focus);
+
 	const radius = viewPoint.length();
 
 	onMouseDownTheta = theta = Math.acos(viewPoint.z / radius);
@@ -415,6 +424,7 @@ function drawGraphics3d(
 				tickNumbers[i][j].style.position = 'absolute';
 				tickNumbers[i][j].style.fontSize = '0.8em';
 				tickNumbers[i][j].style.color = color;
+
 				container.appendChild(tickNumbers[i][j]);
 			}
 		}
@@ -471,8 +481,6 @@ function drawGraphics3d(
 	elements.forEach((element) => {
 		scene.add(primitiveFunctions[element.type](element, canvasSize));
 	});
-
-	// renderer (set preserveDrawingBuffer to deal with issue of weird canvas content after switching windows)
 
 	const renderer = new WebGLRenderer({
 		antialias: true,
