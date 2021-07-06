@@ -1,5 +1,5 @@
 import {
-	BoxGeometry,
+	BoxBufferGeometry,
 	Color,
 	DirectionalLight,
 	EdgesGeometry,
@@ -8,7 +8,6 @@ import {
 	LineBasicMaterial,
 	LineSegments,
 	Matrix4,
-	Mesh,
 	PerspectiveCamera,
 	Scene,
 	Vector2,
@@ -123,22 +122,16 @@ function drawGraphics3d(
 		});
 	}
 
-	const boundingBox = new Mesh(new BoxGeometry(
-		extent.xmax - extent.xmin,
-		extent.ymax - extent.ymin,
-		extent.zmax - extent.zmin
-	));
-
-	boundingBox.position.copy(focus);
-
-	const boundingBoxEdges = new LineSegments(
-		new EdgesGeometry(boundingBox.geometry),
+	const boundingBox = new LineSegments(
+		new EdgesGeometry(new BoxBufferGeometry(
+			extent.xmax - extent.xmin,
+			extent.ymax - extent.ymin,
+			extent.zmax - extent.zmin
+		)),
 		new LineBasicMaterial({ color: 0x666666 })
 	);
 
-	boundingBoxEdges.position.copy(focus);
-
-	scene.add(boundingBoxEdges);
+	boundingBox.position.copy(focus);
 
 	// draw the axes
 	if (axes.hasaxes instanceof Array) {
@@ -165,11 +158,15 @@ function drawGraphics3d(
 		if (hasAxes[i]) {
 			axesGeometry[i] = new Geometry();
 
-			axesGeometry[i].vertices.push(new Vector3().addVectors(
-				boundingBox.geometry.vertices[axesIndexes[i][0][0]], boundingBox.position
+			axesGeometry[i].vertices.push(new Vector3(
+				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3] + boundingBox.position.x,
+				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3 + 1] + boundingBox.position.y,
+				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3 + 2] + boundingBox.position.z
 			));
-			axesGeometry[i].vertices.push(new Vector3().addVectors(
-				boundingBox.geometry.vertices[axesIndexes[i][0][1]], boundingBox.position
+			axesGeometry[i].vertices.push(new Vector3(
+				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3] + boundingBox.position.x,
+				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3 + 1] + boundingBox.position.y,
+				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3 + 2] + boundingBox.position.z
 			));
 
 			axesLines[i] = new Line(
@@ -190,9 +187,10 @@ function drawGraphics3d(
 
 		const temporaryVector = new Vector3();
 		for (let i = 0; i < 8; i++) {
-			temporaryVector.addVectors(
-				boundingBox.geometry.vertices[i],
-				boundingBox.position
+			temporaryVector.set(
+				boundingBox.geometry.attributes.position.array[i * 3] + boundingBox.position.x,
+				boundingBox.geometry.attributes.position.array[i * 3 + 1] + boundingBox.position.y,
+				boundingBox.geometry.attributes.position.array[i * 3 + 2] + boundingBox.position.z
 			).sub(camera.position);
 
 			const temporaryLenght = temporaryVector.length();
@@ -216,8 +214,12 @@ function drawGraphics3d(
 						axesIndexes[i][j][1] !== farJ
 					) {
 						const edge = new Vector3().subVectors(
-							toCanvasCoords(boundingBox.geometry.vertices[axesIndexes[i][j][0]]),
-							toCanvasCoords(boundingBox.geometry.vertices[axesIndexes[i][j][1]])
+							toCanvasCoords(new Vector3(
+								...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][0] * 3, axesIndexes[i][j][0] * 3 + 2)
+							)),
+							toCanvasCoords(new Vector3(
+								...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][1] * 3, axesIndexes[i][j][1] * 3 + 2)
+							))
 						);
 						edge.z = 0;
 
@@ -227,13 +229,15 @@ function drawGraphics3d(
 						}
 					}
 				}
-				axesLines[i].geometry.vertices[0].addVectors(
-					boundingBox.geometry.vertices[axesIndexes[i][maxJ][0]],
-					boundingBox.position
+				axesLines[i].geometry.vertices[0].set(
+					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][0] * 3] + boundingBox.position.x,
+					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][0] * 3 + 1] + boundingBox.position.y,
+					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][0] * 3 + 2] + boundingBox.position.z
 				);
-				axesLines[i].geometry.vertices[1].addVectors(
-					boundingBox.geometry.vertices[axesIndexes[i][maxJ][1]],
-					boundingBox.position
+				axesLines[i].geometry.vertices[1].set(
+					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][1] * 3] + boundingBox.position.x,
+					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][1] * 3 + 1] + boundingBox.position.y,
+					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][1] * 3 + 2] + boundingBox.position.z
 				);
 				axesLines[i].geometry.verticesNeedUpdate = true;
 			}
@@ -494,9 +498,10 @@ function drawGraphics3d(
 		let temporaryFOV = 0;
 
 		for (let i = 0; i < 8; i++) {
-			proj2d.addVectors(
-				boundingBox.geometry.vertices[i],
-				boundingBox.position
+			proj2d.set(
+				boundingBox.geometry.attributes.position.array[i * 3] + boundingBox.position.x,
+				boundingBox.geometry.attributes.position.array[i * 3 + 1] + boundingBox.position.y,
+				boundingBox.geometry.attributes.position.array[i * 3 + 2] + boundingBox.position.z
 			).applyMatrix4(camera.matrixWorldInverse);
 
 			temporaryFOV = Math.max(
