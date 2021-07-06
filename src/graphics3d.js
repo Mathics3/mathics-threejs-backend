@@ -17,6 +17,7 @@ import {
 import primitiveFunctions from './primitives.js';
 import lightFunctions from './lights.js';
 import calculateExtent from './extent.js';
+import scaleCoordinate from './scaleCoordinate.js';
 
 export default function (
 	container,
@@ -89,13 +90,15 @@ export default function (
 
 	scene.add(camera);
 
-	function getInitialLightPosition({ coords }) {
-		if (!(coords instanceof Array)) {
+	function getInitialLightPosition({ Coords }) {
+		if (!(Coords instanceof Array)) {
 			return;
 		}
 
 		// initial light position in spherical polar coordinates
-		const temporaryPosition = new Vector3(...coords[0]);
+		const temporaryPosition = new Vector3(
+			...(Coords[0] || scaleCoordinate(Coords[1]))
+		);
 
 		const result = {
 			radius: radius * temporaryPosition.length(),
@@ -117,7 +120,7 @@ export default function (
 	lighting.forEach((light, i) => {
 		initialLightPosition[i] = getInitialLightPosition(light);
 
-		lights[i] = lightFunctions[light.type](light, radius);
+		lights[i] = lightFunctions[light.type](light, extent, radius);
 
 		scene.add(lights[i]);
 	});
@@ -486,7 +489,7 @@ export default function (
 
 	// plot the primatives
 	elements.forEach((element) => {
-		scene.add(primitiveFunctions[element.type](element, canvasSize));
+		scene.add(primitiveFunctions[element.type](element, extent, canvasSize));
 	});
 
 	const renderer = new WebGLRenderer({

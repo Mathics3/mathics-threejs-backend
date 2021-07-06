@@ -8,8 +8,6 @@ export default function (elements) {
 		zmax: 0
 	};
 
-	console.log(elements[0]);
-
 	elements.forEach((element) => {
 		if (
 			element.type === 'Arrow' ||

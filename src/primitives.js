@@ -24,21 +24,22 @@ import {
 } from '../vendors/threejs/three.min.js';
 
 import earcut from '../vendors/earcut/earcut.min.js';
+import scaleCoordinate from './scaleCoordinate.js';
 
 // TODO: the one-element arrays should be two-element arrays, where the 2nd element is the "scaled" part of the coordinates that depend on the size of the final graphics (see Mathematica's Scaled)
 
 export default {
-	Arrow: ({ Coords, RGBColor }) => {
+	Arrow: ({ Coords, RGBColor }, extent) => {
 		const group = new Group();
 
 		const color = new Color(...RGBColor).getHex();
 
 		const startCoordinate = new Vector3(
-			...Coords[Coords.length - 2][0]
+			...(Coords[Coords.length - 2][0] || scaleCoordinate(Coords[Coords.length - 2][1], extent))
 		);
 
 		const endCoordinate = new Vector3(
-			...Coords[Coords.length - 1][0]
+			...(Coords[Coords.length - 1][0] || scaleCoordinate(Coords[Coords.length - 1][1], extent))
 		);
 
 		group.add(
@@ -53,6 +54,8 @@ export default {
 		const points = new Float32Array(Coords.length * 3 - 3);
 
 		for (let i = 0; i < points.length / 3; i++) {
+			Coords[i][0] ||= scaleCoordinate(Coords[i][1], extent);
+
 			points[i * 3] = Coords[i][0][0];
 			points[i * 3 + 1] = Coords[i][0][1];
 			points[i * 3 + 2] = Coords[i][0][2];
@@ -74,12 +77,16 @@ export default {
 
 		return group;
 	},
-	Cuboid: ({ Coords, RGBColor }) => {
+	Cuboid: ({ Coords, RGBColor }, extent) => {
 		const group = new Group();
 
 		for (let i = 0; i < Coords.length / 2; i++) {
-			const startCoordinate = new Vector3(...Coords[i * 2][0]);
-			const endCoordinate = new Vector3(...Coords[i * 2 + 1][0]);
+			const startCoordinate = new Vector3(
+				...(Coords[i * 2][0] || scaleCoordinate(Coords[i * 2][1], extent))
+			);
+			const endCoordinate = new Vector3(
+				...(Coords[i * 2 + 1][0] || scaleCoordinate(Coords[i * 2 + 1][1], extent))
+			);
 
 			const cuboid = new Mesh(
 				new BoxBufferGeometry(
@@ -100,12 +107,16 @@ export default {
 
 		return group;
 	},
-	Cylinder: ({ Coords, Radius, RGBColor }) => {
+	Cylinder: ({ Coords, Radius, RGBColor }, extent) => {
 		const group = new Group();
 
 		for (let i = 0; i < Coords.length / 2; i++) {
-			const startCoordinate = new Vector3(...Coords[i * 2][0]);
-			const endCoordinate = new Vector3(...Coords[i * 2 + 1][0]);
+			const startCoordinate = new Vector3(
+				...(Coords[i * 2][0] || scaleCoordinate(Coords[i * 2][1], extent))
+			);
+			const endCoordinate = new Vector3(
+				...(Coords[i * 2 + 1][0] || scaleCoordinate(Coords[i * 2][1], extent))
+			);
 
 			const cylinder = new Mesh(
 				new CylinderBufferGeometry(
@@ -133,11 +144,13 @@ export default {
 
 		return group;
 	},
-	Line: ({ Coords, RGBColor }) => {
+	Line: ({ Coords, RGBColor }, extent) => {
 		const geometry = new BufferGeometry();
 		const points = new Float32Array(Coords.length * 3);
 
 		Coords.forEach((coordinate, i) => {
+			coordinate[0] ||= scaleCoordinate(coordinate[1], extent);
+
 			points[i * 3] = coordinate[0][0];
 			points[i * 3 + 1] = coordinate[0][1];
 			points[i * 3 + 2] = coordinate[0][2];
@@ -152,12 +165,14 @@ export default {
 			})
 		);
 	},
-	Point: ({ Coords, Opacity, PointSize, RGBColor }, canvasSize) => {
+	Point: ({ Coords, Opacity, PointSize, RGBColor }, extent, canvasSize) => {
 		const geometry = new BufferGeometry();
 
 		const points = new Float32Array(Coords.length * 3);
 
 		Coords.forEach((coordinate, i) => {
+			coordinate[0] ||= scaleCoordinate(coordinate[1], extent);
+
 			points[i * 3] = coordinate[0][0];
 			points[i * 3 + 1] = coordinate[0][1];
 			points[i * 3 + 2] = coordinate[0][2];
@@ -195,7 +210,7 @@ export default {
 			})
 		);
 	},
-	Polygon: ({ Coords, RGBColor }) => {
+	Polygon: ({ Coords, RGBColor }, extent) => {
 		let geometry;
 
 		if (Coords.length === 3) { // triangle
@@ -204,9 +219,9 @@ export default {
 			geometry.setAttribute(
 				'position',
 				new BufferAttribute(new Float32Array([
-					...Coords[0][0],
-					...Coords[1][0],
-					...Coords[2][0]
+					...(Coords[0][0] || scaleCoordinate(Coords[0][1], extent)),
+					...(Coords[1][0] || scaleCoordinate(Coords[1][1], extent)),
+					...(Coords[2][0] || scaleCoordinate(Coords[2][1], extent))
 				]), 3)
 			);
 
@@ -216,6 +231,8 @@ export default {
 			let isXCoplanar = 1, isYCoplanar = 1, isZCoplanar = 1;
 
 			Coords.forEach((coordinate) => {
+				coordinate[0] ||= scaleCoordinate(coordinate[1], extent);
+
 				if (coordinate[0][0] !== Coords[0][0][0]) {
 					isXCoplanar = 0;
 				}
@@ -237,13 +254,14 @@ export default {
 				const normalZVector = new Vector3(0, 0, 1);
 
 				const points = Coords.map((coordinate) =>
-					new Vector3(...coordinate[0])
-						.applyQuaternion(
-							new Quaternion().setFromUnitVectors(
-								normalVector,
-								normalZVector
-							)
+					new Vector3(
+						...(coordinate[0] || scaleCoordinate(coordinate[1], extent))
+					).applyQuaternion(
+						new Quaternion().setFromUnitVectors(
+							normalVector,
+							normalZVector
 						)
+					)
 				);
 
 				geometry = new ShapeGeometry(new Shape(points));
@@ -264,6 +282,8 @@ export default {
 				const coordinates = new Float32Array(Coords.length * 3);
 
 				Coords.forEach((coordinate, i) => {
+					coordinate[0] ||= scaleCoordinate(coordinate[1], extent);
+
 					coordinates[i * 3] = coordinate[0][0];
 					coordinates[i * 3 + 1] = coordinate[0][1];
 					coordinates[i * 3 + 2] = coordinate[0][2];
@@ -285,7 +305,7 @@ export default {
 			side: DoubleSide
 		}));
 	},
-	Sphere: ({ Coords, Radius, RGBColor }) => {
+	Sphere: ({ Coords, Radius, RGBColor }, extent) => {
 		const spheres = new InstancedMesh(
 			new SphereBufferGeometry(Radius, 48, 48),
 			new MeshLambertMaterial({
