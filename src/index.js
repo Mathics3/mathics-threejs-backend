@@ -52,11 +52,15 @@ function drawGraphics3d(
 	);
 
 	// scale the viewpoint so the camera doesn't be inside the bounding box
-	const viewPoint = new Vector3(
-		viewpoint[0] * (extent.xmax - extent.xmin),
-		viewpoint[1] * (extent.ymax - extent.ymin),
-		viewpoint[2] * (extent.zmax - extent.zmin)
-	).sub(focus);
+	const viewPointScale = Math.max(
+		extent.xmax - extent.xmin,
+		extent.ymax - extent.ymin,
+		extent.zmax - extent.zmin
+	);
+
+	const viewPoint = new Vector3(...viewpoint)
+		.multiplyScalar(viewPointScale)
+		.sub(focus);
 
 	const radius = viewPoint.length();
 
