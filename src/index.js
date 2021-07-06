@@ -11,7 +11,6 @@ import {
 	Mesh,
 	PerspectiveCamera,
 	Scene,
-	Vector2,
 	Vector3,
 	WebGLRenderer
 } from '../vendors/threejs/three.min.js';
@@ -87,7 +86,7 @@ function drawGraphics3d(
 	}
 
 	updateCameraPosition();
-	camera.up.copy(new Vector3(0, 0, 1));
+	camera.up.set(0, 0, 1);
 
 	scene.add(camera);
 
@@ -501,6 +500,8 @@ function drawGraphics3d(
 	}
 
 	function scaleInView() {
+		camera.updateMatrixWorld(); // without this scaleInView doesn't work
+
 		const proj2d = new Vector3();
 
 		let temporaryFOV = 0;
@@ -534,8 +535,8 @@ function drawGraphics3d(
 		onMouseDownTheta = theta;
 		onMouseDownPhi = phi;
 
-		onMouseDownPosition.x = event.clientX;
-		onMouseDownPosition.y = event.clientY;
+		onMouseDownPosition[0] = event.clientX;
+		onMouseDownPosition[1] = event.clientY;
 
 		onMouseDownFocus = new Vector3().copy(focus);
 	}
@@ -549,8 +550,8 @@ function drawGraphics3d(
 			if (event.shiftKey) { // pan
 				if (!isShiftDown) {
 					isShiftDown = true;
-					onMouseDownPosition.x = event.clientX;
-					onMouseDownPosition.y = event.clientY;
+					onMouseDownPosition[0] = event.clientX;
+					onMouseDownPosition[1] = event.clientY;
 					autoRescale = false;
 					container.style.cursor = 'move';
 				}
@@ -568,24 +569,25 @@ function drawGraphics3d(
 					cameraX
 				);
 
-				focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition.x - event.clientX) + cameraY.x * (onMouseDownPosition.y - event.clientY));
-				focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition.x - event.clientX) + cameraY.y * (onMouseDownPosition.y - event.clientY));
-				focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition.y - event.clientY));
+				focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - event.clientX) + cameraY.x * (onMouseDownPosition[1] - event.clientY));
+				focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - event.clientX) + cameraY.y * (onMouseDownPosition[1] - event.clientY));
+				focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - event.clientY));
 
 				updateCameraPosition();
 			} else if (event.ctrlKey) { // zoom
 				if (!isCtrlDown) {
 					isCtrlDown = true;
 					onCtrlDownFov = camera.fov;
-					onMouseDownPosition.x = event.clientX;
-					onMouseDownPosition.y = event.clientY;
+					onMouseDownPosition[0] = event.clientX;
+					onMouseDownPosition[1] = event.clientY;
 					autoRescale = false;
 					container.style.cursor = 'crosshair';
 				}
+
 				camera.fov = Math.max(
 					1,
 					Math.min(
-						onCtrlDownFov + 20 * Math.atan((event.clientY - onMouseDownPosition.y) / 50),
+						onCtrlDownFov + 20 * Math.atan((event.clientY - onMouseDownPosition[1]) / 50),
 						150
 					)
 				);
@@ -593,16 +595,16 @@ function drawGraphics3d(
 				camera.updateProjectionMatrix();
 			} else { // spin
 				if (isCtrlDown || isShiftDown) {
-					onMouseDownPosition.x = event.clientX;
-					onMouseDownPosition.y = event.clientY;
+					onMouseDownPosition[0] = event.clientX;
+					onMouseDownPosition[1] = event.clientY;
 					isShiftDown = false;
 					isCtrlDown = false;
 					container.style.cursor = 'pointer';
 				}
 
-				phi = 2 * Math.PI * (onMouseDownPosition.x - event.clientX) / canvasSize + onMouseDownPhi;
+				phi = 2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi;
 				phi = (phi + 2 * Math.PI) % (2 * Math.PI);
-				theta = 2 * Math.PI * (onMouseDownPosition.y - event.clientY) / canvasSize + onMouseDownTheta;
+				theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
 				const epsilon = 1e-12; // prevents spinnging from getting stuck
 				theta = Math.max(Math.min(Math.PI - epsilon, theta), epsilon);
 
@@ -623,12 +625,11 @@ function drawGraphics3d(
 
 		if (autoRescale) {
 			scaleInView();
-			render();
 		}
 
 		positionAxes();
-		render();
 		positionTickNumbers();
+		render();
 	}
 
 	// bind mouse events
@@ -648,12 +649,11 @@ function drawGraphics3d(
 		positionTickNumbers();
 	});
 
-	const onMouseDownPosition = new Vector2();
+	const onMouseDownPosition = new Int16Array(2);
 
 	updateCameraPosition();
 	positionAxes();
 
-	camera.updateMatrixWorld(); // without this scaleInView doesn't work
 	scaleInView();
 
 	render();
