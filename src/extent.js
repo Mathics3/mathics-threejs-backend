@@ -68,5 +68,22 @@ export default function (elements) {
 		}
 	});
 
+	// if it's all zeroes means that no non-scaled coordinate was passed, and so we set the mins to 0 and maxs to 1
+	if (
+		extent.xmin === 0 &&
+		extent.xmax === 0 &&
+		extent.ymin === 0 &&
+		extent.ymax === 0 &&
+		extent.zmin === 0 &&
+		extent.zmax === 0
+	) {
+		extent.xmin = 0;
+		extent.ymin = 0;
+		extent.zmin = 0;
+		extent.xmax = 1;
+		extent.ymax = 1;
+		extent.zmax = 1;
+	}
+
 	return extent;
 }
