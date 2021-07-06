@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<body>
+	<main id="main"></main>
+
+	<script type="module">
+		import drawGraphics3d from '../../src/index.js';
+
+		drawGraphics3d(
+			document.getElementById('main'),
+			{
+				axes: {},
+				elements: [
+					{
+						type: 'Cylinder',
+						Coords: [
+							[[0, 0, 0]],
+							[[1, 1, 1]],
+							[null, [0.5, 0.5, 0.5]],
+							[[2, 2, 2]]
+						],
+						Radius: 1,
+						RGBColor: [0.5, 0.5, 0.5]
+					}
+				],
+				lighting: [
+					{
+						type: 'Ambient',
+						RGBColor: [1, 1, 1]
+					}
+				],
+				viewpoint: [2, -4, 4]
+			}
+		);
+	</script>
+</body>

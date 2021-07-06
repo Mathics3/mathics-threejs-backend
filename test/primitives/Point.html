@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<body>
+	<main id="main"></main>
+
+	<script type="module">
+		import drawGraphics3d from '../../src/index.js';
+
+		drawGraphics3d(
+			document.getElementById('main'),
+			{
+				axes: {},
+				elements: [
+					{
+						type: 'Point',
+						Coords: [
+							[[0.1, 0.1, 0.1]],
+							[null, [0.5, 0.5, 0.5]],
+							[[0.5, 0.5, 0.5]],
+							[[0.7, 0.7, 0.7]]
+						],
+						Opacity: 0.5,
+						PointSize: 1,
+						RGBColor: [0.5, 0.5, 0.5]
+					}
+				],
+				lighting: [
+					{
+						type: 'Ambient',
+						RGBColor: [1, 1, 1]
+					}
+				],
+				viewpoint: [2, -4, 4]
+			}
+		);
+	</script>
+</body>

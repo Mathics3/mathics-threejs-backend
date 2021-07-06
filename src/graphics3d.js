@@ -8,6 +8,7 @@ import {
 	LineBasicMaterial,
 	LineSegments,
 	Matrix4,
+	Mesh,
 	PerspectiveCamera,
 	Scene,
 	Vector3,
@@ -97,7 +98,7 @@ export default function (
 
 		// initial light position in spherical polar coordinates
 		const temporaryPosition = new Vector3(
-			...(Coords[0] || scaleCoordinate(Coords[1]))
+			...(Coords[0] || scaleCoordinate(Coords[1], extent))
 		);
 
 		const result = {
@@ -106,7 +107,7 @@ export default function (
 			theta: 0
 		};
 
-		if (temporaryPosition.lenght !== 0) {
+		if (temporaryPosition.length() !== 0) {
 			result.phi = (Math.atan2(temporaryPosition.y, temporaryPosition.x) + 2 * Math.PI) % (2 * Math.PI);
 			result.theta = Math.asin(temporaryPosition.z / result.radius);
 		}
@@ -148,17 +149,15 @@ export default function (
 
 	boundingBox.position.copy(focus);
 
+	scene.add(boundingBox);
+
 	// draw the axes
 	if (axes.hasaxes instanceof Array) {
-		hasAxes = new Array(axes.hasaxes[0], axes.hasaxes[1], axes.hasaxes[2]);
-	} else if (axes.hasaxes instanceof Boolean) {
-		if (axes) {
-			hasAxes = new Array(true, true, true);
-		} else {
-			hasAxes = new Array(false, false, false);
-		}
+		hasAxes = [...axes.hasaxes];
+	} else if (typeof axes.hasaxes === 'boolean') {
+		hasAxes = [axes.hasaxes, axes.hasaxes, axes.hasaxes];
 	} else {
-		hasAxes = new Array(false, false, false);
+		hasAxes = [false, false, false];
 	}
 
 	const axesGeometry = [];
@@ -198,7 +197,7 @@ export default function (
 
 	function positionAxes() {
 		// automatic axes placement
-		let nearJ, nearLenght = 10 * radius, farJ, farLenght = 0;
+		let nearJ, nearLength = 10 * radius, farJ, farLength = 0;
 
 		const temporaryVector = new Vector3();
 		for (let i = 0; i < 8; i++) {
@@ -208,19 +207,19 @@ export default function (
 				boundingBox.geometry.attributes.position.array[i * 3 + 2] + boundingBox.position.z
 			).sub(camera.position);
 
-			const temporaryLenght = temporaryVector.length();
+			const temporaryLength = temporaryVector.length();
 
-			if (temporaryLenght < nearLenght) {
-				nearLenght = temporaryLenght;
+			if (temporaryLength < nearLength) {
+				nearLength = temporaryLength;
 				nearJ = i;
-			} else if (temporaryLenght > farLenght) {
-				farLenght = temporaryLenght;
+			} else if (temporaryLength > farLength) {
+				farLength = temporaryLength;
 				farJ = i;
 			}
 		}
 		for (let i = 0; i < 3; i++) {
 			if (hasAxes[i]) {
-				let maxJ, maxLenght = 0;
+				let maxJ, maxLength = 0;
 
 				for (let j = 0; j < 4; j++) {
 					if (axesIndexes[i][j][0] !== nearJ &&
@@ -238,23 +237,22 @@ export default function (
 						);
 						edge.z = 0;
 
-						if (edge.length() > maxLenght) {
-							maxLenght = edge.length();
+						if (edge.length() > maxLength) {
+							maxLength = edge.length();
 							maxJ = j;
 						}
 					}
 				}
 				axesLines[i].geometry.vertices[0].set(
-					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][0] * 3] + boundingBox.position.x,
-					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][0] * 3 + 1] + boundingBox.position.y,
-					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][0] * 3 + 2] + boundingBox.position.z
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0])[0] * 3] + boundingBox.position.x,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0])[0] * 3 + 1] + boundingBox.position.y,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0])[0] * 3 + 2] + boundingBox.position.z
 				);
 				axesLines[i].geometry.vertices[1].set(
-					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][1] * 3] + boundingBox.position.x,
-					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][1] * 3 + 1] + boundingBox.position.y,
-					boundingBox.geometry.attributes.position.array[axesIndexes[i][maxJ][1] * 3 + 2] + boundingBox.position.z
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0, 0])[1] * 3] + boundingBox.position.x,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0, 0])[1] * 3 + 1] + boundingBox.position.y,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0, 0])[1] * 3 + 2] + boundingBox.position.z
 				);
-				axesLines[i].geometry.verticesNeedUpdate = true;
 			}
 		}
 
@@ -469,8 +467,8 @@ export default function (
 					).multiplyScalar(canvasSize / maxSize);
 
 					// distance of the bounding box
-					tickPosition.setX(tickPosition.x - 10);
-					tickPosition.setY(tickPosition.y + 8);
+					tickPosition.setX(tickPosition.x - canvasSize / 50);
+					tickPosition.setY(tickPosition.y + canvasSize / 50);
 
 					tickNumbers[i][j].style.position = `absolute`;
 					tickNumbers[i][j].style.left = `${tickPosition.x}px`;

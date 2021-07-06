@@ -13,7 +13,6 @@ export default function (elements) {
 			element.type === 'Arrow' ||
 			element.type === 'Cuboid' ||
 			element.type === 'Line' ||
-			element.type === 'Point' ||
 			element.type === 'Polygon'
 		) {
 			element.Coords.forEach((coordinate => {
@@ -39,8 +38,11 @@ export default function (elements) {
 		} else if (
 			// the extent isn't calculated correctly for cylinders, their extent should be transformationVector * Radius
 			element.type === 'Cylinder' ||
+			element.type === 'Point' ||
 			element.type === 'Sphere'
 		) {
+			element.Radius ||= element.PointSize
+
 			element.Coords.forEach((coordinate => {
 				if (coordinate[0]) {
 					if (coordinate[0][0] - element.Radius < extent.xmin) {

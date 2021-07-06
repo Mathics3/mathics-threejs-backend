@@ -27,7 +27,7 @@ export default {
 		light.angle = Angle;
 
 		light.target.position.set(
-			...(Target[0] || scaleCoordinate(Target[1]))
+			...(Target[0] || scaleCoordinate(Target[1], extent))
 		);
 		light.target.updateMatrixWorld();
 

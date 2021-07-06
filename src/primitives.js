@@ -317,7 +317,7 @@ export default {
 		Coords.forEach((coordinate, i) =>
 			spheres.setMatrixAt(
 				i,
-				new Matrix4().setPosition(...coordinate[0])
+				new Matrix4().setPosition(...(coordinate[0] || scaleCoordinate(coordinate[1], extent)))
 			)
 		);
 

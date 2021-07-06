@@ -1,0 +1,90 @@
+{
+	"id": "backstop_default",
+	"viewports": [
+		{
+			"label": "main",
+			"width": 400,
+			"height": 400
+		}
+	],
+	"scenarios": [
+		{
+			"label": "scene with axes",
+			"url": "./test/axes/axes.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Ambient light",
+			"url": "./test/lights/Ambient.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Directional light",
+			"url": "./test/lights/Directional.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Point light",
+			"url": "./test/lights/Point.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Spot light",
+			"url": "./test/lights/Spot.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Arrow",
+			"url": "./test/primitives/Arrow.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Cuboid",
+			"url": "./test/primitives/Cuboid.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Cylinder",
+			"url": "./test/primitives/Cylinder.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Line",
+			"url": "./test/primitives/Line.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Point",
+			"url": "./test/primitives/Point.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Polygon",
+			"url": "./test/primitives/Polygon.html",
+			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Sphere",
+			"url": "./test/primitives/Sphere.html",
+			"misMatchThreshold": 0.01
+		}
+	],
+	"paths": {
+		"bitmaps_reference": "backstop_data/bitmaps_reference",
+		"bitmaps_test": "backstop_data/bitmaps_test",
+		"html_report": "backstop_data/html_report"
+	},
+	"report": [
+		"browser"
+	],
+	"engine": "puppeteer",
+	"engineOptions": {
+		"args": [
+			"--no-sandbox"
+		]
+	},
+	"asyncCaptureLimit": 5,
+	"asyncCompareLimit": 50,
+	"debug": false,
+	"debugWindow": false
+}
