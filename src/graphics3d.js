@@ -466,10 +466,6 @@ export default function (
 						)
 					).multiplyScalar(canvasSize / maxSize);
 
-					// distance of the bounding box
-					tickPosition.setX(tickPosition.x - canvasSize / 50);
-					tickPosition.setY(tickPosition.y + canvasSize / 50);
-
 					tickNumbers[i][j].style.position = `absolute`;
 					tickNumbers[i][j].style.left = `${tickPosition.x}px`;
 					tickNumbers[i][j].style.top = `${tickPosition.y}px`;
