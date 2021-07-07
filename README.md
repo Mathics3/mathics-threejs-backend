@@ -13,16 +13,18 @@ drawGraphics3D(
     {
         elements: [
             {
-                type: 'sphere',
-                coords: [[[0, 0, 0]]],
-                faceColor: [1, 1, 1]
+                type: 'Sphere',
+                Coords: [
+                    [[0, 0, 0]]
+                ],
+                RBGColor: [1, 1, 1]
             }
         ],
         axes: {},
         lighting: [
             {
                 type: 'Ambient',
-                color: [1, 1, 1]
+                RBGColor: [1, 1, 1]
             }
         ],
         viewpoint: [2.6, -4.8, 4.0]
