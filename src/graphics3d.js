@@ -8,7 +8,6 @@ import {
 	LineBasicMaterial,
 	LineSegments,
 	Matrix4,
-	Mesh,
 	PerspectiveCamera,
 	Scene,
 	Vector3,
