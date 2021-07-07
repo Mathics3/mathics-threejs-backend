@@ -10,62 +10,74 @@
 	"scenarios": [
 		{
 			"label": "scene with axes",
-			"url": "./test/axes/axes.html",
+			"url": "http://localhost:8080/test/axes/axes.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Ambient light",
-			"url": "./test/lights/Ambient.html",
+			"url": "http://localhost:8080/test/lights/Ambient.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Directional light",
-			"url": "./test/lights/Directional.html",
+			"url": "http://localhost:8080/test/lights/Directional.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Point light",
-			"url": "./test/lights/Point.html",
+			"url": "http://localhost:8080/test/lights/Point.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Spot light",
-			"url": "./test/lights/Spot.html",
+			"url": "http://localhost:8080/test/lights/Spot.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Arrow",
-			"url": "./test/primitives/Arrow.html",
+			"url": "http://localhost:8080/test/primitives/Arrow.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Cuboid",
-			"url": "./test/primitives/Cuboid.html",
+			"url": "http://localhost:8080/test/primitives/Cuboid.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Cylinder",
-			"url": "./test/primitives/Cylinder.html",
+			"url": "http://localhost:8080/test/primitives/Cylinder.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Line",
-			"url": "./test/primitives/Line.html",
+			"url": "http://localhost:8080/test/primitives/Line.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Point",
-			"url": "./test/primitives/Point.html",
+			"url": "http://localhost:8080/test/primitives/Point.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Polygon",
-			"url": "./test/primitives/Polygon.html",
+			"url": "http://localhost:8080/test/primitives/Polygon.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Sphere",
-			"url": "./test/primitives/Sphere.html",
+			"url": "http://localhost:8080/test/primitives/Sphere.html",
+			"delay": 1000,
 			"misMatchThreshold": 0.01
 		}
 	],
@@ -78,11 +90,6 @@
 		"browser"
 	],
 	"engine": "puppeteer",
-	"engineOptions": {
-		"args": [
-			"--no-sandbox"
-		]
-	},
 	"asyncCaptureLimit": 5,
 	"asyncCompareLimit": 50,
 	"debug": false,

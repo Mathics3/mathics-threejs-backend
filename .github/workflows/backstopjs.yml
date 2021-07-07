@@ -20,8 +20,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install BackstopJS
-        run: npm install -g backstopjs
+      - name: Install dependencies
+        run: npm install -g backstopjs http-server
+
+      - name: Start the local server
+        run: http-server
 
       - name: Run the tests
         run: backstop test
