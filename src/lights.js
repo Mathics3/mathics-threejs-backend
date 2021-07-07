@@ -22,12 +22,12 @@ export default {
 	Spot: ({ Angle, Coords, RGBColor, Target }, extent) => {
 		const light = new SpotLight(new Color(...RGBColor).getHex());
 		light.position.set(
-			...(Coords[0] || scaleCoordinate(Coords[1], extent))
+			...(Coords[0] ?? scaleCoordinate(Coords[1], extent))
 		);
 		light.angle = Angle;
 
 		light.target.position.set(
-			...(Target[0] || scaleCoordinate(Target[1], extent))
+			...(Target[0] ?? scaleCoordinate(Target[1], extent))
 		);
 		light.target.updateMatrixWorld();
 
@@ -40,7 +40,7 @@ export default {
 
 		const light = new PointLight(color);
 		light.position.set(
-			...(Coords[0] || scaleCoordinate(Coords[1], extent))
+			...(Coords[0] ?? scaleCoordinate(Coords[1], extent))
 		);
 		group.add(light);
 

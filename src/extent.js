@@ -41,7 +41,7 @@ export default function (elements) {
 			element.type === 'Point' ||
 			element.type === 'Sphere'
 		) {
-			element.Radius ||= element.PointSize
+			element.Radius ??= element.PointSize
 
 			element.Coords.forEach((coordinate => {
 				if (coordinate[0]) {

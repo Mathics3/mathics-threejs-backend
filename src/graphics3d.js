@@ -28,8 +28,8 @@ export default function (
 	// TODO: add a mechanism to update the enclosing <mspace>
 	// TODO: shading, handling of VertexNormals
 
-	maxSize ||= 400;
-	innerWidthMultiplier ||= 0.65;
+	maxSize ??= 400;
+	innerWidthMultiplier ??= 0.65;
 
 	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
 		hasAxes, isMouseDown = false,
@@ -97,7 +97,7 @@ export default function (
 
 		// initial light position in spherical polar coordinates
 		const temporaryPosition = new Vector3(
-			...(Coords[0] || scaleCoordinate(Coords[1], extent))
+			...(Coords[0] ?? scaleCoordinate(Coords[1], extent))
 		);
 
 		const result = {
@@ -243,14 +243,14 @@ export default function (
 					}
 				}
 				axesLines[i].geometry.vertices[0].set(
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0])[0] * 3] + boundingBox.position.x,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0])[0] * 3 + 1] + boundingBox.position.y,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0])[0] * 3 + 2] + boundingBox.position.z
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3] + boundingBox.position.x,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3 + 1] + boundingBox.position.y,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3 + 2] + boundingBox.position.z
 				);
 				axesLines[i].geometry.vertices[1].set(
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0, 0])[1] * 3] + boundingBox.position.x,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0, 0])[1] * 3 + 1] + boundingBox.position.y,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] || [0, 0])[1] * 3 + 2] + boundingBox.position.z
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3] + boundingBox.position.x,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3 + 1] + boundingBox.position.y,
+					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3 + 2] + boundingBox.position.z
 				);
 			}
 		}
