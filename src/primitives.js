@@ -1,5 +1,4 @@
 import {
-	ArrowHelper,
 	BoxBufferGeometry,
 	BufferAttribute,
 	BufferGeometry,
@@ -12,6 +11,7 @@ import {
 	LineBasicMaterial,
 	Matrix4,
 	Mesh,
+	MeshBasicMaterial,
 	MeshLambertMaterial,
 	Points,
 	Quaternion,
@@ -27,7 +27,7 @@ import earcut from '../vendors/earcut/earcut.min.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
 export default {
-	Arrow: ({ Coords, RGBColor }, extent) => {
+	Arrow: ({ Coords, Opacity, RGBColor }, extent) => {
 		const group = new Group();
 
 		const color = new Color(...RGBColor).getHex();
@@ -40,16 +40,32 @@ export default {
 			...(Coords[Coords.length - 1][0] ?? scaleCoordinate(Coords[Coords.length - 1][1], extent))
 		);
 
-		group.add(
-			new ArrowHelper(
-				endCoordinate.clone().sub(startCoordinate).normalize(),
-				startCoordinate,
-				startCoordinate.distanceTo(endCoordinate),
-				color
-			)
+		const arrowHead = new Mesh(
+			new CylinderBufferGeometry(
+				0,
+				0.04 * startCoordinate.distanceTo(endCoordinate),
+				0.2 * startCoordinate.distanceTo(endCoordinate)
+			).rotateX(Math.PI / 2),
+			new MeshBasicMaterial({
+				color,
+				opacity: Opacity ?? 1,
+				transparent: (Opacity ?? 1) !== 1
+			})
 		);
 
-		const points = new Float32Array(Coords.length * 3 - 3);
+		// set the position to 1/10 far from the end coordinate so lookAt work
+		arrowHead.position.copy(
+			endCoordinate.clone()
+				.multiplyScalar(9)
+				.add(startCoordinate)
+				.multiplyScalar(0.1)
+		);
+
+		arrowHead.lookAt(endCoordinate);
+
+		group.add(arrowHead);
+
+		const points = new Float32Array(Coords.length * 3);
 
 		for (let i = 0; i < points.length / 3; i++) {
 			Coords[i][0] ??= scaleCoordinate(Coords[i][1], extent);
@@ -69,7 +85,11 @@ export default {
 		group.add(
 			new Line(
 				linesGeometry,
-				new LineBasicMaterial({ color })
+				new LineBasicMaterial({
+					color,
+					opacity: Opacity ?? 1,
+					transparent: (Opacity ?? 1) !== 1
+				})
 			)
 		);
 
