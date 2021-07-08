@@ -11,7 +11,7 @@
 		{
 			"label": "scene with axes",
 			"url": "http://localhost:8080/test/axes/axes.html",
-			"delay": 1000,
+			"delay": 5000,
 			"misMatchThreshold": 0.01
 		},
 		{
