@@ -12,7 +12,7 @@
 			"label": "scene with axes",
 			"url": "http://localhost:8080/test/axes/axes.html",
 			"delay": 5000,
-			"misMatchThreshold": 0.01
+			"misMatchThreshold": 1
 		},
 		{
 			"label": "Ambient light",
