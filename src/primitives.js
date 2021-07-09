@@ -65,21 +65,21 @@ export default {
 
 		group.add(arrowHead);
 
-		const points = new Float32Array(Coords.length * 3);
+		const coordinates = new Float32Array(Coords.length * 3);
 
-		for (let i = 0; i < points.length / 3; i++) {
+		for (let i = 0; i < coordinates.length / 3; i++) {
 			Coords[i][0] ??= scaleCoordinate(Coords[i][1], extent);
 
-			points[i * 3] = Coords[i][0][0];
-			points[i * 3 + 1] = Coords[i][0][1];
-			points[i * 3 + 2] = Coords[i][0][2];
+			coordinates[i * 3] = Coords[i][0][0];
+			coordinates[i * 3 + 1] = Coords[i][0][1];
+			coordinates[i * 3 + 2] = Coords[i][0][2];
 		}
 
 		const linesGeometry = new BufferGeometry();
 
 		linesGeometry.setAttribute(
 			'position',
-			new BufferAttribute(points, 3)
+			new BufferAttribute(coordinates, 3)
 		);
 
 		group.add(
@@ -168,17 +168,17 @@ export default {
 	},
 	Line: ({ Coords, Opacity, RGBColor }, extent) => {
 		const geometry = new BufferGeometry();
-		const points = new Float32Array(Coords.length * 3);
+		const coordinates = new Float32Array(Coords.length * 3);
 
 		Coords.forEach((coordinate, i) => {
 			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
-			points[i * 3] = coordinate[0][0];
-			points[i * 3 + 1] = coordinate[0][1];
-			points[i * 3 + 2] = coordinate[0][2];
+			coordinates[i * 3] = coordinate[0][0];
+			coordinates[i * 3 + 1] = coordinate[0][1];
+			coordinates[i * 3 + 2] = coordinate[0][2];
 		});
 
-		geometry.setAttribute('position', new BufferAttribute(points, 3));
+		geometry.setAttribute('position', new BufferAttribute(coordinates, 3));
 
 		return new Line(
 			geometry,
@@ -192,17 +192,17 @@ export default {
 	Point: ({ Coords, Opacity, PointSize, RGBColor }, extent, canvasSize) => {
 		const geometry = new BufferGeometry();
 
-		const points = new Float32Array(Coords.length * 3);
+		const coordinates = new Float32Array(Coords.length * 3);
 
 		Coords.forEach((coordinate, i) => {
 			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
-			points[i * 3] = coordinate[0][0];
-			points[i * 3 + 1] = coordinate[0][1];
-			points[i * 3 + 2] = coordinate[0][2];
+			coordinates[i * 3] = coordinate[0][0];
+			coordinates[i * 3 + 1] = coordinate[0][1];
+			coordinates[i * 3 + 2] = coordinate[0][2];
 		});
 
-		geometry.setAttribute('position', new BufferAttribute(points, 3));
+		geometry.setAttribute('position', new BufferAttribute(coordinates, 3));
 
 		return new Points(
 			geometry,
@@ -277,18 +277,18 @@ export default {
 
 				const normalZVector = new Vector3(0, 0, 1);
 
-				const points = Coords.map((coordinate) =>
-					new Vector3(
-						...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
-					).applyQuaternion(
-						new Quaternion().setFromUnitVectors(
-							normalVector,
-							normalZVector
+				geometry = new ShapeGeometry(new Shape(
+					Coords.map((coordinate) =>
+						new Vector3(
+							...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
+						).applyQuaternion(
+							new Quaternion().setFromUnitVectors(
+								normalVector,
+								normalZVector
+							)
 						)
 					)
-				);
-
-				geometry = new ShapeGeometry(new Shape(points));
+				));
 
 				geometry.vertices = geometry.vertices.map(
 					(vertex) => vertex.applyQuaternion(

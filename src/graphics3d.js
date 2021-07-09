@@ -25,7 +25,6 @@ export default function (
 	maxSize,
 	innerWidthMultiplier
 ) {
-	// TODO: add a mechanism to update the enclosing <mspace>
 	// TODO: shading, handling of VertexNormals
 
 	maxSize ??= 400;
@@ -50,15 +49,15 @@ export default function (
 		0.5 * (extent.zmin + extent.zmax)
 	);
 
-	// scale the viewpoint so the camera doesn't be inside the bounding box
-	const viewPointScale = Math.max(
-		extent.xmax - extent.xmin,
-		extent.ymax - extent.ymin,
-		extent.zmax - extent.zmin
-	);
-
 	const viewPoint = new Vector3(...viewpoint)
-		.multiplyScalar(viewPointScale)
+		.multiplyScalar(
+			// scale the viewpoint so the camera isn't inside the bounding box
+			Math.max(
+				extent.xmax - extent.xmin,
+				extent.ymax - extent.ymin,
+				extent.zmax - extent.zmin
+			)
+		)
 		.sub(focus);
 
 	const radius = viewPoint.length();
@@ -297,7 +296,7 @@ export default function (
 		}
 	}
 
-	function getTickDir(i) {
+	function getTickDirection(i) {
 		const tickDir = new Vector3();
 
 		if (i === 0) {
@@ -350,7 +349,7 @@ export default function (
 	function updateAxes() {
 		for (let i = 0; i < 3; i++) {
 			if (hasAxes[i]) {
-				let tickDir = getTickDir(i);
+				const tickDirection = getTickDirection(i);
 
 				for (let j = 0; j < axes.ticks[i][0].length; j++) {
 					let value = axes.ticks[i][0][j];
@@ -358,7 +357,7 @@ export default function (
 					ticks[i][j].geometry.vertices[0].copy(axesGeometry[i].vertices[0]);
 					ticks[i][j].geometry.vertices[1].addVectors(
 						axesGeometry[i].vertices[0],
-						tickDir
+						tickDirection
 					);
 
 					if (i === 0) {
@@ -381,7 +380,7 @@ export default function (
 					ticksSmall[i][j].geometry.vertices[0].copy(axesGeometry[i].vertices[0]);
 					ticksSmall[i][j].geometry.vertices[1].addVectors(
 						axesGeometry[i].vertices[0],
-						tickDir.clone().multiplyScalar(0.5)
+						tickDirection.clone().multiplyScalar(0.5)
 					);
 
 					if (i === 0) {
@@ -654,9 +653,7 @@ export default function (
 
 	updateCameraPosition();
 	positionAxes();
-
 	scaleInView();
-
 	render();
 	positionTickNumbers();
 }
