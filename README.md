@@ -34,7 +34,7 @@ drawGraphics3D(
 
 ## Displaying Examples
 
-Install an HTTP server and run a HTTP server:
+Install an HTTP server and run it:
 
 ```
 $ npm install http-server # Do this only one time.
