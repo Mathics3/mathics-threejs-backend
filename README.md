@@ -31,3 +31,30 @@ drawGraphics3D(
     }
 )
 ```
+
+## Displaying Examples
+
+Install an HTTP server and run a HTTP server:
+
+```
+$ npm install http-server # Do this only one time.
+...
+added 30 packages from 40 contributors and audited 30 packages in 1.595s
+...
+found 0 vulnerabilities
+```
+
+The above only needs to be done once to set up an HTTP server to use. If you already have an HTTP server running that is also able to browse local files in this repository, then you probably don't need to do this.
+
+Otherwise, start the HTTP server that was just installed:
+
+```
+$ ./node_modules/http-server/bin/http-server  # Do this once per session
+Starting up http-server, serving ./
+Available on:
+  http://127.0.0.1:8080
+...
+Hit CTRL-C to stop the server
+```
+
+Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/test/axes/axes.html
