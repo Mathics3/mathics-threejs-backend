@@ -35,10 +35,9 @@ drawGraphics3D(
 Lots of other examples can be found in the [test](https://github.com/Mathics3/mathics-threejs-backend/tree/master/test) directory of this repository.
 
 ## Displaying Examples
-ash
 Install an HTTP server and run it:
 
-```bash
+```console
 $ npm install http-server # Do this only one time.
 ...
 added 30 packages from 40 contributors and audited 30 packages in 1.595s
@@ -50,7 +49,7 @@ The above only needs to be done once to set up an HTTP server to use. If you alr
 
 Otherwise, start the HTTP server that was just installed:
 
-```
+```console
 $ ./node_modules/http-server/bin/http-server  # Do this once per session
 Starting up http-server, serving ./
 Available on:
