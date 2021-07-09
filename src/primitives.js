@@ -27,17 +27,17 @@ import earcut from '../vendors/earcut/earcut.min.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
 export default {
-	Arrow: ({ Coords, Opacity, RGBColor }, extent) => {
+	arrow: ({ color, coords, opacity }, extent) => {
 		const group = new Group();
 
-		const color = new Color(...RGBColor).getHex();
+		const colorHex = new Color(...color).getHex();
 
 		const startCoordinate = new Vector3(
-			...(Coords[Coords.length - 2][0] ?? scaleCoordinate(Coords[Coords.length - 2][1], extent))
+			...(coords[coords.length - 2][0] ?? scaleCoordinate(coords[coords.length - 2][1], extent))
 		);
 
 		const endCoordinate = new Vector3(
-			...(Coords[Coords.length - 1][0] ?? scaleCoordinate(Coords[Coords.length - 1][1], extent))
+			...(coords[coords.length - 1][0] ?? scaleCoordinate(coords[coords.length - 1][1], extent))
 		);
 
 		const arrowHead = new Mesh(
@@ -47,9 +47,9 @@ export default {
 				0.2 * startCoordinate.distanceTo(endCoordinate)
 			).rotateX(Math.PI / 2),
 			new MeshBasicMaterial({
-				color,
-				opacity: Opacity ?? 1,
-				transparent: (Opacity ?? 1) !== 1
+				color: colorHex,
+				opacity: opacity ?? 1,
+				transparent: (opacity ?? 1) !== 1
 			})
 		);
 
@@ -65,14 +65,14 @@ export default {
 
 		group.add(arrowHead);
 
-		const coordinates = new Float32Array(Coords.length * 3);
+		const coordinates = new Float32Array(coords.length * 3);
 
 		for (let i = 0; i < coordinates.length / 3; i++) {
-			Coords[i][0] ??= scaleCoordinate(Coords[i][1], extent);
+			coords[i][0] ??= scaleCoordinate(coords[i][1], extent);
 
-			coordinates[i * 3] = Coords[i][0][0];
-			coordinates[i * 3 + 1] = Coords[i][0][1];
-			coordinates[i * 3 + 2] = Coords[i][0][2];
+			coordinates[i * 3] = coords[i][0][0];
+			coordinates[i * 3 + 1] = coords[i][0][1];
+			coordinates[i * 3 + 2] = coords[i][0][2];
 		}
 
 		const linesGeometry = new BufferGeometry();
@@ -86,24 +86,24 @@ export default {
 			new Line(
 				linesGeometry,
 				new LineBasicMaterial({
-					color,
-					opacity: Opacity ?? 1,
-					transparent: (Opacity ?? 1) !== 1
+					color: colorHex,
+					opacity: opacity ?? 1,
+					transparent: (opacity ?? 1) !== 1
 				})
 			)
 		);
 
 		return group;
 	},
-	Cuboid: ({ Coords, Opacity, RGBColor }, extent) => {
+	cuboid: ({ color, coords, opacity }, extent) => {
 		const group = new Group();
 
-		for (let i = 0; i < Coords.length / 2; i++) {
+		for (let i = 0; i < coords.length / 2; i++) {
 			const startCoordinate = new Vector3(
-				...(Coords[i * 2][0] ?? scaleCoordinate(Coords[i * 2][1], extent))
+				...(coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent))
 			);
 			const endCoordinate = new Vector3(
-				...(Coords[i * 2 + 1][0] ?? scaleCoordinate(Coords[i * 2 + 1][1], extent))
+				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent))
 			);
 
 			const cuboid = new Mesh(
@@ -111,9 +111,9 @@ export default {
 					...endCoordinate.clone().sub(startCoordinate).toArray()
 				),
 				new MeshLambertMaterial({
-					color: new Color(...RGBColor).getHex(),
-					opacity: Opacity ?? 1,
-					transparent: (Opacity ?? 1) !== 1
+					color: new Color(...color).getHex(),
+					opacity: opacity ?? 1,
+					transparent: (opacity ?? 1) !== 1
 				})
 			);
 
@@ -127,21 +127,21 @@ export default {
 
 		return group;
 	},
-	Cylinder: ({ Coords, Opacity, Radius, RGBColor }, extent) => {
+	cylinder: ({ color, coords, opacity, radius }, extent) => {
 		const group = new Group();
 
-		for (let i = 0; i < Coords.length / 2; i++) {
+		for (let i = 0; i < coords.length / 2; i++) {
 			const startCoordinate = new Vector3(
-				...(Coords[i * 2][0] ?? scaleCoordinate(Coords[i * 2][1], extent))
+				...(coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent))
 			);
 			const endCoordinate = new Vector3(
-				...(Coords[i * 2 + 1][0] ?? scaleCoordinate(Coords[i * 2][1], extent))
+				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2][1], extent))
 			);
 
 			const cylinder = new Mesh(
 				new CylinderBufferGeometry(
-					Radius,
-					Radius,
+					radius,
+					radius,
 					startCoordinate.distanceTo(endCoordinate), // the height of the cylinder
 					24
 				).applyMatrix4(
@@ -149,9 +149,9 @@ export default {
 					new Matrix4().makeRotationX(1.5707963267948966)
 				),
 				new MeshLambertMaterial({
-					color: new Color(...RGBColor).getHex(),
-					opacity: Opacity ?? 1,
-					transparent: (Opacity ?? 1) !== 1
+					color: new Color(...color).getHex(),
+					opacity: opacity ?? 1,
+					transparent: (opacity ?? 1) !== 1
 				})
 			);
 
@@ -166,11 +166,11 @@ export default {
 
 		return group;
 	},
-	Line: ({ Coords, Opacity, RGBColor }, extent) => {
+	line: ({ color, coords, opacity }, extent) => {
 		const geometry = new BufferGeometry();
-		const coordinates = new Float32Array(Coords.length * 3);
+		const coordinates = new Float32Array(coords.length * 3);
 
-		Coords.forEach((coordinate, i) => {
+		coords.forEach((coordinate, i) => {
 			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
 			coordinates[i * 3] = coordinate[0][0];
@@ -183,18 +183,18 @@ export default {
 		return new Line(
 			geometry,
 			new LineBasicMaterial({
-				color: new Color(...RGBColor).getHex(),
-				opacity: Opacity ?? 1,
-				transparent: (Opacity ?? 1) !== 1
+				color: new Color(...color).getHex(),
+				opacity: opacity ?? 1,
+				transparent: (opacity ?? 1) !== 1
 			})
 		);
 	},
-	Point: ({ Coords, Opacity, PointSize, RGBColor }, extent, canvasSize) => {
+	point: ({ color, coords, opacity, pointSize }, extent, canvasSize) => {
 		const geometry = new BufferGeometry();
 
-		const coordinates = new Float32Array(Coords.length * 3);
+		const coordinates = new Float32Array(coords.length * 3);
 
-		Coords.forEach((coordinate, i) => {
+		coords.forEach((coordinate, i) => {
 			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
 			coordinates[i * 3] = coordinate[0][0];
@@ -208,9 +208,10 @@ export default {
 			geometry,
 			new ShaderMaterial({
 				transparent: true,
+				depthWrite: false,
 				uniforms: {
-					size: { value: PointSize * canvasSize * 0.5 },
-					color: { value: new Vector4(...RGBColor, Opacity) },
+					size: { value: pointSize * canvasSize * 0.5 },
+					color: { value: new Vector4(...color, opacity) },
 				},
 				vertexShader: `
 					uniform float size;
@@ -234,18 +235,18 @@ export default {
 			})
 		);
 	},
-	Polygon: ({ Coords, Opacity, RGBColor }, extent) => {
+	polygon: ({ color, coords, opacity }, extent) => {
 		let geometry;
 
-		if (Coords.length === 3) { // triangle
+		if (coords.length === 3) { // triangle
 			geometry = new BufferGeometry();
 
 			geometry.setAttribute(
 				'position',
 				new BufferAttribute(new Float32Array([
-					...(Coords[0][0] ?? scaleCoordinate(Coords[0][1], extent)),
-					...(Coords[1][0] ?? scaleCoordinate(Coords[1][1], extent)),
-					...(Coords[2][0] ?? scaleCoordinate(Coords[2][1], extent))
+					...(coords[0][0] ?? scaleCoordinate(coords[0][1], extent)),
+					...(coords[1][0] ?? scaleCoordinate(coords[1][1], extent)),
+					...(coords[2][0] ?? scaleCoordinate(coords[2][1], extent))
 				]), 3)
 			);
 
@@ -254,16 +255,16 @@ export default {
 			// boolean variables
 			let isXCoplanar = 1, isYCoplanar = 1, isZCoplanar = 1;
 
-			Coords.forEach((coordinate) => {
+			coords.forEach((coordinate) => {
 				coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
-				if (coordinate[0][0] !== Coords[0][0][0]) {
+				if (coordinate[0][0] !== coords[0][0][0]) {
 					isXCoplanar = 0;
 				}
-				if (coordinate[0][1] !== Coords[0][0][1]) {
+				if (coordinate[0][1] !== coords[0][0][1]) {
 					isYCoplanar = 0;
 				}
-				if (coordinate[0][2] !== Coords[0][0][2]) {
+				if (coordinate[0][2] !== coords[0][0][2]) {
 					isZCoplanar = 0;
 				}
 			});
@@ -278,7 +279,7 @@ export default {
 				const normalZVector = new Vector3(0, 0, 1);
 
 				geometry = new ShapeGeometry(new Shape(
-					Coords.map((coordinate) =>
+					coords.map((coordinate) =>
 						new Vector3(
 							...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
 						).applyQuaternion(
@@ -303,9 +304,9 @@ export default {
 			} else {
 				geometry = new BufferGeometry();
 
-				const coordinates = new Float32Array(Coords.length * 3);
+				const coordinates = new Float32Array(coords.length * 3);
 
-				Coords.forEach((coordinate, i) => {
+				coords.forEach((coordinate, i) => {
 					coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
 					coordinates[i * 3] = coordinate[0][0];
@@ -325,24 +326,24 @@ export default {
 		};
 
 		return new Mesh(geometry, new MeshLambertMaterial({
-			color: new Color(...RGBColor).getHex(),
-			opacity: Opacity ?? 1,
-			transparent: (Opacity ?? 1) !== 1,
+			color: new Color(...color).getHex(),
+			opacity: opacity ?? 1,
+			transparent: (opacity ?? 1) !== 1,
 			side: DoubleSide
 		}));
 	},
-	Sphere: ({ Coords, Opacity, Radius, RGBColor }, extent) => {
+	sphere: ({ color, coords, opacity, radius }, extent) => {
 		const spheres = new InstancedMesh(
-			new SphereBufferGeometry(Radius, 48, 48),
+			new SphereBufferGeometry(radius, 48, 48),
 			new MeshLambertMaterial({
-				color: new Color(...RGBColor).getHex(),
-				opacity: Opacity ?? 1,
-				transparent: (Opacity ?? 1) !== 1
+				color: new Color(...color).getHex(),
+				opacity: opacity ?? 1,
+				transparent: (opacity ?? 1) !== 1
 			}),
-			Coords.length
+			coords.length
 		);
 
-		Coords.forEach((coordinate, i) =>
+		coords.forEach((coordinate, i) =>
 			spheres.setMatrixAt(
 				i,
 				new Matrix4().setPosition(...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent)))

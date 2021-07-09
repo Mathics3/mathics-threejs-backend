@@ -12,24 +12,22 @@
 				axes: {},
 				elements: [
 					{
-						type: 'Cuboid',
-						Coords: [
+						type: 'cuboid',
+						color: [1, 1, 1],
+						coords: [
 							[null, [0, 0, 0]],
-							[[1, 1, 1]],
-							[[1, 1, 1]],
-							[[2, 2, 2]]
-						],
-						Opacity: 0.5,
-						RGBColor: [0.5, 0.5, 0.5]
+							[null, [0.5, 0.5, 0.5]]
+						]
 					}
 				],
 				lighting: [
 					{
-						type: 'Ambient',
-						RGBColor: [1, 1, 1]
+						type: 'directional',
+						color: [1, 0, 0],
+						coords: [null, [1, 1, 1]]
 					}
 				],
-				viewpoint: [2, -4, 4]
+				viewpoint: [2, 2, 2]
 			}
 		);
 	</script>

@@ -10,12 +10,12 @@ export default function (elements) {
 
 	elements.forEach((element) => {
 		if (
-			element.type === 'Arrow' ||
-			element.type === 'Cuboid' ||
-			element.type === 'Line' ||
-			element.type === 'Polygon'
+			element.type === 'arrow' ||
+			element.type === 'cuboid' ||
+			element.type === 'line' ||
+			element.type === 'polygon'
 		) {
-			element.Coords.forEach((coordinate => {
+			element.coords.forEach((coordinate => {
 				if (coordinate[0]) {
 					if (coordinate[0][0] < extent.xmin) {
 						extent.xmin = coordinate[0][0];
@@ -37,33 +37,33 @@ export default function (elements) {
 			}));
 		} else if (
 			// the extent isn't calculated correctly for cylinders, their extent should be transformationVector * Radius
-			element.type === 'Cylinder' ||
-			element.type === 'Point' ||
-			element.type === 'Sphere'
+			element.type === 'cylinder' ||
+			element.type === 'point' ||
+			element.type === 'sphere'
 		) {
-			element.Radius ??= element.PointSize
+			element.radius ??= element.pointSize
 
-			element.Coords.forEach((coordinate => {
+			element.coords.forEach((coordinate => {
 				if (coordinate[0]) {
-					if (coordinate[0][0] - element.Radius < extent.xmin) {
-						extent.xmin = coordinate[0][0] - element.Radius;
+					if (coordinate[0][0] - element.radius < extent.xmin) {
+						extent.xmin = coordinate[0][0] - element.radius;
 					}
-					if (coordinate[0][0] + element.Radius > extent.xmax) {
-						extent.xmax = coordinate[0][0] + element.Radius;
-					}
-
-					if (coordinate[0][1] - element.Radius < extent.ymin) {
-						extent.ymin = coordinate[0][1] - element.Radius;
-					}
-					if (coordinate[0][1] + element.Radius > extent.ymax) {
-						extent.ymax = coordinate[0][1] + element.Radius;
+					if (coordinate[0][0] + element.radius > extent.xmax) {
+						extent.xmax = coordinate[0][0] + element.radius;
 					}
 
-					if (coordinate[0][2] - element.Radius < extent.zmin) {
-						extent.zmin = coordinate[0][2] - element.Radius;
+					if (coordinate[0][1] - element.radius < extent.ymin) {
+						extent.ymin = coordinate[0][1] - element.radius;
 					}
-					if (coordinate[0][2] + element.Radius > extent.zmax) {
-						extent.zmax = coordinate[0][2] + element.Radius;
+					if (coordinate[0][1] + element.radius > extent.ymax) {
+						extent.ymax = coordinate[0][1] + element.radius;
+					}
+
+					if (coordinate[0][2] - element.radius < extent.zmin) {
+						extent.zmin = coordinate[0][2] - element.radius;
+					}
+					if (coordinate[0][2] + element.radius > extent.zmax) {
+						extent.zmax = coordinate[0][2] + element.radius;
 					}
 				}
 			}));

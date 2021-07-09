@@ -89,14 +89,14 @@ export default function (
 
 	scene.add(camera);
 
-	function getInitialLightPosition({ Coords }) {
-		if (!(Coords instanceof Array)) {
+	function getInitialLightPosition({ coords }) {
+		if (!(coords instanceof Array)) {
 			return;
 		}
 
 		// initial light position in spherical polar coordinates
 		const temporaryPosition = new Vector3(
-			...(Coords[0] ?? scaleCoordinate(Coords[1], extent))
+			...(coords[0] ?? scaleCoordinate(coords[1], extent))
 		);
 
 		const result = {

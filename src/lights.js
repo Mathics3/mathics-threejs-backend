@@ -13,41 +13,41 @@ import {
 import scaleCoordinate from './scaleCoordinate.js';
 
 export default {
-	Ambient: ({ RGBColor }) => {
-		return new AmbientLight(new Color(...RGBColor).getHex());
+	ambient: ({ color }) => {
+		return new AmbientLight(new Color(...color).getHex());
 	},
-	Directional: ({ RGBColor }) => {
-		return new DirectionalLight(new Color(...RGBColor).getHex(), 1);
+	directional: ({ color }) => {
+		return new DirectionalLight(new Color(...color).getHex(), 1);
 	},
-	Spot: ({ Angle, Coords, RGBColor, Target }, extent) => {
-		const light = new SpotLight(new Color(...RGBColor).getHex());
+	spot: ({ angle, color, coords, target }, extent) => {
+		const light = new SpotLight(new Color(...color).getHex());
 		light.position.set(
-			...(Coords[0] ?? scaleCoordinate(Coords[1], extent))
+			...(coords[0] ?? scaleCoordinate(coords[1], extent))
 		);
-		light.angle = Angle;
+		light.angle = angle;
 
 		light.target.position.set(
-			...(Target[0] ?? scaleCoordinate(Target[1], extent))
+			...(target[0] ?? scaleCoordinate(target[1], extent))
 		);
 		light.target.updateMatrixWorld();
 
 		return light;
 	},
-	Point: ({ Coords, RGBColor }, extent, radius) => {
+	point: ({ color, coords }, extent, radius) => {
 		const group = new Group();
 
-		const color = new Color(...RGBColor).getHex();
+		const colorHex = new Color(...color).getHex();
 
-		const light = new PointLight(color);
+		const light = new PointLight(colorHex);
 		light.position.set(
-			...(Coords[0] ?? scaleCoordinate(Coords[1], extent))
+			...(coords[0] ?? scaleCoordinate(coords[1], extent))
 		);
 		group.add(light);
 
 		// add visible light sphere
 		const lightSphere = new Mesh(
 			new SphereGeometry(0.007 * radius, 16, 8),
-			new MeshBasicMaterial({ color })
+			new MeshBasicMaterial({ color: colorHex })
 		);
 		lightSphere.position.copy(light.position);
 
