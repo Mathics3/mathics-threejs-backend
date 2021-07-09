@@ -32,11 +32,13 @@ drawGraphics3D(
 )
 ```
 
-## Displaying Examples
+Lots of other examples can be found in the [test](https://github.com/Mathics3/mathics-threejs-backend/tree/master/test) directory of this repository.
 
+## Displaying Examples
+ash
 Install an HTTP server and run it:
 
-```
+```bash
 $ npm install http-server # Do this only one time.
 ...
 added 30 packages from 40 contributors and audited 30 packages in 1.595s
@@ -58,3 +60,10 @@ Hit CTRL-C to stop the server
 ```
 
 Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/test/axes/axes.html
+
+## JSON API for Compact Graphics3D
+
+See the [wiki](https://github.com/Mathics3/mathics-threejs-backend/wiki) for the JSON API description for Graphics3D Primitives.
+
+
+
