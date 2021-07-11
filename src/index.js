@@ -1,7 +1,7 @@
 import drawGraphics3d from './graphics3d.js';
 
 // it'll be removed on Mathics Core update
-window.drawGraphics3d = (object) => {
+function translationLayer(div, object) {
 	object.elements.forEach((primitive) => {
 		if (primitive.faceColor) {
 			primitive.color = primitive.faceColor;
@@ -13,10 +13,12 @@ window.drawGraphics3d = (object) => {
 			light.coords = [light.position];
 		}
 
-		light.type.toLowerCase();
+		light.type = light.type.toLowerCase();
 	});
 
-	return drawGraphics3d(object);
-};
+	return drawGraphics3d(div, object);
+}
 
-export default drawGraphics3d;
+window.drawGraphics3d = translationLayer;
+
+export default translationLayer;
