@@ -1,4 +1,5 @@
 /node_modules
+package-lock.json
 backstop_data/bitmaps_test
 backstop_data/engine_scripts
 backstop_data/html_report

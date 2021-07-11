@@ -20,5 +20,12 @@
 	"bugs": {
 		"url": "https://github.com/Mathics3/mathics-threejs-backend/issues"
 	},
-	"homepage": "https://github.com/Mathics3/mathics-threejs-backend"
+	"homepage": "https://github.com/Mathics3/mathics-threejs-backend",
+	"scripts": {
+		"build": "rollup src/index.js --file bundle/tmp.js --format iife && minify bundle/tmp.js > bundle/index.js && rm bundle/tmp.js"
+	},
+	"devDependencies": {
+		"minify": "^7",
+		"rollup": "^2"
+	}
 }
