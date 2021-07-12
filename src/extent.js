@@ -41,7 +41,7 @@ export default function (elements) {
 			element.type === 'point' ||
 			element.type === 'sphere'
 		) {
-			element.radius ??= element.pointSize
+			element.radius ??= element.pointSize;
 
 			element.coords.forEach((coordinate => {
 				if (coordinate[0]) {
@@ -70,21 +70,40 @@ export default function (elements) {
 		}
 	});
 
-	// if it's all zeroes means that no non-scaled coordinate was passed, and so we set the mins to 0 and maxs to 1
-	if (
-		extent.xmin === 0 &&
-		extent.xmax === 0 &&
-		extent.ymin === 0 &&
-		extent.ymax === 0 &&
-		extent.zmin === 0 &&
-		extent.zmax === 0
-	) {
-		extent.xmin = 0;
-		extent.ymin = 0;
-		extent.zmin = 0;
-		extent.xmax = 1;
-		extent.ymax = 1;
-		extent.zmax = 1;
+	if (extent.xmin > extent.xmax) {
+		[extent.xmin, extent.xmax] = [extent.xmax, extent.xmin];
+	} else if (extent.xmin === extent.xmax) {
+		if (extent.xmin < 0) {
+			[extent.xmin, extent.xmax] = [2 * extent.xmin, 0];
+		} else if (extent.xmin > 0) {
+			[extent.xmin, extent.xmax] = [0, 2 * extent.xmin];
+		} else {
+			[extent.xmin, extent.xmax] = [-1, 1];
+		}
+	}
+
+	if (extent.ymin > extent.ymax) {
+		[extent.ymin, extent.ymax] = [extent.ymax, extent.ymin];
+	} else if (extent.ymin === extent.ymax) {
+		if (extent.ymin < 0) {
+			[extent.ymin, extent.ymax] = [2 * extent.ymin, 0];
+		} else if (extent.ymin > 0) {
+			[extent.ymin, extent.ymax] = [0, 2 * extent.ymin];
+		} else {
+			[extent.ymin, extent.ymax] = [-1, 1];
+		}
+	}
+
+	if (extent.zmin > extent.zmax) {
+		[extent.zmin, extent.zmax] = [extent.zmax, extent.zmin];
+	} else if (extent.zmin === extent.zmax) {
+		if (extent.zmin < 0) {
+			[extent.zmin, extent.zmax] = [2 * extent.zmin, 0];
+		} else if (extent.zmin > 0) {
+			[extent.zmin, extent.zmax] = [0, 2 * extent.zmin];
+		} else {
+			[extent.zmin, extent.zmax] = [-1, 1];
+		}
 	}
 
 	return extent;
