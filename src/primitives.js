@@ -104,45 +104,41 @@ export default {
 		const indices = new Array(18 * coords.length);
 
 		for (let i = 0; i < coords.length / 2; i++) {
-			const startCoordinate = new Vector3(
-				...(coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent))
-			);
-			const endCoordinate = new Vector3(
-				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent))
-			);
+			const startCoordinate = coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent);
+			const endCoordinate = coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent);
 
 			// vertex 0
-			coordinates[i * 24] = startCoordinate.x;
-			coordinates[i * 24 + 1] = startCoordinate.y;
-			coordinates[i * 24 + 2] = startCoordinate.z;
+			coordinates[i * 24] = startCoordinate[0];
+			coordinates[i * 24 + 1] = startCoordinate[1];
+			coordinates[i * 24 + 2] = startCoordinate[2];
 			// vextex 1
-			coordinates[i * 24 + 3] = endCoordinate.x;
-			coordinates[i * 24 + 4] = startCoordinate.y;
-			coordinates[i * 24 + 5] = startCoordinate.z;
+			coordinates[i * 24 + 3] = endCoordinate[0];
+			coordinates[i * 24 + 4] = startCoordinate[1];
+			coordinates[i * 24 + 5] = startCoordinate[2];
 			// vextex 2
-			coordinates[i * 24 + 6] = startCoordinate.x;
-			coordinates[i * 24 + 7] = endCoordinate.y;
-			coordinates[i * 24 + 8] = startCoordinate.z;
+			coordinates[i * 24 + 6] = startCoordinate[0];
+			coordinates[i * 24 + 7] = endCoordinate[1];
+			coordinates[i * 24 + 8] = startCoordinate[2];
 			// vextex 3
-			coordinates[i * 24 + 9] = endCoordinate.x;
-			coordinates[i * 24 + 10] = endCoordinate.y;
-			coordinates[i * 24 + 11] = startCoordinate.z;
+			coordinates[i * 24 + 9] = endCoordinate[0];
+			coordinates[i * 24 + 10] = endCoordinate[1];
+			coordinates[i * 24 + 11] = startCoordinate[2];
 			// vextex 4
-			coordinates[i * 24 + 12] = startCoordinate.x;
-			coordinates[i * 24 + 13] = startCoordinate.y;
-			coordinates[i * 24 + 14] = endCoordinate.z;
+			coordinates[i * 24 + 12] = startCoordinate[0];
+			coordinates[i * 24 + 13] = startCoordinate[1];
+			coordinates[i * 24 + 14] = endCoordinate[2];
 			// vextex 5
-			coordinates[i * 24 + 15] = endCoordinate.x;
-			coordinates[i * 24 + 16] = startCoordinate.y;
-			coordinates[i * 24 + 17] = endCoordinate.z;
+			coordinates[i * 24 + 15] = endCoordinate[0];
+			coordinates[i * 24 + 16] = startCoordinate[1];
+			coordinates[i * 24 + 17] = endCoordinate[2];
 			// vextex 6
-			coordinates[i * 24 + 18] = startCoordinate.x;
-			coordinates[i * 24 + 19] = endCoordinate.y;
-			coordinates[i * 24 + 20] = endCoordinate.z;
+			coordinates[i * 24 + 18] = startCoordinate[0];
+			coordinates[i * 24 + 19] = endCoordinate[1];
+			coordinates[i * 24 + 20] = endCoordinate[2];
 			// vextex 7
-			coordinates[i * 24 + 21] = endCoordinate.x;
-			coordinates[i * 24 + 22] = endCoordinate.y;
-			coordinates[i * 24 + 23] = endCoordinate.z;
+			coordinates[i * 24 + 21] = endCoordinate[0];
+			coordinates[i * 24 + 22] = endCoordinate[1];
+			coordinates[i * 24 + 23] = endCoordinate[2];
 
 			// the orther of the indices matter: clockwise is one side and counterclockwise the other side
 			// if the front isn't really the front is because of the camera position

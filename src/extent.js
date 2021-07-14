@@ -41,29 +41,29 @@ export default function (elements) {
 			element.type === 'point' ||
 			element.type === 'sphere'
 		) {
-			element.radius ??= element.pointSize;
+			const radius = element.radius ?? element.pointSize;
 
 			element.coords.forEach((coordinate => {
 				if (coordinate[0]) {
-					if (coordinate[0][0] - element.radius < extent.xmin) {
-						extent.xmin = coordinate[0][0] - element.radius;
+					if (coordinate[0][0] - radius < extent.xmin) {
+						extent.xmin = coordinate[0][0] - radius;
 					}
-					if (coordinate[0][0] + element.radius > extent.xmax) {
-						extent.xmax = coordinate[0][0] + element.radius;
-					}
-
-					if (coordinate[0][1] - element.radius < extent.ymin) {
-						extent.ymin = coordinate[0][1] - element.radius;
-					}
-					if (coordinate[0][1] + element.radius > extent.ymax) {
-						extent.ymax = coordinate[0][1] + element.radius;
+					if (coordinate[0][0] + radius > extent.xmax) {
+						extent.xmax = coordinate[0][0] + radius;
 					}
 
-					if (coordinate[0][2] - element.radius < extent.zmin) {
-						extent.zmin = coordinate[0][2] - element.radius;
+					if (coordinate[0][1] - radius < extent.ymin) {
+						extent.ymin = coordinate[0][1] - radius;
 					}
-					if (coordinate[0][2] + element.radius > extent.zmax) {
-						extent.zmax = coordinate[0][2] + element.radius;
+					if (coordinate[0][1] + radius > extent.ymax) {
+						extent.ymax = coordinate[0][1] + radius;
+					}
+
+					if (coordinate[0][2] - radius < extent.zmin) {
+						extent.zmin = coordinate[0][2] - radius;
+					}
+					if (coordinate[0][2] + radius > extent.zmax) {
+						extent.zmax = coordinate[0][2] + radius;
 					}
 				}
 			}));

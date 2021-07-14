@@ -198,6 +198,7 @@ export default function (
 		let nearJ, nearLength = 10 * radius, farJ, farLength = 0;
 
 		const temporaryVector = new Vector3();
+
 		for (let i = 0; i < 8; i++) {
 			temporaryVector.set(
 				boundingBox.geometry.attributes.position.array[i * 3] + boundingBox.position.x,
@@ -297,53 +298,53 @@ export default function (
 	}
 
 	function getTickDirection(i) {
-		const tickDir = new Vector3();
+		const tickDirection = new Vector3();
 
 		if (i === 0) {
 			if (0.25 * Math.PI < theta && theta < 0.75 * Math.PI) {
 				if (axesGeometry[0].vertices[0].z > boundingBox.position.z) {
-					tickDir.setZ(-tickLength);
+					tickDirection.setZ(-tickLength);
 				} else {
-					tickDir.setZ(tickLength);
+					tickDirection.setZ(tickLength);
 				}
 			} else {
 				if (axesGeometry[0].vertices[0].y > boundingBox.position.y) {
-					tickDir.setY(-tickLength);
+					tickDirection.setY(-tickLength);
 				} else {
-					tickDir.setY(tickLength);
+					tickDirection.setY(tickLength);
 				}
 			}
 		} else if (i === 1) {
 			if (0.25 * Math.PI < theta && theta < 0.75 * Math.PI) {
 				if (axesGeometry[1].vertices[0].z > boundingBox.position.z) {
-					tickDir.setZ(-tickLength);
+					tickDirection.setZ(-tickLength);
 				} else {
-					tickDir.setZ(tickLength);
+					tickDirection.setZ(tickLength);
 				}
 			} else {
 				if (axesGeometry[1].vertices[0].x > boundingBox.position.x) {
-					tickDir.setX(-tickLength);
+					tickDirection.setX(-tickLength);
 				} else {
-					tickDir.setX(tickLength);
+					tickDirection.setX(tickLength);
 				}
 			}
 		} else if (i === 2) {
 			if ((0.25 * Math.PI < phi && phi < 0.75 * Math.PI) || (1.25 * Math.PI < phi && phi < 1.75 * Math.PI)) {
 				if (axesGeometry[2].vertices[0].x > boundingBox.position.x) {
-					tickDir.setX(-tickLength);
+					tickDirection.setX(-tickLength);
 				} else {
-					tickDir.setX(tickLength);
+					tickDirection.setX(tickLength);
 				}
 			} else {
 				if (axesGeometry[2].vertices[0].y > boundingBox.position.y) {
-					tickDir.setY(-tickLength);
+					tickDirection.setY(-tickLength);
 				} else {
-					tickDir.setY(tickLength);
+					tickDirection.setY(tickLength);
 				}
 			}
 		}
 
-		return tickDir;
+		return tickDirection;
 	}
 
 	function updateAxes() {
@@ -538,7 +539,7 @@ export default function (
 		onMouseDownPosition[0] = event.clientX;
 		onMouseDownPosition[1] = event.clientY;
 
-		onMouseDownFocus = new Vector3().copy(focus);
+		onMouseDownFocus = focus.clone();
 	}
 
 	function onDocumentMouseMove(event) {
