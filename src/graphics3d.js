@@ -1,5 +1,7 @@
 import {
 	BoxBufferGeometry,
+	BufferAttribute,
+	BufferGeometry,
 	Color,
 	DirectionalLight,
 	EdgesGeometry,
@@ -164,22 +166,28 @@ export default function (
 		[[0, 2], [1, 3], [4, 6], [5, 7]],
 		[[0, 1], [2, 3], [4, 5], [6, 7]]
 	];
+
 	const axesLines = new Array(3);
+
+	const axesVertices = new Float32Array(6);
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			axesGeometry[i] = new Geometry();
+			axesGeometry[i] = new BufferGeometry();
 
-			axesGeometry[i].vertices.push(new Vector3(
-				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3] + boundingBox.position.x,
-				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3 + 1] + boundingBox.position.y,
-				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3 + 2] + boundingBox.position.z
-			));
-			axesGeometry[i].vertices.push(new Vector3(
-				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3] + boundingBox.position.x,
-				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3 + 1] + boundingBox.position.y,
-				boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3 + 2] + boundingBox.position.z
-			));
+			axesVertices[0] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3] + boundingBox.position.x;
+
+			axesVertices[1] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3 + 1] + boundingBox.position.y;
+
+			axesVertices[2] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3 + 2] + boundingBox.position.z;
+
+			axesVertices[3] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3] + boundingBox.position.x;
+
+			axesVertices[4] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3 + 1] + boundingBox.position.y;
+
+			axesVertices[5] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3 + 2] + boundingBox.position.z;
+
+			axesGeometry[i].setAttribute('position', new BufferAttribute(axesVertices, 3));
 
 			axesLines[i] = new Line(
 				axesGeometry[i],
@@ -226,14 +234,12 @@ export default function (
 						axesIndexes[i][j][0] !== farJ &&
 						axesIndexes[i][j][1] !== farJ
 					) {
-						const edge = new Vector3().subVectors(
-							toCanvasCoords(new Vector3(
-								...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][0] * 3, axesIndexes[i][j][0] * 3 + 2)
-							)),
-							toCanvasCoords(new Vector3(
-								...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][1] * 3, axesIndexes[i][j][1] * 3 + 2)
-							))
-						);
+						const edge = toCanvasCoords(new Vector3(
+							...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][0] * 3, axesIndexes[i][j][0] * 3 + 2)
+						)).sub(toCanvasCoords(new Vector3(
+							...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][1] * 3, axesIndexes[i][j][1] * 3 + 2)
+						)));
+
 						edge.z = 0;
 
 						if (edge.length() > maxLength) {
@@ -242,16 +248,18 @@ export default function (
 						}
 					}
 				}
-				axesLines[i].geometry.vertices[0].set(
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3] + boundingBox.position.x,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3 + 1] + boundingBox.position.y,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3 + 2] + boundingBox.position.z
-				);
-				axesLines[i].geometry.vertices[1].set(
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3] + boundingBox.position.x,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3 + 1] + boundingBox.position.y,
-					boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3 + 2] + boundingBox.position.z
-				);
+
+				axesGeometry[i].attributes.position.array[0] = boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3] + boundingBox.position.x;
+
+				axesGeometry[i].attributes.position.array[1] = boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3 + 1] + boundingBox.position.y;
+
+				axesGeometry[i].attributes.position.array[2] = boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0])[0] * 3 + 2] + boundingBox.position.z;
+
+				axesGeometry[i].attributes.position.array[3] = boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3] + boundingBox.position.x;
+
+				axesGeometry[i].attributes.position.array[4] = boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3 + 1] + boundingBox.position.y;
+
+				axesGeometry[i].attributes.position.array[5] = boundingBox.geometry.attributes.position.array[(axesIndexes[i][maxJ] ?? [0, 0])[1] * 3 + 2] + boundingBox.position.z;
 			}
 		}
 
@@ -269,28 +277,37 @@ export default function (
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			ticks[i] = [];
+			ticks[i] = new Array(axes.ticks[i][0].length);
+			ticksSmall[i] = new Array(axes.ticks[i][1].length);
 
 			for (let j = 0; j < axes.ticks[i][0].length; j++) {
-				const tickGeometry = new Geometry();
+				const tickGeometry = new BufferGeometry();
 
-				tickGeometry.vertices.push(new Vector3());
-				tickGeometry.vertices.push(new Vector3());
+				tickGeometry.setAttribute(
+					'position',
+					new BufferAttribute(
+						new Float32Array(6),
+						3
+					)
+				);
 
-				ticks[i].push(new Line(tickGeometry, tickMaterial));
+				ticks[i][j] = new Line(tickGeometry, tickMaterial);
 
 				scene.add(ticks[i][j]);
 			}
 
-			ticksSmall[i] = [];
-
 			for (let j = 0; j < axes.ticks[i][1].length; j++) {
-				const tickGeometry = new Geometry();
+				const tickGeometry = new BufferGeometry();
 
-				tickGeometry.vertices.push(new Vector3());
-				tickGeometry.vertices.push(new Vector3());
+				tickGeometry.setAttribute(
+					'position',
+					new BufferAttribute(
+						new Float32Array(6),
+						3
+					)
+				);
 
-				ticksSmall[i].push(new Line(tickGeometry, tickMaterial));
+				ticksSmall[i][j] = new Line(tickGeometry, tickMaterial);
 
 				scene.add(ticksSmall[i][j]);
 			}
@@ -302,13 +319,13 @@ export default function (
 
 		if (i === 0) {
 			if (0.25 * Math.PI < theta && theta < 0.75 * Math.PI) {
-				if (axesGeometry[0].vertices[0].z > boundingBox.position.z) {
+				if (axesGeometry[0].attributes.position.array[2] > boundingBox.position.z) {
 					tickDirection.setZ(-tickLength);
 				} else {
 					tickDirection.setZ(tickLength);
 				}
 			} else {
-				if (axesGeometry[0].vertices[0].y > boundingBox.position.y) {
+				if (axesGeometry[0].attributes.position.array[1] > boundingBox.position.y) {
 					tickDirection.setY(-tickLength);
 				} else {
 					tickDirection.setY(tickLength);
@@ -316,13 +333,13 @@ export default function (
 			}
 		} else if (i === 1) {
 			if (0.25 * Math.PI < theta && theta < 0.75 * Math.PI) {
-				if (axesGeometry[1].vertices[0].z > boundingBox.position.z) {
+				if (axesGeometry[1].attributes.position.array[2] > boundingBox.position.z) {
 					tickDirection.setZ(-tickLength);
 				} else {
 					tickDirection.setZ(tickLength);
 				}
 			} else {
-				if (axesGeometry[1].vertices[0].x > boundingBox.position.x) {
+				if (axesGeometry[1].attributes.position.array[0] > boundingBox.position.x) {
 					tickDirection.setX(-tickLength);
 				} else {
 					tickDirection.setX(tickLength);
@@ -330,13 +347,13 @@ export default function (
 			}
 		} else if (i === 2) {
 			if ((0.25 * Math.PI < phi && phi < 0.75 * Math.PI) || (1.25 * Math.PI < phi && phi < 1.75 * Math.PI)) {
-				if (axesGeometry[2].vertices[0].x > boundingBox.position.x) {
+				if (axesGeometry[2].attributes.position.array[0] > boundingBox.position.x) {
 					tickDirection.setX(-tickLength);
 				} else {
 					tickDirection.setX(tickLength);
 				}
 			} else {
-				if (axesGeometry[2].vertices[0].y > boundingBox.position.y) {
+				if (axesGeometry[2].attributes.position.array[1] > boundingBox.position.y) {
 					tickDirection.setY(-tickLength);
 				} else {
 					tickDirection.setY(tickLength);
@@ -353,49 +370,57 @@ export default function (
 				const tickDirection = getTickDirection(i);
 
 				for (let j = 0; j < axes.ticks[i][0].length; j++) {
-					let value = axes.ticks[i][0][j];
+					const value = axes.ticks[i][0][j];
 
-					ticks[i][j].geometry.vertices[0].copy(axesGeometry[i].vertices[0]);
-					ticks[i][j].geometry.vertices[1].addVectors(
-						axesGeometry[i].vertices[0],
-						tickDirection
-					);
+					ticks[i][j].geometry.attributes.position.array[0] = axesGeometry[i].attributes.position.array[0];
+
+					ticks[i][j].geometry.attributes.position.array[1] = axesGeometry[i].attributes.position.array[1];
+
+					ticks[i][j].geometry.attributes.position.array[2] = axesGeometry[i].attributes.position.array[2];
+
+					ticks[i][j].geometry.attributes.position.array[3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x;
+
+					ticks[i][j].geometry.attributes.position.array[4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y;
+
+					ticks[i][j].geometry.attributes.position.array[5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z;
 
 					if (i === 0) {
-						ticks[i][j].geometry.vertices[0].x = value;
-						ticks[i][j].geometry.vertices[1].x = value;
+						ticks[i][j].geometry.attributes.position.array[0] = value;
+						ticks[i][j].geometry.attributes.position.array[3] = value;
 					} else if (i === 1) {
-						ticks[i][j].geometry.vertices[0].y = value;
-						ticks[i][j].geometry.vertices[1].y = value;
+						ticks[i][j].geometry.attributes.position.array[1] = value;
+						ticks[i][j].geometry.attributes.position.array[4] = value;
 					} else if (i === 2) {
-						ticks[i][j].geometry.vertices[0].z = value;
-						ticks[i][j].geometry.vertices[1].z = value;
+						ticks[i][j].geometry.attributes.position.array[2] = value;
+						ticks[i][j].geometry.attributes.position.array[5] = value;
 					}
-
-					ticks[i][j].geometry.verticesNeedUpdate = true;
 				}
 
 				for (let j = 0; j < axes.ticks[i][1].length; j++) {
-					let value = axes.ticks[i][1][j];
+					const value = axes.ticks[i][1][j];
 
-					ticksSmall[i][j].geometry.vertices[0].copy(axesGeometry[i].vertices[0]);
-					ticksSmall[i][j].geometry.vertices[1].addVectors(
-						axesGeometry[i].vertices[0],
-						tickDirection.clone().multiplyScalar(0.5)
-					);
+					ticksSmall[i][j].geometry.attributes.position.array[0] = axesGeometry[i].attributes.position.array[0];
+
+					ticksSmall[i][j].geometry.attributes.position.array[1] = axesGeometry[i].attributes.position.array[1];
+
+					ticksSmall[i][j].geometry.attributes.position.array[2] = axesGeometry[i].attributes.position.array[2];
+
+					ticksSmall[i][j].geometry.attributes.position.array[3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x / 2;
+
+					ticksSmall[i][j].geometry.attributes.position.array[4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y / 2;
+
+					ticksSmall[i][j].geometry.attributes.position.array[5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z / 2;
 
 					if (i === 0) {
-						ticksSmall[i][j].geometry.vertices[0].x = value;
-						ticksSmall[i][j].geometry.vertices[1].x = value;
+						ticksSmall[i][j].geometry.attributes.position.array[0] = value;
+						ticksSmall[i][j].geometry.attributes.position.array[3] = value;
 					} else if (i === 1) {
-						ticksSmall[i][j].geometry.vertices[0].y = value;
-						ticksSmall[i][j].geometry.vertices[1].y = value;
+						ticksSmall[i][j].geometry.attributes.position.array[1] = value;
+						ticksSmall[i][j].geometry.attributes.position.array[4] = value;
 					} else if (i === 2) {
-						ticksSmall[i][j].geometry.vertices[0].z = value;
-						ticksSmall[i][j].geometry.vertices[1].z = value;
+						ticksSmall[i][j].geometry.attributes.position.array[2] = value;
+						ticksSmall[i][j].geometry.attributes.position.array[5] = value;
 					}
-
-					ticksSmall[i][j].geometry.verticesNeedUpdate = true;
 				}
 			}
 		}
@@ -457,11 +482,12 @@ export default function (
 			if (hasAxes[i]) {
 				for (let j = 0; j < tickNumbers[i].length; j++) {
 					const tickPosition = toCanvasCoords(
-						ticks[i][j].geometry.vertices[0].clone().add(
-							new Vector3().subVectors(
-								ticks[i][j].geometry.vertices[0],
-								ticks[i][j].geometry.vertices[1]
-							).multiplyScalar(6)
+						new Vector3(
+							ticks[i][j].geometry.attributes.position.array[0] * 7 - ticks[i][j].geometry.attributes.position.array[3] * 6,
+
+							ticks[i][j].geometry.attributes.position.array[1] * 7 - ticks[i][j].geometry.attributes.position.array[4] * 6,
+
+							ticks[i][j].geometry.attributes.position.array[2] * 7 - ticks[i][j].geometry.attributes.position.array[5] * 6
 						)
 					).multiplyScalar(canvasSize / maxSize);
 
