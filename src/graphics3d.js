@@ -1,11 +1,10 @@
 import {
-	BoxBufferGeometry,
+	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Color,
 	DirectionalLight,
 	EdgesGeometry,
-	Geometry,
 	Line,
 	LineBasicMaterial,
 	LineSegments,
@@ -14,7 +13,7 @@ import {
 	Scene,
 	Vector3,
 	WebGLRenderer
-} from '../vendors/threejs/three.min.js';
+} from '../vendors/threejs/three.js';
 
 import primitiveFunctions from './primitives.js';
 import lightFunctions from './lights.js';
@@ -139,7 +138,7 @@ export default function (
 	}
 
 	const boundingBox = new LineSegments(
-		new EdgesGeometry(new BoxBufferGeometry(
+		new EdgesGeometry(new BoxGeometry(
 			extent.xmax - extent.xmin,
 			extent.ymax - extent.ymin,
 			extent.zmax - extent.zmin

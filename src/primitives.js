@@ -2,7 +2,7 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	Color,
-	CylinderBufferGeometry,
+	CylinderGeometry,
 	DoubleSide,
 	Group,
 	InstancedMesh,
@@ -17,11 +17,11 @@ import {
 	Quaternion,
 	ShaderMaterial,
 	Shape,
-	ShapeBufferGeometry,
-	SphereBufferGeometry,
+	ShapeGeometry,
+	SphereGeometry,
 	Vector3,
 	Vector4
-} from '../vendors/threejs/three.min.js';
+} from '../vendors/threejs/three.js';
 
 import earcut from '../vendors/earcut/earcut.min.js';
 import scaleCoordinate from './scaleCoordinate.js';
@@ -41,7 +41,7 @@ export default {
 		);
 
 		const arrowHead = new Mesh(
-			new CylinderBufferGeometry(
+			new CylinderGeometry(
 				0,
 				0.04 * startCoordinate.distanceTo(endCoordinate),
 				0.2 * startCoordinate.distanceTo(endCoordinate)
@@ -225,7 +225,7 @@ export default {
 			);
 
 			const cylinder = new Mesh(
-				new CylinderBufferGeometry(
+				new CylinderGeometry(
 					radius,
 					radius,
 					startCoordinate.distanceTo(endCoordinate), // the height of the cylinder
@@ -364,7 +364,7 @@ export default {
 
 				const normalZVector = new Vector3(0, 0, 1);
 
-				geometry = new ShapeBufferGeometry(new Shape(
+				geometry = new ShapeGeometry(new Shape(
 					coords.map((coordinate) =>
 						new Vector3(
 							...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
@@ -427,7 +427,7 @@ export default {
 	},
 	sphere: ({ color, coords, opacity, radius }, extent) => {
 		const spheres = new InstancedMesh(
-			new SphereBufferGeometry(radius, 48, 48),
+			new SphereGeometry(radius, 48, 48),
 			new MeshLambertMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
