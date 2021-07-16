@@ -17,7 +17,7 @@ import {
 	Quaternion,
 	ShaderMaterial,
 	Shape,
-	ShapeGeometry,
+	ShapeBufferGeometry,
 	SphereBufferGeometry,
 	Vector3,
 	Vector4
@@ -364,7 +364,7 @@ export default {
 
 				const normalZVector = new Vector3(0, 0, 1);
 
-				geometry = new ShapeGeometry(new Shape(
+				geometry = new ShapeBufferGeometry(new Shape(
 					coords.map((coordinate) =>
 						new Vector3(
 							...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
@@ -377,16 +377,20 @@ export default {
 					)
 				));
 
-				geometry.vertices = geometry.vertices.map(
-					(vertex) => vertex.applyQuaternion(
+				for (let i = 0; i < geometry.attributes.position.count / 3; i++) {
+					const temporaryVector = new Vector3(
+						...geometry.attributes.position.array.slice(i * 3, i * 3 + 2)
+					).applyQuaternion(
 						new Quaternion().setFromUnitVectors(
 							normalZVector,
 							normalVector
 						)
-					)
-				);
+					);
 
-				geometry.computeFaceNormals();
+					geometry.attributes.position.array[i * 3] = temporaryVector.x;
+					geometry.attributes.position.array[i * 3 + 1] = temporaryVector.y;
+					geometry.attributes.position.array[i * 3 + 2] = temporaryVector.z;
+				}
 			} else {
 				geometry = new BufferGeometry();
 
