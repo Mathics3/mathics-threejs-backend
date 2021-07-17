@@ -19,8 +19,7 @@ import {
 	Shape,
 	ShapeGeometry,
 	SphereGeometry,
-	Vector3,
-	Vector4
+	Vector3
 } from '../vendors/threejs/three.js';
 
 import earcut from '../vendors/earcut/earcut.min.js';
@@ -297,7 +296,7 @@ export default {
 				depthWrite: false,
 				uniforms: {
 					size: { value: pointSize * canvasSize * 0.5 },
-					color: { value: new Vector4(...color, opacity) },
+					color: { value: [...color, opacity] },
 				},
 				vertexShader: `
 					uniform float size;
