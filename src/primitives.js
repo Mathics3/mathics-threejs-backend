@@ -419,10 +419,11 @@ export default {
 
 		return new Mesh(
 			geometry,
-			new MeshLambertMaterial({
+			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
 				transparent: (opacity ?? 1) !== 1,
+				flatShading: true,
 				side: DoubleSide
 			})
 		);
