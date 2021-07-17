@@ -371,6 +371,7 @@ export default function (
 				for (let j = 0; j < axes.ticks[i][0].length; j++) {
 					const value = axes.ticks[i][0][j];
 
+					// set the "position" buffer to its initial values
 					ticks[i][j].geometry.attributes.position.array[0] = axesGeometry[i].attributes.position.array[0];
 
 					ticks[i][j].geometry.attributes.position.array[1] = axesGeometry[i].attributes.position.array[1];
@@ -398,6 +399,7 @@ export default function (
 				for (let j = 0; j < axes.ticks[i][1].length; j++) {
 					const value = axes.ticks[i][1][j];
 
+					// set the "position" buffer to its initial values
 					ticksSmall[i][j].geometry.attributes.position.array[0] = axesGeometry[i].attributes.position.array[0];
 
 					ticksSmall[i][j].geometry.attributes.position.array[1] = axesGeometry[i].attributes.position.array[1];

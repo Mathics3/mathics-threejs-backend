@@ -364,6 +364,7 @@ export default {
 
 				const normalZVector = new Vector3(0, 0, 1);
 
+				// apply the quaternion "zero" all z values, we can't draw a shape with non-zero z values
 				geometry = new ShapeGeometry(new Shape(
 					coords.map((coordinate) =>
 						new Vector3(
@@ -378,6 +379,7 @@ export default {
 				));
 
 				for (let i = 0; i < geometry.attributes.position.count / 3; i++) {
+					// apply "revert" quaternion so we respect original z values
 					const temporaryVector = new Vector3(
 						...geometry.attributes.position.array.slice(i * 3, i * 3 + 2)
 					).applyQuaternion(
@@ -387,6 +389,7 @@ export default {
 						)
 					);
 
+					// copy the temporary vector to the "position" buffer
 					geometry.attributes.position.array[i * 3] = temporaryVector.x;
 					geometry.attributes.position.array[i * 3 + 1] = temporaryVector.y;
 					geometry.attributes.position.array[i * 3 + 2] = temporaryVector.z;
