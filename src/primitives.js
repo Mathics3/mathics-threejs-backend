@@ -1,10 +1,13 @@
 import {
+	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Color,
 	CylinderGeometry,
+	DodecahedronGeometry,
 	DoubleSide,
 	Group,
+	IcosahedronGeometry,
 	InstancedMesh,
 	Line,
 	LineBasicMaterial,
@@ -13,12 +16,14 @@ import {
 	MeshBasicMaterial,
 	MeshLambertMaterial,
 	MeshStandardMaterial,
+	OctahedronGeometry,
 	Points,
 	Quaternion,
 	ShaderMaterial,
 	Shape,
 	ShapeGeometry,
 	SphereGeometry,
+	TetrahedronGeometry,
 	Vector3
 } from '../vendors/threejs/three.js';
 
@@ -427,6 +432,44 @@ export default {
 				side: DoubleSide
 			})
 		);
+	},
+	polyhedron: ({ color, coords, opacity, subType }, extent) => {
+		let geometry;
+
+		switch (subType) {
+			case 'tetrahedron':
+				geometry = new TetrahedronGeometry();
+				break;
+			case 'octahedron':
+				geometry = new OctahedronGeometry();
+				break;
+			case 'dodecahedron':
+				geometry = new DodecahedronGeometry();
+				break;
+			case 'icosahedron':
+				geometry = new IcosahedronGeometry();
+				break;
+		}
+
+		const polyhedrons = new InstancedMesh(
+			geometry,
+			new MeshStandardMaterial({
+				color: new Color(...color).getHex(),
+				opacity: opacity ?? 1,
+				transparent: (opacity ?? 1) !== 1,
+				flatShading: true
+			}),
+			coords.length
+		);
+
+		coords.forEach((coordinate, i) =>
+			polyhedrons.setMatrixAt(
+				i,
+				new Matrix4().setPosition(...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent)))
+			)
+		);
+
+		return polyhedrons;
 	},
 	sphere: ({ color, coords, opacity, radius }, extent) => {
 		const spheres = new InstancedMesh(

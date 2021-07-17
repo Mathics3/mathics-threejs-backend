@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<body>
+	<main id="main"></main>
+
+	<script type="module">
+		import drawGraphics3d from '../../src/index.js';
+
+		drawGraphics3d(
+			document.getElementById('main'),
+			{
+				axes: {},
+				elements: [
+					{
+						type: 'polyhedron',
+						color: [0, 0, 0],
+						coords: [
+							[[0, 0, 0]],
+							[[2, 2, 2]]
+						],
+						opacity: 0.5,
+						subType: 'tetrahedron'
+					},
+					{
+						type: 'polyhedron',
+						color: [1, 0, 1],
+						coords: [
+							[null, [0.5, 0.5, 0.5]]
+						],
+						opacity: 0.5,
+						subType: 'octahedron'
+					},
+					{
+						type: 'polyhedron',
+						color: [0, 1, 1],
+						coords: [
+							[[6, 6, 6]]
+						],
+						opacity: 0.5,
+						subType: 'dodecahedron'
+					},
+					{
+						type: 'polyhedron',
+						color: [1, 0, 0],
+						coords: [
+							[[8, 8, 8]]
+						],
+						opacity: 0.5,
+						subType: 'icosahedron'
+					}
+				],
+				lighting: [
+					{
+						type: 'ambient',
+						color: [1, 1, 1]
+					}
+				],
+				viewpoint: [2, -4, 4]
+			}
+		);
+	</script>
+</body>
