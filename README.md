@@ -13,7 +13,7 @@ drawGraphics3D(
     {
         elements: [
             {
-                type: 'Sphere',
+                type: 'sphere',
                 color: [1, 1, 1],
                 coords: [
                     [[0, 0, 0]]
@@ -23,7 +23,7 @@ drawGraphics3D(
         axes: {},
         lighting: [
             {
-                type: 'Ambient',
+                type: 'ambient',
                 color: [1, 1, 1]
             }
         ],
