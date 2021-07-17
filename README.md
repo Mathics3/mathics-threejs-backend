@@ -14,17 +14,17 @@ drawGraphics3D(
         elements: [
             {
                 type: 'Sphere',
-                Coords: [
+                color: [1, 1, 1],
+                coords: [
                     [[0, 0, 0]]
-                ],
-                RBGColor: [1, 1, 1]
+                ]
             }
         ],
         axes: {},
         lighting: [
             {
                 type: 'Ambient',
-                RBGColor: [1, 1, 1]
+                color: [1, 1, 1]
             }
         ],
         viewpoint: [2.6, -4.8, 4.0]
@@ -63,6 +63,3 @@ Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:808
 ## JSON API for Compact Graphics3D
 
 See the [wiki](https://github.com/Mathics3/mathics-threejs-backend/wiki) for the JSON API description for Graphics3D Primitives.
-
-
-
