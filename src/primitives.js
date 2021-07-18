@@ -1,5 +1,4 @@
 import {
-	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Color,
@@ -49,7 +48,7 @@ export default {
 				0,
 				0.04 * startCoordinate.distanceTo(endCoordinate),
 				0.2 * startCoordinate.distanceTo(endCoordinate)
-			).rotateX(Math.PI / 2),
+			).rotateX(Math.PI / 2), // rotate the cylinder 90 degrees to lookAt work
 			new MeshBasicMaterial({
 				color: colorHex,
 				opacity: opacity ?? 1,
@@ -59,7 +58,8 @@ export default {
 
 		// set the position to 1/10 far from the end coordinate so lookAt work
 		arrowHead.position.copy(
-			endCoordinate.clone()
+			endCoordinate
+				.clone()
 				.multiplyScalar(9)
 				.add(startCoordinate)
 				.multiplyScalar(0.1)
@@ -218,43 +218,57 @@ export default {
 		);
 	},
 	cylinder: ({ color, coords, opacity, radius }, extent) => {
-		const group = new Group();
+		const cylinders = new InstancedMesh(
+			new CylinderGeometry(
+				radius,
+				radius,
+				1,
+				24
+			).rotateX(Math.PI / 2), // rotate the cylinder 90 degrees to lookAt work
+			new MeshLambertMaterial({
+				color: new Color(...color).getHex(),
+				opacity: opacity ?? 1,
+				transparent: (opacity ?? 1) !== 1,
+				depthWrite: false
+			}),
+			coords.length
+		);
 
 		for (let i = 0; i < coords.length / 2; i++) {
 			const startCoordinate = new Vector3(
 				...(coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent))
 			);
+
 			const endCoordinate = new Vector3(
 				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2][1], extent))
 			);
 
-			const cylinder = new Mesh(
-				new CylinderGeometry(
-					radius,
-					radius,
-					startCoordinate.distanceTo(endCoordinate), // the height of the cylinder
-					24
-				).applyMatrix4(
-					// rotate the cylinder 90 degrees to lookAt work;
-					new Matrix4().makeRotationX(1.5707963267948966)
-				),
-				new MeshLambertMaterial({
-					color: new Color(...color).getHex(),
-					opacity: opacity ?? 1,
-					transparent: (opacity ?? 1) !== 1
-				})
+			cylinders.setMatrixAt(
+				i,
+				new Matrix4()
+					.setPosition(
+						startCoordinate
+							.clone()
+							.add(endCoordinate)
+							.multiplyScalar(0.5)
+					)
+					.lookAt(
+						startCoordinate,
+						endCoordinate,
+						new Vector3(0, 1, 0)
+					)
+					.scale(
+						new Vector3(
+							1,
+							1,
+							// the height of the cylinder
+							startCoordinate.distanceTo(endCoordinate),
+						)
+					)
 			);
+		};
 
-			// mean of the start and end coordinates, the center of the cylinder
-			cylinder.position.addVectors(startCoordinate, endCoordinate)
-				.multiplyScalar(0.5);
-
-			cylinder.lookAt(endCoordinate);
-
-			group.add(cylinder);
-		}
-
-		return group;
+		return cylinders;
 	},
 	line: ({ color, coords, opacity }, extent) => {
 		const geometry = new BufferGeometry();

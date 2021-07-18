@@ -36,7 +36,7 @@ export default function (elements) {
 				}
 			}));
 		} else if (
-			// the extent isn't calculated correctly for cylinders, their extent should be transformationVector * Radius
+			// the extent isn't calculated correctly for cylinders, their extent should be transformationVector * radius
 			element.type === 'cylinder' ||
 			element.type === 'point' ||
 			element.type === 'polyhedron' ||
