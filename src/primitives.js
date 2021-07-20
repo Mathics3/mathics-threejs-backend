@@ -212,7 +212,7 @@ export default {
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
 				transparent: (opacity ?? 1) !== 1,
-				depthWrite: false,
+				depthWrite: (opacity ?? 1) === 1,
 				flatShading: true
 			})
 		);
@@ -229,7 +229,7 @@ export default {
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
 				transparent: (opacity ?? 1) !== 1,
-				depthWrite: false
+				depthWrite: (opacity ?? 1) === 1
 			}),
 			coords.length
 		);
@@ -312,7 +312,7 @@ export default {
 			geometry,
 			new ShaderMaterial({
 				transparent: true,
-				depthWrite: false,
+				depthWrite: (opacity ?? 1) === 1,
 				uniforms: {
 					size: { value: pointSize * canvasSize * 0.5 },
 					color: { value: [...color, opacity] },
