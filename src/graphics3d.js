@@ -66,14 +66,13 @@ export default function (
 	onMouseDownTheta = theta = Math.acos(viewPoint.z / radius);
 	onMouseDownPhi = phi = (Math.atan2(viewPoint.y, viewPoint.x) + 2 * Math.PI) % (2 * Math.PI);
 
-	const scene = new Scene();
-
-	const camera = new PerspectiveCamera(
-		35,           // field of view
-		1,            // aspect ratio
-		0.1 * radius, // near plane
-		1000 * radius // far plane
-	);
+	const scene = new Scene(),
+		camera = new PerspectiveCamera(
+			35,           // field of view
+			1,            // aspect ratio
+			0.1 * radius, // near plane
+			1000 * radius // far plane
+		);
 
 	function updateCameraPosition() {
 		camera.position.set(
@@ -114,8 +113,8 @@ export default function (
 		return result;
 	}
 
-	const lights = new Array(lighting.length);
-	const initialLightPosition = new Array(lighting.length);
+	const lights = new Array(lighting.length),
+		initialLightPosition = new Array(lighting.length);
 
 	lighting.forEach((light, i) => {
 		initialLightPosition[i] = getInitialLightPosition(light);
@@ -159,16 +158,14 @@ export default function (
 		hasAxes = [false, false, false];
 	}
 
-	const axesGeometry = [];
-	const axesIndexes = [
-		[[0, 5], [1, 4], [2, 7], [3, 6]],
-		[[0, 2], [1, 3], [4, 6], [5, 7]],
-		[[0, 1], [2, 3], [4, 5], [6, 7]]
-	];
-
-	const axesLines = new Array(3);
-
-	const axesVertices = new Float32Array(6);
+	const axesGeometry = [],
+		axesIndexes = [
+			[[0, 5], [1, 4], [2, 7], [3, 6]],
+			[[0, 2], [1, 3], [4, 6], [5, 7]],
+			[[0, 1], [2, 3], [4, 5], [6, 7]]
+		],
+		axesLines = new Array(3),
+		axesVertices = new Float32Array(6);
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
@@ -208,18 +205,18 @@ export default function (
 
 		for (let i = 0; i < 8; i++) {
 			temporaryVector.set(
-				boundingBox.geometry.attributes.position.array[i * 3] + boundingBox.position.x,
-				boundingBox.geometry.attributes.position.array[i * 3 + 1] + boundingBox.position.y,
-				boundingBox.geometry.attributes.position.array[i * 3 + 2] + boundingBox.position.z
-			).sub(camera.position);
+				boundingBox.geometry.attributes.position.array[i * 3],
+				boundingBox.geometry.attributes.position.array[i * 3 + 1],
+				boundingBox.geometry.attributes.position.array[i * 3 + 2]
+			).add(boundingBox.position).sub(camera.position);
 
-			const temporaryLength = temporaryVector.length();
+			const temporaryVectorLength = temporaryVector.length();
 
-			if (temporaryLength < nearLength) {
-				nearLength = temporaryLength;
+			if (temporaryVectorLength < nearLength) {
+				nearLength = temporaryVectorLength;
 				nearJ = i;
-			} else if (temporaryLength > farLength) {
-				farLength = temporaryLength;
+			} else if (temporaryVectorLength > farLength) {
+				farLength = temporaryVectorLength;
 				farJ = i;
 			}
 		}
@@ -266,11 +263,12 @@ export default function (
 	}
 
 	// axes ticks
-	const tickMaterial = new LineBasicMaterial({
-		color: 0x000000,
-		linewidth: 1.2
-	});
-	const ticks = new Array(3),
+	const
+		tickMaterial = new LineBasicMaterial({
+			color: 0x000000,
+			linewidth: 1.2
+		}),
+		ticks = new Array(3),
 		ticksSmall = new Array(3),
 		tickLength = 0.005 * radius;
 
