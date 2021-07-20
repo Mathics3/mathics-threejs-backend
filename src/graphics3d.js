@@ -231,9 +231,9 @@ export default function (
 						axesIndexes[i][j][1] !== farJ
 					) {
 						const edge = toCanvasCoords(new Vector3(
-							...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][0] * 3, axesIndexes[i][j][0] * 3 + 2)
+							...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][0] * 3, axesIndexes[i][j][0] * 3 + 3)
 						)).sub(toCanvasCoords(new Vector3(
-							...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][1] * 3, axesIndexes[i][j][1] * 3 + 2)
+							...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][1] * 3, axesIndexes[i][j][1] * 3 + 3)
 						)));
 
 						edge.z = 0;
