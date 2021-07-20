@@ -6,6 +6,8 @@ function translationLayer(div, object) {
 		if (primitive.faceColor) {
 			primitive.color = primitive.faceColor;
 		}
+
+		primitive.color = primitive.color.slice(0, 3);
 	});
 
 	object.lighting.forEach((light) => {
