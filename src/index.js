@@ -18,9 +18,9 @@ function translationLayer(div, object) {
 		light.type = light.type.toLowerCase();
 	});
 
-	return drawGraphics3d(div, object);
+	return drawGraphics3d(div, object, true);
 }
 
 window.drawGraphics3d = translationLayer;
 
-export default translationLayer;
+export default drawGraphics3d;
