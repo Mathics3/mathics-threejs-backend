@@ -43,31 +43,30 @@ export default {
 			...(coords[coords.length - 1][0] ?? scaleCoordinate(coords[coords.length - 1][1], extent))
 		);
 
-		const arrowHead = new Mesh(
-			new CylinderGeometry(
-				0,
-				0.04 * startCoordinate.distanceTo(endCoordinate),
-				0.2 * startCoordinate.distanceTo(endCoordinate)
-			).rotateX(Math.PI / 2), // rotate the cylinder 90 degrees to lookAt work
-			new MeshBasicMaterial({
-				color: colorHex,
-				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1
-			})
+		group.add(
+			new Mesh(
+				new CylinderGeometry(
+					0,
+					0.04 * startCoordinate.distanceTo(endCoordinate),
+					0.2 * startCoordinate.distanceTo(endCoordinate)
+				)
+					// rotate the cylinder 90 degrees to lookAt work
+					.rotateX(Math.PI / 2)
+					.applyMatrix4(
+						new Matrix4().lookAt(
+							startCoordinate,
+							endCoordinate,
+							new Vector3(0, 1, 0)
+						)
+					),
+
+				new MeshBasicMaterial({
+					color: colorHex,
+					opacity: opacity ?? 1,
+					transparent: (opacity ?? 1) !== 1
+				})
+			)
 		);
-
-		// set the position to 1/10 far from the end coordinate so lookAt work
-		arrowHead.position.copy(
-			endCoordinate
-				.clone()
-				.multiplyScalar(9)
-				.add(startCoordinate)
-				.multiplyScalar(0.1)
-		);
-
-		arrowHead.lookAt(endCoordinate);
-
-		group.add(arrowHead);
 
 		const coordinates = new Float32Array(coords.length * 3);
 
