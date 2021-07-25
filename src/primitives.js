@@ -461,7 +461,8 @@ export default {
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
 				transparent: (opacity ?? 1) !== 1,
-				flatShading: true
+				flatShading: true,
+				depthWrite: (opacity ?? 1) === 1
 			}),
 			coords.length
 		);
@@ -481,7 +482,8 @@ export default {
 			new MeshLambertMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1
+				transparent: (opacity ?? 1) !== 1,
+				depthWrite: (opacity ?? 1) === 1
 			}),
 			coords.length
 		);
