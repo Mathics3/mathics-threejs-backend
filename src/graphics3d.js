@@ -23,7 +23,6 @@ import scaleCoordinate from './scaleCoordinate.js';
 export default function (
 	container,
 	{ axes, elements, lighting, viewpoint },
-	scaledViewpoint,
 	maxSize,
 	innerWidthMultiplier
 ) {
@@ -54,7 +53,7 @@ export default function (
 	const viewPoint = new Vector3(...viewpoint)
 		.multiplyScalar(
 			// scale the viewpoint so the camera isn't inside the bounding box
-			scaledViewpoint ? 1 : Math.max(
+			Math.max(
 				extent.xmax - extent.xmin,
 				extent.ymax - extent.ymin,
 				extent.zmax - extent.zmin
