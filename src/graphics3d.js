@@ -177,8 +177,6 @@ export default function (
 		new LineBasicMaterial({ color: 0x666666 })
 	);
 
-	boundingBox.position.copy(focus);
-
 	scene.add(boundingBox);
 
 	// draw the axes
