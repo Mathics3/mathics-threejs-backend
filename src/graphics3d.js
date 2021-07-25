@@ -170,8 +170,6 @@ export default function (
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			axesGeometry[i] = new BufferGeometry();
-
 			axesVertices[0] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3] + boundingBox.position.x;
 
 			axesVertices[1] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][0] * 3 + 1] + boundingBox.position.y;
@@ -184,7 +182,10 @@ export default function (
 
 			axesVertices[5] = boundingBox.geometry.attributes.position.array[axesIndexes[i][0][1] * 3 + 2] + boundingBox.position.z;
 
-			axesGeometry[i].setAttribute('position', new BufferAttribute(axesVertices, 3));
+			axesGeometry[i] = new BufferGeometry().setAttribute(
+				'position',
+				new BufferAttribute(axesVertices, 3)
+			);
 
 			axesLines[i] = new Line(
 				axesGeometry[i],
@@ -279,33 +280,31 @@ export default function (
 			ticksSmall[i] = new Array(axes.ticks[i][1].length);
 
 			for (let j = 0; j < axes.ticks[i][0].length; j++) {
-				const tickGeometry = new BufferGeometry();
-
-				tickGeometry.setAttribute(
-					'position',
-					new BufferAttribute(
-						new Float32Array(6),
-						3
-					)
+				ticks[i][j] = new Line(
+					new BufferGeometry().setAttribute(
+						'position',
+						new BufferAttribute(
+							new Float32Array(6),
+							3
+						)
+					),
+					tickMaterial
 				);
-
-				ticks[i][j] = new Line(tickGeometry, tickMaterial);
 
 				scene.add(ticks[i][j]);
 			}
 
 			for (let j = 0; j < axes.ticks[i][1].length; j++) {
-				const tickGeometry = new BufferGeometry();
-
-				tickGeometry.setAttribute(
-					'position',
-					new BufferAttribute(
-						new Float32Array(6),
-						3
-					)
+				ticksSmall[i][j] = new Line(
+					new BufferGeometry().setAttribute(
+						'position',
+						new BufferAttribute(
+							new Float32Array(6),
+							3
+						)
+					),
+					tickMaterial
 				);
-
-				ticksSmall[i][j] = new Line(tickGeometry, tickMaterial);
 
 				scene.add(ticksSmall[i][j]);
 			}

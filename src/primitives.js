@@ -78,16 +78,12 @@ export default {
 			coordinates[i * 3 + 2] = coords[i][0][2];
 		}
 
-		const linesGeometry = new BufferGeometry();
-
-		linesGeometry.setAttribute(
-			'position',
-			new BufferAttribute(coordinates, 3)
-		);
-
 		group.add(
 			new Line(
-				linesGeometry,
+				new BufferGeometry().setAttribute(
+					'position',
+					new BufferAttribute(coordinates, 3)
+				),
 				new LineBasicMaterial({
 					color: colorHex,
 					opacity: opacity ?? 1,
@@ -270,7 +266,6 @@ export default {
 		return cylinders;
 	},
 	line: ({ color, coords, opacity }, extent) => {
-		const geometry = new BufferGeometry();
 		const coordinates = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) => {
@@ -281,10 +276,11 @@ export default {
 			coordinates[i * 3 + 2] = coordinate[0][2];
 		});
 
-		geometry.setAttribute('position', new BufferAttribute(coordinates, 3));
-
 		return new Line(
-			geometry,
+			new BufferGeometry().setAttribute(
+				'position',
+				new BufferAttribute(coordinates, 3)
+			),
 			new LineBasicMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
@@ -293,8 +289,6 @@ export default {
 		);
 	},
 	point: ({ color, coords, opacity, pointSize }, extent, canvasSize) => {
-		const geometry = new BufferGeometry();
-
 		const coordinates = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) => {
@@ -305,10 +299,11 @@ export default {
 			coordinates[i * 3 + 2] = coordinate[0][2];
 		});
 
-		geometry.setAttribute('position', new BufferAttribute(coordinates, 3));
-
 		return new Points(
-			geometry,
+			new BufferGeometry().setAttribute(
+				'position',
+				new BufferAttribute(coordinates, 3)
+			),
 			new ShaderMaterial({
 				transparent: true,
 				depthWrite: (opacity ?? 1) === 1,
@@ -342,9 +337,7 @@ export default {
 		let geometry;
 
 		if (coords.length === 3) { // triangle
-			geometry = new BufferGeometry();
-
-			geometry.setAttribute(
+			geometry = new BufferGeometry().setAttribute(
 				'position',
 				new BufferAttribute(new Float32Array([
 					...(coords[0][0] ?? scaleCoordinate(coords[0][1], extent)),
@@ -396,7 +389,7 @@ export default {
 				));
 
 				for (let i = 0; i < geometry.attributes.position.count / 3; i++) {
-					// apply "revert" quaternion so we respect original z values
+					// apply the "revert" quaternion so we respect original z values
 					const temporaryVector = new Vector3(
 						...geometry.attributes.position.array.slice(i * 3, i * 3 + 2)
 					).applyQuaternion(
@@ -412,8 +405,6 @@ export default {
 					geometry.attributes.position.array[i * 3 + 2] = temporaryVector.z;
 				}
 			} else {
-				geometry = new BufferGeometry();
-
 				const coordinates = new Float32Array(coords.length * 3);
 
 				coords.forEach((coordinate, i) => {
@@ -424,7 +415,7 @@ export default {
 					coordinates[i * 3 + 2] = coordinate[0][2];
 				});
 
-				geometry.setAttribute(
+				geometry = new BufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(coordinates, 3)
 				);
