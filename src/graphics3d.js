@@ -1,11 +1,8 @@
 import {
-	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Color,
 	DirectionalLight,
-	EdgesGeometry,
-	Line,
 	LineBasicMaterial,
 	LineSegments,
 	Matrix4,
@@ -138,11 +135,46 @@ export default function (
 	}
 
 	const boundingBox = new LineSegments(
-		new EdgesGeometry(new BoxGeometry(
-			extent.xmax - extent.xmin,
-			extent.ymax - extent.ymin,
-			extent.zmax - extent.zmin
-		)),
+		new BufferGeometry().setAttribute(
+			'position',
+			new BufferAttribute(new Float32Array([
+				extent.xmin, extent.ymax, extent.zmin,
+				extent.xmin, extent.ymax, extent.zmax,
+
+				extent.xmax, extent.ymax, extent.zmax,
+				extent.xmax, extent.ymax, extent.zmin,
+
+				extent.xmin, extent.ymin, extent.zmax,
+				extent.xmin, extent.ymin, extent.zmin,
+
+				extent.xmax, extent.ymin, extent.zmin,
+				extent.xmax, extent.ymin, extent.zmax,
+
+				extent.xmin, extent.ymax, extent.zmax,
+				extent.xmin, extent.ymin, extent.zmax,
+
+				extent.xmax, extent.ymax, extent.zmax,
+				extent.xmin, extent.ymax, extent.zmax,
+
+				extent.xmin, extent.ymin, extent.zmax,
+				extent.xmax, extent.ymin, extent.zmax,
+
+				extent.xmax, extent.ymin, extent.zmax,
+				extent.xmax, extent.ymax, extent.zmax,
+
+				extent.xmax, extent.ymax, extent.zmin,
+				extent.xmax, extent.ymin, extent.zmin,
+
+				extent.xmin, extent.ymax, extent.zmin,
+				extent.xmax, extent.ymax, extent.zmin,
+
+				extent.xmax, extent.ymin, extent.zmin,
+				extent.xmin, extent.ymin, extent.zmin,
+
+				extent.xmin, extent.ymin, extent.zmin,
+				extent.xmin, extent.ymax, extent.zmin,
+			]), 3)
+		),
 		new LineBasicMaterial({ color: 0x666666 })
 	);
 
@@ -187,7 +219,7 @@ export default function (
 				new BufferAttribute(axesVertices, 3)
 			);
 
-			axesLines[i] = new Line(
+			axesLines[i] = new LineSegments(
 				axesGeometry[i],
 				new LineBasicMaterial({
 					color: 0x000000,
@@ -280,7 +312,7 @@ export default function (
 			ticksSmall[i] = new Array(axes.ticks[i][1].length);
 
 			for (let j = 0; j < axes.ticks[i][0].length; j++) {
-				ticks[i][j] = new Line(
+				ticks[i][j] = new LineSegments(
 					new BufferGeometry().setAttribute(
 						'position',
 						new BufferAttribute(
@@ -295,7 +327,7 @@ export default function (
 			}
 
 			for (let j = 0; j < axes.ticks[i][1].length; j++) {
-				ticksSmall[i][j] = new Line(
+				ticksSmall[i][j] = new LineSegments(
 					new BufferGeometry().setAttribute(
 						'position',
 						new BufferAttribute(
