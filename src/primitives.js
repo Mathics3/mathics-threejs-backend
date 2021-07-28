@@ -43,21 +43,27 @@ export default {
 			...(coords[coords.length - 1][0] ?? scaleCoordinate(coords[coords.length - 1][1], extent))
 		);
 
+		const arrowHeadHeight = 0.2 * startCoordinate.distanceTo(endCoordinate);
+
 		group.add(
 			new Mesh(
 				new CylinderGeometry(
-					0,
-					0.04 * startCoordinate.distanceTo(endCoordinate),
-					0.2 * startCoordinate.distanceTo(endCoordinate)
+					0, // radius top
+					0.04 * startCoordinate.distanceTo(endCoordinate), // radius bottom
+					arrowHeadHeight
 				)
-					// rotate the cylinder 90 degrees to lookAt work
+					// move to the left so setPosition works
+					.translate(0, -arrowHeadHeight / 2, 0)
+					// rotate the cylinder 90 degrees to lookAt works
 					.rotateX(Math.PI / 2)
 					.applyMatrix4(
-						new Matrix4().lookAt(
-							startCoordinate,
-							endCoordinate,
-							new Vector3(0, 1, 0)
-						)
+						new Matrix4()
+							.setPosition(endCoordinate)
+							.lookAt(
+								endCoordinate,
+								startCoordinate,
+								new Vector3(0, 1, 0)
+							)
 					),
 
 				new MeshBasicMaterial({
