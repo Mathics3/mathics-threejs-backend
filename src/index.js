@@ -1,7 +1,25 @@
 import drawGraphics3d from './graphics3d.js';
 
-// it'll be removed on Mathics Core update
 function translationLayer(div, object) {
+	if (object.protocol) {
+		// protocol version is X.Y, so it is an array of two elements: major version and minor version
+		const versionArray = object.protocol.match(/\d/g);
+
+		if (versionArray[0] != 1) {
+			container.style.color = 'red';
+			container.innerText = `The major version of mathics-threejs-backend is 1, but it was expected to be ${majorVerion}.`;
+
+			return;
+		}
+
+		if (versionArray[1] < 0) {
+			container.style.color = 'red';
+			container.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${minorVerion}.`;
+
+			return;
+		}
+	}
+
 	object.elements.forEach((primitive) => {
 		if (primitive.faceColor) {
 			primitive.color = primitive.faceColor;
