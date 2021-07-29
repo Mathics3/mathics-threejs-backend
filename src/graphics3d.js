@@ -10,7 +10,7 @@ import {
 	Scene,
 	Vector3,
 	WebGLRenderer
-} from '../vendors/threejs/three.js';
+} from '../vendors/three.js';
 
 import primitiveFunctions from './primitives.js';
 import lightFunctions from './lights.js';

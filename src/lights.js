@@ -8,7 +8,7 @@ import {
 	PointLight,
 	SphereGeometry,
 	SpotLight
-} from '../vendors/threejs/three.js';
+} from '../vendors/three.js';
 
 import scaleCoordinate from './scaleCoordinate.js';
 

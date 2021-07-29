@@ -24,9 +24,9 @@ import {
 	SphereGeometry,
 	TetrahedronGeometry,
 	Vector3
-} from '../vendors/threejs/three.js';
+} from '../vendors/three.js';
 
-import earcut from '../vendors/earcut/earcut.min.js';
+import earcut from '../vendors/earcut.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
 export default {
