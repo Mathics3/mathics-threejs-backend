@@ -39,10 +39,11 @@ export default function (elements) {
 			// the extent isn't calculated correctly for cylinders, their extent should be transformationVector * radius
 			element.type === 'cylinder' ||
 			element.type === 'point' ||
+			// the calculated extent for uniformPolyhedron is approximated
 			element.type === 'uniformPolyhedron' ||
 			element.type === 'sphere'
 		) {
-			const radius = element.radius ?? element.pointSize ?? 1;
+			const radius = element.radius ?? element.pointSize ?? element.edgeLength ?? 1;
 
 			element.coords.forEach((coordinate => {
 				if (coordinate[0]) {
