@@ -75,14 +75,14 @@
 			"misMatchThreshold": 0.01
 		},
 		{
-			"label": "Polyhedron",
-			"url": "http://localhost:8080/test/primitives/polyhedron.html",
+			"label": "Sphere",
+			"url": "http://localhost:8080/test/primitives/sphere.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
-			"label": "Sphere",
-			"url": "http://localhost:8080/test/primitives/sphere.html",
+			"label": "Uniform Polyhedron",
+			"url": "http://localhost:8080/test/primitives/uniformPolyhedron.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		}
