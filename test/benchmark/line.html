@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<head>
+	<style>
+		input,
+		button,
+		main,
+		p {
+			display: block;
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		input {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<input type="number" id="elements-number" placeholder="1000" value="1000" />
+	<button id="run-test">Run the test</button>
+
+	<main id="main"></main>
+
+	<script type="module">
+		import drawGraphics3d from '../../src/index.js';
+
+		document.getElementById('run-test').addEventListener('click', () => {
+			document.getElementById('main').innerHTML = '';
+
+			const numberOfElements = document.getElementById('elements-number').value;
+
+			const coords = Array.from({ length: numberOfElements }, (x, i) => [[i, i ** 0.5 + 1, i ** 1.5 + 1]]);
+
+			const startTime = performance.now();
+
+			drawGraphics3d(
+				document.getElementById('main'),
+				{
+					axes: {},
+					elements: [
+						{
+							type: 'line',
+							color: [1, 1, 1],
+							coords,
+							opacity: 1
+						}
+					],
+					lighting: [
+						{
+							type: 'ambient',
+							color: [1, 1, 1]
+						}
+					],
+					viewpoint: [2, -4, 4]
+				},
+				200
+			);
+
+			const duration = performance.now() - startTime;
+
+			let timeElement = document.getElementById('time');
+
+			if (!timeElement) {
+				timeElement = document.createElement('p');
+				timeElement.id = 'time';
+				document.body.appendChild(timeElement);
+			}
+
+			timeElement.innerText = `Time taken to draw a line crossing ${numberOfElements} points: ${duration / 1000} seconds`;
+		});
+	</script>
+</body>
