@@ -201,8 +201,6 @@ export default {
 
 		geometry.setIndex(indices);
 
-		geometry.computeVertexNormals();
-
 		return new Mesh(
 			geometry,
 			new MeshStandardMaterial({
@@ -347,8 +345,6 @@ export default {
 					...(coords[2][0] ?? scaleCoordinate(coords[2][1], extent))
 				]), 3)
 			);
-
-			geometry.computeVertexNormals();
 		} else {
 			// boolean variables
 			let isXCoplanar = 1, isYCoplanar = 1, isZCoplanar = 1;
@@ -423,8 +419,6 @@ export default {
 				);
 
 				geometry.setIndex(earcut(coordinates));
-
-				geometry.computeVertexNormals();
 			}
 		};
 
