@@ -311,7 +311,7 @@ export default {
 				depthWrite: (opacity ?? 1) === 1,
 				uniforms: {
 					size: { value: pointSize * canvasSize * 0.5 },
-					color: { value: [...color, opacity] },
+					color: { value: [...color, opacity ?? 1] },
 				},
 				vertexShader: `
 					uniform float size;
