@@ -97,8 +97,6 @@ export default {
 		return group;
 	},
 	cuboid: ({ color, coords, opacity }, extent) => {
-		const geometry = new BufferGeometry();
-
 		// vertices per cuboid * 3 / 2
 		const coordinates = new Float32Array(12 * coords.length);
 		// polygons per cuboid * 3 / 2
@@ -194,15 +192,13 @@ export default {
 			indices[i * 36 + 35] = i * 8 + 2;
 		}
 
-		geometry.setAttribute(
-			'position',
-			new BufferAttribute(coordinates, 3)
-		);
-
-		geometry.setIndex(indices);
-
 		return new Mesh(
-			geometry,
+			new BufferGeometry()
+				.setAttribute(
+					'position',
+					new BufferAttribute(coordinates, 3)
+				)
+				.setIndex(indices),
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
