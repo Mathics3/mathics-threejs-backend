@@ -409,12 +409,12 @@ export default {
 					coordinates[i * 3 + 2] = coordinate[0][2];
 				});
 
-				geometry = new BufferGeometry().setAttribute(
-					'position',
-					new BufferAttribute(coordinates, 3)
-				);
-
-				geometry.setIndex(earcut(coordinates));
+				geometry = new BufferGeometry()
+					.setAttribute(
+						'position',
+						new BufferAttribute(coordinates, 3)
+					)
+					.setIndex(earcut(coordinates));
 			}
 		};
 
