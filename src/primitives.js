@@ -302,7 +302,7 @@ export default {
 			),
 			new ShaderMaterial({
 				transparent: true,
-				depthWrite: (opacity ?? 1) === 1,
+				depthWrite: false,
 				uniforms: {
 					size: { value: pointSize * canvasSize * 0.5 },
 					color: { value: [...color, opacity ?? 1] },
@@ -311,10 +311,8 @@ export default {
 					uniform float size;
 
 					void main() {
-						#include <begin_vertex>
-						#include <project_vertex>
-
 						gl_PointSize = size;
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 					}
 				`,
 				fragmentShader: `
