@@ -65,7 +65,7 @@ export default {
 				new MeshBasicMaterial({
 					color: colorHex,
 					opacity: opacity ?? 1,
-					transparent: (opacity ?? 1) !== 1
+					transparent: !!opacity
 				})
 			)
 		);
@@ -202,8 +202,8 @@ export default {
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1,
-				depthWrite: (opacity ?? 1) === 1,
+				transparent: !!opacity,
+				depthWrite: !opacity,
 				flatShading: true
 			})
 		);
@@ -219,8 +219,8 @@ export default {
 			new MeshLambertMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1,
-				depthWrite: (opacity ?? 1) === 1
+				transparent: !!opacity,
+				depthWrite: !opacity
 			}),
 			coords.length
 		);
@@ -280,7 +280,7 @@ export default {
 			new LineBasicMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1
+				transparent: !!opacity
 			})
 		);
 	},
@@ -421,7 +421,7 @@ export default {
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1,
+				transparent: !!opacity,
 				flatShading: true,
 				side: DoubleSide
 			})
@@ -433,8 +433,8 @@ export default {
 			new MeshLambertMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1,
-				depthWrite: (opacity ?? 1) === 1
+				transparent: !!opacity,
+				depthWrite: !opacity
 			}),
 			coords.length
 		);
@@ -1120,9 +1120,9 @@ export default {
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
 				opacity: opacity ?? 1,
-				transparent: (opacity ?? 1) !== 1,
+				transparent: !!opacity,
 				flatShading: true,
-				depthWrite: (opacity ?? 1) === 1
+				depthWrite: !opacity
 			}),
 			coords.length
 		);
