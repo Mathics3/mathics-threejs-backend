@@ -2,7 +2,6 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	Color,
-	DirectionalLight,
 	LineBasicMaterial,
 	LineSegments,
 	Matrix4,
@@ -12,9 +11,9 @@ import {
 	WebGLRenderer
 } from '../vendors/three.js';
 
-import primitiveFunctions from './primitives.js';
-import lightFunctions from './lights.js';
 import calculateExtent from './extent.js';
+import lightFunctions from './lights.js';
+import primitiveFunctions from './primitives.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
 export default function (
@@ -86,7 +85,7 @@ export default function (
 
 	scene.add(camera);
 
-	function getInitialLightPosition({ coords }) {
+	function getInitialLightPosition(coords) {
 		if (!(coords instanceof Array)) {
 			return;
 		}
@@ -110,26 +109,26 @@ export default function (
 		return result;
 	}
 
-	const lights = new Array(lighting.length),
-		initialLightPosition = new Array(lighting.length);
+	const lights = [], initialLightPosition = [];
 
-	lighting.forEach((light, i) => {
-		initialLightPosition[i] = getInitialLightPosition(light);
+	lighting.forEach((element) => {
+		const light = lightFunctions[element.type](element, extent, radius);
 
-		lights[i] = lightFunctions[light.type](light, extent, radius);
+		if (light.type === 'DirectionalLight') {
+			lights.push(light);
+			initialLightPosition.push(getInitialLightPosition(element.coords));
+		}
 
-		scene.add(lights[i]);
+		scene.add(light);
 	});
 
 	function positionLights() {
 		lights.forEach((light, i) => {
-			if (light instanceof DirectionalLight) {
-				light.position.set(
-					initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.cos(phi + initialLightPosition[i].phi),
-					initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.sin(phi + initialLightPosition[i].phi),
-					initialLightPosition[i].radius * Math.cos(theta + initialLightPosition[i].theta)
-				).add(focus);
-			}
+			light.position.set(
+				initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.cos(phi + initialLightPosition[i].phi),
+				initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.sin(phi + initialLightPosition[i].phi),
+				initialLightPosition[i].radius * Math.cos(theta + initialLightPosition[i].theta)
+			).add(focus);
 		});
 	}
 

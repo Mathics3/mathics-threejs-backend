@@ -5,7 +5,7 @@ function translationLayer(div, object) {
 		// protocol version is X.Y, so it is an array of two elements: major version and minor version
 		const versionArray = object.protocol.match(/\d/g);
 
-		if (versionArray[0] != 1) {
+		if (versionArray[0] !== 1) {
 			container.style.color = 'red';
 			container.innerText = `The major version of mathics-threejs-backend is 1, but it was expected to be ${majorVerion}.`;
 
