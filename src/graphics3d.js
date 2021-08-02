@@ -193,7 +193,6 @@ export default function (
 			[[0, 2], [1, 3], [4, 6], [5, 7]],
 			[[0, 1], [2, 3], [4, 5], [6, 7]]
 		],
-		axesLines = new Array(3),
 		axesVertices = new Float32Array(6);
 
 	for (let i = 0; i < 3; i++) {
@@ -215,15 +214,13 @@ export default function (
 				new BufferAttribute(axesVertices, 3)
 			);
 
-			axesLines[i] = new LineSegments(
+			scene.add(new LineSegments(
 				axesGeometry[i],
 				new LineBasicMaterial({
 					color: 0x000000,
 					linewidth: 1.5
 				})
-			);
-
-			scene.add(axesLines[i]);
+			));
 		}
 	}
 
@@ -266,8 +263,6 @@ export default function (
 							...boundingBox.geometry.attributes.position.array.slice(axesIndexes[i][j][1] * 3, axesIndexes[i][j][1] * 3 + 3)
 						)));
 
-						edge.z = 0;
-
 						if (edge.length() > maxLength) {
 							maxLength = edge.length();
 							maxJ = j;
@@ -304,38 +299,31 @@ export default function (
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			ticks[i] = new Array(axes.ticks[i][0].length);
-			ticksSmall[i] = new Array(axes.ticks[i][1].length);
+			ticks[i] = new LineSegments(
+				new BufferGeometry().setAttribute(
+					'position',
+					new BufferAttribute(
+						new Float32Array(6 * axes.ticks[i][0].length),
+						3
+					)
+				),
+				tickMaterial
+			);
 
-			for (let j = 0; j < axes.ticks[i][0].length; j++) {
-				ticks[i][j] = new LineSegments(
-					new BufferGeometry().setAttribute(
-						'position',
-						new BufferAttribute(
-							new Float32Array(6),
-							3
-						)
-					),
-					tickMaterial
-				);
+			scene.add(ticks[i]);
 
-				scene.add(ticks[i][j]);
-			}
+			ticksSmall[i] = new LineSegments(
+				new BufferGeometry().setAttribute(
+					'position',
+					new BufferAttribute(
+						new Float32Array(6 * axes.ticks[i][1].length),
+						3
+					)
+				),
+				tickMaterial
+			);
 
-			for (let j = 0; j < axes.ticks[i][1].length; j++) {
-				ticksSmall[i][j] = new LineSegments(
-					new BufferGeometry().setAttribute(
-						'position',
-						new BufferAttribute(
-							new Float32Array(6),
-							3
-						)
-					),
-					tickMaterial
-				);
-
-				scene.add(ticksSmall[i][j]);
-			}
+			scene.add(ticksSmall[i]);
 		}
 	}
 
@@ -398,27 +386,27 @@ export default function (
 					const value = axes.ticks[i][0][j];
 
 					// set the "position" buffer to its initial values
-					ticks[i][j].geometry.attributes.position.array[0] = axesGeometry[i].attributes.position.array[0];
+					ticks[i].geometry.attributes.position.array[j * 6] = axesGeometry[i].attributes.position.array[0];
 
-					ticks[i][j].geometry.attributes.position.array[1] = axesGeometry[i].attributes.position.array[1];
+					ticks[i].geometry.attributes.position.array[j * 6 + 1] = axesGeometry[i].attributes.position.array[1];
 
-					ticks[i][j].geometry.attributes.position.array[2] = axesGeometry[i].attributes.position.array[2];
+					ticks[i].geometry.attributes.position.array[j * 6 + 2] = axesGeometry[i].attributes.position.array[2];
 
-					ticks[i][j].geometry.attributes.position.array[3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x;
+					ticks[i].geometry.attributes.position.array[j * 6 + 3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x;
 
-					ticks[i][j].geometry.attributes.position.array[4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y;
+					ticks[i].geometry.attributes.position.array[j * 6 + 4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y;
 
-					ticks[i][j].geometry.attributes.position.array[5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z;
+					ticks[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z;
 
 					if (i === 0) {
-						ticks[i][j].geometry.attributes.position.array[0] = value;
-						ticks[i][j].geometry.attributes.position.array[3] = value;
+						ticks[i].geometry.attributes.position.array[j * 6] = value;
+						ticks[i].geometry.attributes.position.array[j * 6 + 3] = value;
 					} else if (i === 1) {
-						ticks[i][j].geometry.attributes.position.array[1] = value;
-						ticks[i][j].geometry.attributes.position.array[4] = value;
+						ticks[i].geometry.attributes.position.array[j * 6 + 1] = value;
+						ticks[i].geometry.attributes.position.array[j * 6 + 4] = value;
 					} else if (i === 2) {
-						ticks[i][j].geometry.attributes.position.array[2] = value;
-						ticks[i][j].geometry.attributes.position.array[5] = value;
+						ticks[i].geometry.attributes.position.array[j * 6 + 2] = value;
+						ticks[i].geometry.attributes.position.array[j * 6 + 5] = value;
 					}
 				}
 
@@ -426,27 +414,27 @@ export default function (
 					const value = axes.ticks[i][1][j];
 
 					// set the "position" buffer to its initial values
-					ticksSmall[i][j].geometry.attributes.position.array[0] = axesGeometry[i].attributes.position.array[0];
+					ticksSmall[i].geometry.attributes.position.array[j * 6] = axesGeometry[i].attributes.position.array[0];
 
-					ticksSmall[i][j].geometry.attributes.position.array[1] = axesGeometry[i].attributes.position.array[1];
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = axesGeometry[i].attributes.position.array[1];
 
-					ticksSmall[i][j].geometry.attributes.position.array[2] = axesGeometry[i].attributes.position.array[2];
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = axesGeometry[i].attributes.position.array[2];
 
-					ticksSmall[i][j].geometry.attributes.position.array[3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x / 2;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x / 2;
 
-					ticksSmall[i][j].geometry.attributes.position.array[4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y / 2;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y / 2;
 
-					ticksSmall[i][j].geometry.attributes.position.array[5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z / 2;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z / 2;
 
 					if (i === 0) {
-						ticksSmall[i][j].geometry.attributes.position.array[0] = value;
-						ticksSmall[i][j].geometry.attributes.position.array[3] = value;
+						ticksSmall[i].geometry.attributes.position.array[j * 6 + 0] = value;
+						ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = value;
 					} else if (i === 1) {
-						ticksSmall[i][j].geometry.attributes.position.array[1] = value;
-						ticksSmall[i][j].geometry.attributes.position.array[4] = value;
+						ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = value;
+						ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = value;
 					} else if (i === 2) {
-						ticksSmall[i][j].geometry.attributes.position.array[2] = value;
-						ticksSmall[i][j].geometry.attributes.position.array[5] = value;
+						ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = value;
+						ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = value;
 					}
 				}
 			}
@@ -500,7 +488,7 @@ export default function (
 		return new Vector3(
 			(temporaryPosition.x + 1) * 200,
 			(1 - temporaryPosition.y) * 200,
-			(temporaryPosition.z + 1) * 200
+			0
 		);
 	}
 
@@ -510,11 +498,11 @@ export default function (
 				for (let j = 0; j < tickNumbers[i].length; j++) {
 					const tickPosition = toCanvasCoords(
 						new Vector3(
-							ticks[i][j].geometry.attributes.position.array[0] * 7 - ticks[i][j].geometry.attributes.position.array[3] * 6,
+							ticks[i].geometry.attributes.position.array[j * 6] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 3] * 6,
 
-							ticks[i][j].geometry.attributes.position.array[1] * 7 - ticks[i][j].geometry.attributes.position.array[4] * 6,
+							ticks[i].geometry.attributes.position.array[j * 6 + 1] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 4] * 6,
 
-							ticks[i][j].geometry.attributes.position.array[2] * 7 - ticks[i][j].geometry.attributes.position.array[5] * 6
+							ticks[i].geometry.attributes.position.array[j * 6 + 2] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 5] * 6
 						)
 					).multiplyScalar(canvasSize / maxSize);
 
@@ -524,8 +512,7 @@ export default function (
 
 					if (tickPosition.x < 5 || tickPosition.x > 395 || tickPosition.y < 5 || tickPosition.y > 395) {
 						tickNumbers[i][j].style.display = 'none';
-					}
-					else {
+					} else {
 						tickNumbers[i][j].style.display = '';
 					}
 				}
