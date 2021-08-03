@@ -520,7 +520,7 @@ export default function (
 		}
 	}
 
-	// plot the primatives
+	// plot the primitives
 	elements.forEach((element) => {
 		scene.add(primitiveFunctions[element.type](element, extent, canvasSize));
 	});
