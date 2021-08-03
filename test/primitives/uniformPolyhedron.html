@@ -13,12 +13,12 @@
 				elements: [
 					{
 						type: 'uniformPolyhedron',
-						color: [0, 0, 0],
+						color: [0.5, 0.5, 0.5],
 						coords: [
 							[[0, 0, 0]],
 							[[2, 2, 2]]
 						],
-						opacity: 0.5,
+						opacity: 0.75,
 						subType: 'tetrahedron'
 					},
 					{
@@ -27,7 +27,7 @@
 						coords: [
 							[null, [0.5, 0.5, 0.5]]
 						],
-						opacity: 0.5,
+						opacity: 0.75,
 						subType: 'octahedron'
 					},
 					{
@@ -36,7 +36,7 @@
 						coords: [
 							[[6, 6, 6]]
 						],
-						opacity: 0.5,
+						opacity: 0.75,
 						subType: 'dodecahedron'
 					},
 					{
@@ -45,22 +45,18 @@
 						coords: [
 							[[8, 8, 8]]
 						],
-						opacity: 0.5,
+						opacity: 0.75,
 						subType: 'icosahedron'
 					}
 				],
 				lighting: [
 					{
-						type: 'ambient',
-						color: [0.1, 0.1, 0.1]
-					},
-					{
 						type: 'directional',
 						color: [1, 1, 1],
-						coords: [[10, 10, 10]],
+						coords: [null, [1, 1, 1]]
 					}
 				],
-				viewpoint: [2, -4, 4]
+				viewpoint: [-2, -4, 2]
 			}
 		);
 	</script>
