@@ -5,7 +5,8 @@
 		input,
 		button,
 		main,
-		p {
+		p,
+		label {
 			display: block;
 			margin: 0 auto;
 			text-align: center;
@@ -18,7 +19,9 @@
 </head>
 
 <body>
-	<input type="number" id="elements-number" placeholder="1000" value="1000" />
+	<label for="grid-size">Size of the grid:</label>
+	<input type="number" id="grid-size" placeholder="10" value="10" />
+
 	<button id="run-test">Run the test</button>
 
 	<main id="main"></main>
@@ -29,9 +32,17 @@
 		document.getElementById('run-test').addEventListener('click', () => {
 			document.getElementById('main').innerHTML = '';
 
-			const numberOfElements = document.getElementById('elements-number').value;
+			const gridSize = document.getElementById('grid-size').value;
 
-			const coords = Array.from({ length: numberOfElements }, (x, i) => [[i, i, i]]);
+			const coords = new Array(gridSize ** 3);
+
+			for (let i = 0; i < gridSize; i++) {
+				for (let j = 0; j < gridSize; j++) {
+					for (let k = 0; k < gridSize; k++) {
+						coords[i * gridSize ** 2 + j * gridSize + k] = [[i, j, k]];
+					}
+				}
+			}
 
 			const startTime = performance.now();
 
@@ -44,7 +55,7 @@
 							type: 'sphere',
 							color: [1, 1, 1],
 							coords,
-							radius: 0.5
+							radius: 0.1
 						}
 					],
 					lighting: [
@@ -68,7 +79,7 @@
 				document.body.appendChild(timeElement);
 			}
 
-			timeElement.innerText = `Time taken to draw ${numberOfElements} spheres: ${duration / 1000} seconds`;
+			timeElement.innerText = `Time taken to draw ${gridSize ** 3} spheres: ${duration / 1000} seconds`;
 		});
 	</script>
 </body>
