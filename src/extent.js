@@ -1,11 +1,11 @@
 export default function (elements) {
 	const extent = {
 		xmin: 0,
-		xmax: 0,
 		ymin: 0,
-		ymax: 0,
 		zmin: 0,
-		zmax: 0
+		xmax: 1,
+		ymax: 1,
+		zmax: 1
 	};
 
 	let isFirstCoordinate = true;
