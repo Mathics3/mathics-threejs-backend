@@ -10,79 +10,79 @@
 	"scenarios": [
 		{
 			"label": "scene with axes",
-			"url": "http://localhost:8080/test/axes/axes.html",
+			"url": "http://localhost:8080/examples/test/axes.html",
 			"delay": 5000,
 			"misMatchThreshold": 0.5
 		},
 		{
 			"label": "Ambient light",
-			"url": "http://localhost:8080/test/lights/ambient.html",
+			"url": "http://localhost:8080/examples/test/ambient_light.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Directional light",
-			"url": "http://localhost:8080/test/lights/directional.html",
+			"url": "http://localhost:8080/examples/test/directional_light.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Point light",
-			"url": "http://localhost:8080/test/lights/point.html",
+			"url": "http://localhost:8080/examples/test/point_light.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Spot light",
-			"url": "http://localhost:8080/test/lights/spot.html",
+			"url": "http://localhost:8080/examples/test/spot_light.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Arrow",
-			"url": "http://localhost:8080/test/primitives/arrow.html",
+			"url": "http://localhost:8080/examples/test/arrow.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Cuboid",
-			"url": "http://localhost:8080/test/primitives/cuboid.html",
+			"url": "http://localhost:8080/examples/test/cuboid.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Cylinder",
-			"url": "http://localhost:8080/test/primitives/cylinder.html",
+			"url": "http://localhost:8080/examples/test/cylinder.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Line",
-			"url": "http://localhost:8080/test/primitives/line.html",
+			"url": "http://localhost:8080/examples/test/line.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Point",
-			"url": "http://localhost:8080/test/primitives/point.html",
+			"url": "http://localhost:8080/examples/test/point.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Polygon",
-			"url": "http://localhost:8080/test/primitives/polygon.html",
+			"url": "http://localhost:8080/examples/test/polygon.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Sphere",
-			"url": "http://localhost:8080/test/primitives/sphere.html",
+			"url": "http://localhost:8080/examples/test/sphere.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		},
 		{
 			"label": "Uniform Polyhedron",
-			"url": "http://localhost:8080/test/primitives/uniformPolyhedron.html",
+			"url": "http://localhost:8080/examples/test/uniformPolyhedron.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		}
