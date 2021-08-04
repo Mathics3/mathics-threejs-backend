@@ -5,7 +5,8 @@
 		input,
 		button,
 		main,
-		p {
+		p,
+		label {
 			display: block;
 			margin: 0 auto;
 			text-align: center;
@@ -18,7 +19,9 @@
 </head>
 
 <body>
-	<input type="number" id="elements-number" placeholder="1000" value="1000" />
+	<label for="grid-size">Size of the grid:</label>
+	<input type="number" id="grid-size" placeholder="30" value="30" />
+
 	<button id="run-test">Run the test</button>
 
 	<main id="main"></main>
@@ -29,9 +32,18 @@
 		document.getElementById('run-test').addEventListener('click', () => {
 			document.getElementById('main').innerHTML = '';
 
-			const numberOfElements = document.getElementById('elements-number').value;
+			const gridSize = document.getElementById('grid-size').value;
 
-			const coords = Array.from({ length: numberOfElements * 2 }, (x, i) => [[i, i, i]]);
+			const coords = new Array(gridSize ** 3);
+
+			for (let i = 0; i < gridSize; i++) {
+				for (let j = 0; j < gridSize; j++) {
+					for (let k = 0; k < gridSize; k++) {
+						coords[2 * i * gridSize ** 2 + 2 * j * gridSize + 2 * k] = [[i, j, k]];
+						coords[2 * i * gridSize ** 2 + 2 * j * gridSize + 2 * k + 1] = [[i + 0.5, j + 0.5, k + 0.5]];
+					}
+				}
+			}
 
 			const startTime = performance.now();
 
@@ -48,11 +60,28 @@
 					],
 					lighting: [
 						{
-							type: 'ambient',
-							color: [1, 1, 1]
+							type: 'spot',
+							angle: 1,
+							color: [1, 0, 0],
+							coords: [null, [1, 1, 1]],
+							target: [null, [0.5, 0.5, 0.5]]
+						},
+						{
+							type: 'spot',
+							angle: 1,
+							color: [0, 1, 0],
+							coords: [null, [0, 0, 0]],
+							target: [null, [0.5, 0.5, 0.5]]
+						},
+						{
+							type: 'spot',
+							angle: 1,
+							color: [0, 0, 1],
+							coords: [null, [0, 1, 1]],
+							target: [null, [0.5, 0.5, 0.5]]
 						}
 					],
-					viewpoint: [2, -4, 4]
+					viewpoint: [2, 2, 2]
 				},
 				200
 			);
@@ -67,7 +96,7 @@
 				document.body.appendChild(timeElement);
 			}
 
-			timeElement.innerText = `Time taken to draw ${numberOfElements} cuboids: ${duration / 1000} seconds`;
+			timeElement.innerText = `Time taken to draw ${gridSize ** 3} cuboids: ${duration / 1000} seconds`;
 		});
 	</script>
 </body>
