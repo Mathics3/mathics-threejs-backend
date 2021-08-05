@@ -5,7 +5,8 @@
 		input,
 		button,
 		main,
-		p {
+		p,
+		label {
 			display: block;
 			margin: 0 auto;
 			text-align: center;
@@ -18,33 +19,46 @@
 </head>
 
 <body>
-	<input type="number" id="elements-number" placeholder="1000" value="1000" />
-	<button id="run-test">Run the test</button>
+	<label for="elements-number">Number of points:</label>
+	<input type="number" id="elements-number" placeholder="10000" value="10000" />
 
-	<main id="main"></main>
+	<button id="run-test">Run the test</button>
 
 	<script type="module">
 		import drawGraphics3d from '../../src/index.js';
 
 		document.getElementById('run-test').addEventListener('click', () => {
-			document.getElementById('main').innerHTML = '';
+			document.querySelector('main')?.remove();
+			document.body.appendChild(document.createElement('main'));
 
-			const numberOfElements = document.getElementById('elements-number').value;
+			const numberOfPoints = Math.floor(document.getElementById('elements-number').value / 10) * 10;
 
-			const coords = Array.from({ length: numberOfElements }, (x, i) => [[i, i ** 0.5 + 1, i ** 1.5 + 1]]);
+			const coords = new Array(numberOfPoints);
+
+			for (let i = 0; i < numberOfPoints / 7; i++) {
+				coords[i * 10] = [[0, 0, 0]];
+				coords[i * 10 + 1] = [[0, 0, i * 1024]];
+				coords[i * 10 + 2] = [[1, 1, i * 1024]];
+				coords[i * 10 + 3] = [[0, i * 1024, 0]];
+				coords[i * 10 + 4] = [[1, i * 1024, 1]];
+				coords[i * 10 + 5] = [[i * 1024, 0, 0]];
+				coords[i * 10 + 6] = [[i * 1024, 1, 1]];
+				coords[i * 10 + 7] = [[i * 1024, 0, i * 1024]];
+				coords[i * 10 + 8] = [[i * 1024, i * 1024, 0]];
+				coords[i * 10 + 9] = [[i * 1024, i * 1024, i * 1024]];
+			}
 
 			const startTime = performance.now();
 
 			drawGraphics3d(
-				document.getElementById('main'),
+				document.querySelector('main'),
 				{
 					axes: {},
 					elements: [
 						{
 							type: 'line',
 							color: [1, 1, 1],
-							coords,
-							opacity: 1
+							coords
 						}
 					],
 					lighting: [
@@ -53,7 +67,7 @@
 							color: [1, 1, 1]
 						}
 					],
-					viewpoint: [2, -4, 4]
+					viewpoint: [2, 2, 2]
 				},
 				200
 			);
@@ -68,7 +82,7 @@
 				document.body.appendChild(timeElement);
 			}
 
-			timeElement.innerText = `Time taken to draw a line crossing ${numberOfElements} points: ${duration / 1000} seconds`;
+			timeElement.innerText = `Time taken to draw a line crossing ${numberOfPoints} points: ${duration / 1000} seconds`;
 		});
 	</script>
 </body>

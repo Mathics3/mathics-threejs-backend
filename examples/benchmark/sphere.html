@@ -24,13 +24,12 @@
 
 	<button id="run-test">Run the test</button>
 
-	<main id="main"></main>
-
 	<script type="module">
 		import drawGraphics3d from '../../src/index.js';
 
 		document.getElementById('run-test').addEventListener('click', () => {
-			document.getElementById('main').innerHTML = '';
+			document.querySelector('main')?.remove();
+			document.body.appendChild(document.createElement('main'));
 
 			const gridSize = document.getElementById('grid-size').value;
 
@@ -47,7 +46,7 @@
 			const startTime = performance.now();
 
 			drawGraphics3d(
-				document.getElementById('main'),
+				document.querySelector('main'),
 				{
 					axes: {},
 					elements: [
