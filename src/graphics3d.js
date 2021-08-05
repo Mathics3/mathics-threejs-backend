@@ -548,10 +548,7 @@ export default function (
 
 			temporaryFOV = Math.max(
 				temporaryFOV,
-				114.59 * Math.max(
-					Math.abs(Math.atan(proj2d.x / proj2d.z) / camera.aspect),
-					Math.abs(Math.atan(proj2d.y / proj2d.z))
-				)
+				114.59 * Math.abs(Math.atan(proj2d.y / proj2d.z))
 			);
 		}
 
