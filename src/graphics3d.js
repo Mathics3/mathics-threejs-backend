@@ -594,17 +594,15 @@ export default function (
 				}
 
 				const cameraX = new Vector3(
-					- radius * Math.cos(theta) * Math.sin(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
+					-radius * Math.cos(theta) * Math.sin(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
 					radius * Math.cos(theta) * Math.cos(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
 					0
 				).normalize();
 
-				const cameraY = new Vector3().crossVectors(
-					new Vector3()
-						.subVectors(focus, camera.position)
-						.normalize(),
-					cameraX
-				);
+				const cameraY = new Vector3()
+					.subVectors(focus, camera.position)
+					.normalize()
+					.cross(cameraX);
 
 				focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - event.clientX) + cameraY.x * (onMouseDownPosition[1] - event.clientY));
 				focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - event.clientX) + cameraY.y * (onMouseDownPosition[1] - event.clientY));
