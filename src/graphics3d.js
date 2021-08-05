@@ -19,13 +19,10 @@ import scaleCoordinate from './scaleCoordinate.js';
 export default function (
 	container,
 	{ axes, elements, lighting, viewpoint },
-	maxSize,
-	innerWidthMultiplier
+	maxSize = 400,
+	innerWidthMultiplier = 0.65
 ) {
 	// TODO: shading, handling of VertexNormals
-
-	maxSize ??= 400;
-	innerWidthMultiplier ??= 0.65;
 
 	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
 		hasAxes, isMouseDown = false,

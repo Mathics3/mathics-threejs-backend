@@ -26,7 +26,7 @@ import earcut from '../vendors/earcut.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
 export default {
-	arrow: ({ color, coords, opacity }, extent) => {
+	arrow: ({ color, coords, opacity = 1 }, extent) => {
 		const group = new Group();
 
 		const colorHex = new Color(...color).getHex();
@@ -64,21 +64,21 @@ export default {
 
 				new MeshBasicMaterial({
 					color: colorHex,
-					opacity: opacity ?? 1,
-					transparent: !!opacity
+					opacity,
+					transparent: opacity !== 1
 				})
 			)
 		);
 
 		const coordinates = new Float32Array(coords.length * 3);
 
-		for (let i = 0; i < coordinates.length / 3; i++) {
-			coords[i][0] ??= scaleCoordinate(coords[i][1], extent);
+		coords.forEach((coordinate, i) => {
+			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
-			coordinates[i * 3] = coords[i][0][0];
-			coordinates[i * 3 + 1] = coords[i][0][1];
-			coordinates[i * 3 + 2] = coords[i][0][2];
-		}
+			coordinates[i * 3] = coordinate[0][0];
+			coordinates[i * 3 + 1] = coordinate[0][1];
+			coordinates[i * 3 + 2] = coordinate[0][2];
+		});
 
 		group.add(
 			new Line(
@@ -88,15 +88,15 @@ export default {
 				),
 				new LineBasicMaterial({
 					color: colorHex,
-					opacity: opacity ?? 1,
-					transparent: (opacity ?? 1) !== 1
+					opacity,
+					transparent: opacity !== 1
 				})
 			)
 		);
 
 		return group;
 	},
-	cuboid: ({ color, coords, opacity }, extent) => {
+	cuboid: ({ color, coords, opacity = 1 }, extent) => {
 		// vertices per cuboid * 3 / 2
 		const coordinates = new Float32Array(12 * coords.length);
 		// polygons per cuboid * 3 / 2
@@ -201,14 +201,14 @@ export default {
 				.setIndex(indices),
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
-				opacity: opacity ?? 1,
-				transparent: !!opacity,
-				depthWrite: !opacity,
+				opacity,
+				transparent: opacity !== 1,
+				depthWrite: opacity === 1,
 				flatShading: true
 			})
 		);
 	},
-	cylinder: ({ color, coords, opacity, radius }, extent) => {
+	cylinder: ({ color, coords, opacity = 1, radius }, extent) => {
 		const cylinders = new InstancedMesh(
 			new CylinderGeometry(
 				radius,
@@ -218,9 +218,9 @@ export default {
 			).rotateX(Math.PI / 2), // rotate the cylinder 90 degrees to lookAt work
 			new MeshLambertMaterial({
 				color: new Color(...color).getHex(),
-				opacity: opacity ?? 1,
-				transparent: !!opacity,
-				depthWrite: !opacity
+				opacity,
+				transparent: opacity !== 1,
+				depthWrite: opacity === 1
 			}),
 			coords.length
 		);
@@ -261,7 +261,7 @@ export default {
 
 		return cylinders;
 	},
-	line: ({ color, coords, opacity }, extent) => {
+	line: ({ color, coords, opacity = 1 }, extent) => {
 		const coordinates = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) => {
@@ -279,12 +279,12 @@ export default {
 			),
 			new LineBasicMaterial({
 				color: new Color(...color).getHex(),
-				opacity: opacity ?? 1,
-				transparent: !!opacity
+				opacity,
+				transparent: opacity !== 1
 			})
 		);
 	},
-	point: ({ color, coords, opacity, pointSize }, extent, canvasSize) => {
+	point: ({ color, coords, opacity = 1, pointSize }, extent, canvasSize) => {
 		const coordinates = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) => {
@@ -305,7 +305,7 @@ export default {
 				depthWrite: false,
 				uniforms: {
 					size: { value: pointSize * canvasSize },
-					color: { value: [...color, opacity ?? 1] },
+					color: { value: [...color, opacity] },
 				},
 				vertexShader: `
 					uniform float size;
@@ -327,7 +327,7 @@ export default {
 			})
 		);
 	},
-	polygon: ({ color, coords, opacity }, extent) => {
+	polygon: ({ color, coords, opacity = 1 }, extent) => {
 		let geometry;
 
 		if (coords.length === 3) { // triangle
@@ -420,21 +420,21 @@ export default {
 			geometry,
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
-				opacity: opacity ?? 1,
-				transparent: !!opacity,
+				opacity,
+				transparent: opacity !== 1,
 				flatShading: true,
 				side: DoubleSide
 			})
 		);
 	},
-	sphere: ({ color, coords, opacity, radius }, extent) => {
+	sphere: ({ color, coords, opacity = 1, radius }, extent) => {
 		const spheres = new InstancedMesh(
 			new SphereGeometry(radius, 48, 48),
 			new MeshLambertMaterial({
 				color: new Color(...color).getHex(),
-				opacity: opacity ?? 1,
-				transparent: !!opacity,
-				depthWrite: !opacity
+				opacity,
+				transparent: opacity !== 1,
+				depthWrite: opacity === 1
 			}),
 			coords.length
 		);
@@ -448,10 +448,8 @@ export default {
 
 		return spheres;
 	},
-	uniformPolyhedron: ({ color, coords, edgeLength, opacity, subType }, extent) => {
+	uniformPolyhedron: ({ color, coords, edgeLength = 1, opacity = 1, subType }, extent) => {
 		let geometry;
-
-		edgeLength ??= 1;
 
 		// the magic numbers in the code bellow were captured multipling √(3/8) (see https://en.wikipedia.org/wiki/Tetrahedron#Coordinates_for_a_regular_tetrahedron) by each number of the respective three.js geometry's position and divided by 0.5773502588272095 (the unique number in three.js TetrahedronGeometry's position)
 
@@ -1119,10 +1117,10 @@ export default {
 			geometry,
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
-				opacity: opacity ?? 1,
-				transparent: !!opacity,
+				opacity,
+				transparent: opacity !== 1,
 				flatShading: true,
-				depthWrite: !opacity
+				depthWrite: opacity === 1
 			}),
 			coords.length
 		);
