@@ -304,7 +304,7 @@ export default {
 				transparent: true,
 				depthWrite: false,
 				uniforms: {
-					size: { value: pointSize * canvasSize * 0.5 },
+					size: { value: pointSize * canvasSize },
 					color: { value: [...color, opacity ?? 1] },
 				},
 				vertexShader: `
