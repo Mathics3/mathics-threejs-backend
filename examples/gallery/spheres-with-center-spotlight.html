@@ -10,6 +10,7 @@
 
 <body>
 	<main id="main"></main>
+
 	<script type="module">
 		import drawGraphics3d from '../../src/index.js';
 
@@ -18,35 +19,37 @@
 			{
 				axes: {},
 				elements: [
-					{type: 'sphere',
-					 color: [1.0, 1.0, 1.0],
-					 opacity: 1.0,
-					 radius: 1,
-					 coords: [[[0.0, 0.0, 0.0], null]]
+					{
+						type: 'sphere',
+						color: [1, 1, 1],
+						radius: 1,
+						coords: [[[0, 0, 0]]]
 					},
-					{type: 'sphere',
-					 color: [1.0, 1.0, 1.0],
-					 opacity: 1.0,
-					 radius: 1,
-					 coords: [[[3.0, 0.0, 0.0], null]]
+					{
+						type: 'sphere',
+						color: [1, 1, 1],
+						radius: 1,
+						coords: [[[3, 0, 0]]]
 					},
-					{type: 'sphere',
-					 color: [1.0, 1.0, 1.0],
-					 opacity: 1.0,
-					 radius: 1,
-					 coords: [[[0.0,3.0, 0.0], null]]
+					{
+						type: 'sphere',
+						color: [1, 1, 1],
+						radius: 1,
+						coords: [[[0, 3, 0]]]
 					},
-					{type: 'sphere',
-					 color: [1.0, 1.0, 1.0],
-					 opacity: 1.0,
-					 radius: 1,
-					 coords: [[[3.0,3.0, 0.0], null]]
+					{
+						type: 'sphere',
+						color: [1, 1, 1],
+						radius: 1,
+						coords: [[[3, 3, 0]]]
 					}
 				],
 				lighting: [
-					{type: 'point',
-					 color: [0.0,1.0, 0.0],
-					 coords: [[2,2,2], null]}
+					{
+						type: 'point',
+						color: [0, 1, 0],
+						coords: [[2, 2, 2]]
+					}
 				],
 				viewpoint: [2, -4, 4]
 			}
