@@ -210,12 +210,9 @@ export default {
 	},
 	cylinder: ({ color, coords, opacity = 1, radius }, extent) => {
 		const cylinders = new InstancedMesh(
-			new CylinderGeometry(
-				radius,
-				radius,
-				1,
-				24
-			).rotateX(Math.PI / 2), // rotate the cylinder 90 degrees to lookAt work
+			new CylinderGeometry(radius, radius, 1, 24)
+				.translate(0, -0.5, 0) // translate the geometry so we don't need to calculate the middle of each coordinates-pair
+				.rotateX(Math.PI / 2), // rotate the cylinder 90 degrees to lookAt work
 			new MeshLambertMaterial({
 				color: new Color(...color).getHex(),
 				opacity,
@@ -237,11 +234,7 @@ export default {
 			cylinders.setMatrixAt(
 				i,
 				new Matrix4()
-					.setPosition(
-						(startCoordinate.x + endCoordinate.x) * 0.5,
-						(startCoordinate.y + endCoordinate.y) * 0.5,
-						(startCoordinate.z + endCoordinate.z) * 0.5
-					)
+					.setPosition(startCoordinate)
 					.lookAt(
 						startCoordinate,
 						endCoordinate,
