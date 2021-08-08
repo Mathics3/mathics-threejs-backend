@@ -375,9 +375,7 @@ export default function (
 			if (hasAxes[i]) {
 				const tickDirection = getTickDirection(i);
 
-				for (let j = 0; j < axes.ticks[i][0].length; j++) {
-					const value = axes.ticks[i][0][j];
-
+				axes.ticks[i][0].forEach((value, j) => {
 					// set the "position" buffer to its initial values
 					ticks[i].geometry.attributes.position.array[j * 6] = axesGeometry[i].attributes.position.array[0];
 
@@ -401,11 +399,9 @@ export default function (
 						ticks[i].geometry.attributes.position.array[j * 6 + 2] = value;
 						ticks[i].geometry.attributes.position.array[j * 6 + 5] = value;
 					}
-				}
+				});
 
-				for (let j = 0; j < axes.ticks[i][1].length; j++) {
-					const value = axes.ticks[i][1][j];
-
+				axes.ticks[i][1].forEach((value, j) => {
 					// set the "position" buffer to its initial values
 					ticksSmall[i].geometry.attributes.position.array[j * 6] = axesGeometry[i].attributes.position.array[0];
 
@@ -429,7 +425,7 @@ export default function (
 						ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = value;
 						ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = value;
 					}
-				}
+				});
 			}
 		}
 	}
