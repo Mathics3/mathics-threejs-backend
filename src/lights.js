@@ -19,7 +19,7 @@ export default {
 	directional: ({ color }) => {
 		return new DirectionalLight(new Color(...color).getHex(), 1);
 	},
-	spot: ({ angle, color, coords, target }, extent) => {
+	spot: ({ angle = 1.57079632679, color, coords, target }, extent) => {
 		const light = new SpotLight(new Color(...color).getHex());
 		light.position.set(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
