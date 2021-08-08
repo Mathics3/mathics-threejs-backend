@@ -1,4 +1,5 @@
 import {
+	BoxGeometry,
 	BufferAttribute,
 	BufferGeometry,
 	Color,
@@ -97,116 +98,36 @@ export default {
 		return group;
 	},
 	cuboid: ({ color, coords, opacity = 1 }, extent) => {
-		// vertices per cuboid * 3 / 2
-		const coordinates = new Float32Array(12 * coords.length);
-		// polygons per cuboid * 3 / 2
-		const indices = new Array(18 * coords.length);
-
-		for (let i = 0; i < coords.length / 2; i++) {
-			const startCoordinate = coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent);
-			const endCoordinate = coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent);
-
-			// vertex 0
-			coordinates[i * 24] = startCoordinate[0];
-			coordinates[i * 24 + 1] = startCoordinate[1];
-			coordinates[i * 24 + 2] = startCoordinate[2];
-			// vextex 1
-			coordinates[i * 24 + 3] = endCoordinate[0];
-			coordinates[i * 24 + 4] = startCoordinate[1];
-			coordinates[i * 24 + 5] = startCoordinate[2];
-			// vextex 2
-			coordinates[i * 24 + 6] = startCoordinate[0];
-			coordinates[i * 24 + 7] = endCoordinate[1];
-			coordinates[i * 24 + 8] = startCoordinate[2];
-			// vextex 3
-			coordinates[i * 24 + 9] = endCoordinate[0];
-			coordinates[i * 24 + 10] = endCoordinate[1];
-			coordinates[i * 24 + 11] = startCoordinate[2];
-			// vextex 4
-			coordinates[i * 24 + 12] = startCoordinate[0];
-			coordinates[i * 24 + 13] = startCoordinate[1];
-			coordinates[i * 24 + 14] = endCoordinate[2];
-			// vextex 5
-			coordinates[i * 24 + 15] = endCoordinate[0];
-			coordinates[i * 24 + 16] = startCoordinate[1];
-			coordinates[i * 24 + 17] = endCoordinate[2];
-			// vextex 6
-			coordinates[i * 24 + 18] = startCoordinate[0];
-			coordinates[i * 24 + 19] = endCoordinate[1];
-			coordinates[i * 24 + 20] = endCoordinate[2];
-			// vextex 7
-			coordinates[i * 24 + 21] = endCoordinate[0];
-			coordinates[i * 24 + 22] = endCoordinate[1];
-			coordinates[i * 24 + 23] = endCoordinate[2];
-
-			// the orther of the indices matter: clockwise is one side and counterclockwise the other side
-			// if the front isn't really the front is because of the camera position
-
-			// front polygon 0
-			indices[i * 36] = i * 8 + 3;
-			indices[i * 36 + 1] = i * 8 + 1;
-			indices[i * 36 + 2] = i * 8;
-			// front polygon 1
-			indices[i * 36 + 3] = i * 8 + 2;
-			indices[i * 36 + 4] = i * 8 + 3;
-			indices[i * 36 + 5] = i * 8;
-			// back polygon 0
-			indices[i * 36 + 6] = i * 8 + 4;
-			indices[i * 36 + 7] = i * 8 + 5;
-			indices[i * 36 + 8] = i * 8 + 7;
-			// back polygon 1
-			indices[i * 36 + 9] = i * 8 + 4;
-			indices[i * 36 + 10] = i * 8 + 7;
-			indices[i * 36 + 11] = i * 8 + 6;
-			// top polygon 0
-			indices[i * 36 + 12] = i * 8 + 2;
-			indices[i * 36 + 13] = i * 8 + 6;
-			indices[i * 36 + 14] = i * 8 + 3;
-			// top polygon 1
-			indices[i * 36 + 15] = i * 8 + 6;
-			indices[i * 36 + 16] = i * 8 + 7;
-			indices[i * 36 + 17] = i * 8 + 3;
-			// bottom polygon 0
-			indices[i * 36 + 18] = i * 8 + 1;
-			indices[i * 36 + 19] = i * 8 + 5;
-			indices[i * 36 + 20] = i * 8;
-			// bottom polygon 1
-			indices[i * 36 + 21] = i * 8 + 5;
-			indices[i * 36 + 22] = i * 8 + 4;
-			indices[i * 36 + 23] = i * 8;
-			// right polygon 0
-			indices[i * 36 + 24] = i * 8 + 1;
-			indices[i * 36 + 25] = i * 8 + 7;
-			indices[i * 36 + 26] = i * 8 + 5;
-			// right polygon 1
-			indices[i * 36 + 27] = i * 8 + 1;
-			indices[i * 36 + 28] = i * 8 + 3;
-			indices[i * 36 + 29] = i * 8 + 7;
-			// left polygon 0
-			indices[i * 36 + 30] = i * 8 + 4;
-			indices[i * 36 + 31] = i * 8 + 2;
-			indices[i * 36 + 32] = i * 8;
-			// left polygon 1
-			indices[i * 36 + 33] = i * 8 + 4;
-			indices[i * 36 + 34] = i * 8 + 6;
-			indices[i * 36 + 35] = i * 8 + 2;
-		}
-
-		return new Mesh(
-			new BufferGeometry()
-				.setAttribute(
-					'position',
-					new BufferAttribute(coordinates, 3)
-				)
-				.setIndex(indices),
+		const cuboids = new InstancedMesh(
+			new BoxGeometry().translate(0.5, 0.5, 0.5), // translate the geometry so we don't need to calculate the middle of each coordinates-pair
 			new MeshStandardMaterial({
 				color: new Color(...color).getHex(),
 				opacity,
 				transparent: opacity !== 1,
 				depthWrite: opacity === 1,
 				flatShading: true
-			})
+			}),
+			coords.length / 2
 		);
+
+		for (let i = 0; i < coords.length / 2; i++) {
+			const startCoordinate = new Vector3(
+				...(coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent))
+			);
+
+			const endCoordinate = new Vector3(
+				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent))
+			);
+
+			cuboids.setMatrixAt(
+				i,
+				new Matrix4()
+					.setPosition(startCoordinate)
+					.scale(endCoordinate.sub(startCoordinate))
+			);
+		};
+
+		return cuboids;
 	},
 	cylinder: ({ color, coords, opacity = 1, radius }, extent) => {
 		const cylinders = new InstancedMesh(
@@ -219,7 +140,7 @@ export default {
 				transparent: opacity !== 1,
 				depthWrite: opacity === 1
 			}),
-			coords.length
+			coords.length / 2
 		);
 
 		for (let i = 0; i < coords.length / 2; i++) {
@@ -228,7 +149,7 @@ export default {
 			);
 
 			const endCoordinate = new Vector3(
-				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2][1], extent))
+				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent))
 			);
 
 			cylinders.setMatrixAt(
