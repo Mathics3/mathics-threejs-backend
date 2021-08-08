@@ -238,15 +238,14 @@ export default {
 				i,
 				new Matrix4()
 					.setPosition(
-						startCoordinate
-							.clone()
-							.add(endCoordinate)
-							.multiplyScalar(0.5)
+						(startCoordinate.x + endCoordinate.x) * 0.5,
+						(startCoordinate.y + endCoordinate.y) * 0.5,
+						(startCoordinate.z + endCoordinate.z) * 0.5
 					)
 					.lookAt(
 						startCoordinate,
 						endCoordinate,
-						new Vector3(0, 1, 0)
+						cylinders.up
 					)
 					.scale(
 						new Vector3(
