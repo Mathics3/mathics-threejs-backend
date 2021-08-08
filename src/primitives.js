@@ -361,9 +361,7 @@ export default {
 					isXCoplanar,
 					isYCoplanar,
 					isZCoplanar
-				);
-
-				const normalZVector = new Vector3(0, 0, 1);
+				), normalZVector = new Vector3(0, 0, 1);
 
 				// apply the quaternion "zero" all z values, we can't draw a shape with non-zero z values
 				geometry = new ShapeGeometry(new Shape(
@@ -379,10 +377,12 @@ export default {
 					)
 				));
 
-				for (let i = 0; i < geometry.attributes.position.count / 3; i++) {
+				for (let i = 0; i < coords.length; i++) {
 					// apply the "revert" quaternion so we respect original z values
 					const temporaryVector = new Vector3(
-						...geometry.attributes.position.array.slice(i * 3, i * 3 + 2)
+						geometry.attributes.position.array[i * 3],
+						geometry.attributes.position.array[i * 3 + 1],
+						0
 					).applyQuaternion(
 						new Quaternion().setFromUnitVectors(
 							normalZVector,
