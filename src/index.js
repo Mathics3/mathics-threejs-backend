@@ -5,19 +5,20 @@ function translationLayer(div, object) {
 		// protocol version is X.Y, so it is an array of two elements: major version and minor version
 		const versionArray = object.protocol.match(/\d/g);
 
-		if (versionArray[0] !== 1) {
-			container.style.color = 'red';
-			container.innerText = `The major version of mathics-threejs-backend is 1, but it was expected to be ${majorVerion}.`;
+		if (parseInt(versionArray[0]) !== 1) {
+			div.style.color = 'red';
+			div.innerText = `The major version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}.`;
 
 			return;
 		}
 
-		if (versionArray[1] < 0) {
-			container.style.color = 'red';
-			container.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${minorVerion}.`;
+		// the code bellow is commented as the number can't be smaller than 0
+		// if (parseInt(versionArray[1]) < 0) {
+		// 	div.style.color = 'red';
+		// 	div.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${versionArray[1]}.`;
 
-			return;
-		}
+		// 	return;
+		// }
 	}
 
 	object.elements.forEach((primitive) => {
