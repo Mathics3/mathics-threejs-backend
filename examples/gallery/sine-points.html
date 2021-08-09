@@ -1,13 +1,5 @@
 <!DOCTYPE html>
 
-<head>
-	<style>
-		div {
-			font-family: Arial;
-		}
-	</style>
-</head>
-
 <body>
 	<main id="main"></main>
 
@@ -17,11 +9,10 @@
 		drawGraphics3d(
 			document.getElementById('main'),
 			{
-				axes: {},
 				elements: [
 					{
 						type: 'point',
-						pointSize: 0.01,
+						pointSize: 0.02,
 						color: [0.5, 0.5, 0.5],
 						coords: [
 							[[0, 0, 1]],
@@ -36,11 +27,6 @@
 							[[5.65487, -0.587785, 0.809017]],
 							[[6.28319, 0, 1]]
 						]
-					}],
-				lighting: [
-					{
-						type: 'ambient',
-						color: [1, 1, 1]
 					}
 				],
 				viewpoint: [2, -4, 4]
