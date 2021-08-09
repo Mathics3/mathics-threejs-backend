@@ -11,14 +11,14 @@
 		{
 			"label": "scene with axes",
 			"url": "http://localhost:8080/examples/test/axes.html",
-			"delay": 5000,
+			"delay": 1000,
 			"misMatchThreshold": 0.5
 		},
 		{
 			"label": "wrong protocol version",
 			"url": "http://localhost:8080/examples/test/wrong_protocol_version.html",
 			"delay": 1000,
-			"misMatchThreshold": 0.25
+			"misMatchThreshold": 3
 		},
 		{
 			"label": "Ambient light",
