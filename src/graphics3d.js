@@ -18,7 +18,12 @@ import scaleCoordinate from './scaleCoordinate.js';
 
 export default function (
 	container,
-	{ axes, elements, lighting, viewpoint },
+	{
+		axes = { hasaxes: false },
+		elements = [],
+		lighting = [],
+		viewpoint
+	},
 	maxSize = 400,
 	innerWidthMultiplier = 0.65
 ) {
@@ -174,10 +179,8 @@ export default function (
 	// draw the axes
 	if (axes.hasaxes instanceof Array) {
 		hasAxes = [...axes.hasaxes];
-	} else if (typeof axes.hasaxes === 'boolean') {
-		hasAxes = [axes.hasaxes, axes.hasaxes, axes.hasaxes];
 	} else {
-		hasAxes = [false, false, false];
+		hasAxes = [axes.hasaxes, axes.hasaxes, axes.hasaxes];
 	}
 
 	const axesGeometry = [],
@@ -442,7 +445,7 @@ export default function (
 			for (let j = 0; j < tickNumbers[i].length; j++) {
 				let color = 'black';
 
-				if (i < axes.ticks_style.length) {
+				if (i < axes.ticks_style?.length) {
 					color = new Color(...axes.ticks_style[i]).getStyle();
 				}
 
