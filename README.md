@@ -20,7 +20,6 @@ drawGraphics3D(
                 ]
             }
         ],
-        axes: {},
         lighting: [
             {
                 type: 'ambient',
@@ -32,7 +31,7 @@ drawGraphics3D(
 )
 ```
 
-Lots of other examples can be found in the [test](https://github.com/Mathics3/mathics-threejs-backend/tree/master/test) directory of this repository.
+Lots of other examples can be found in the [examples](https://github.com/Mathics3/mathics-threejs-backend/tree/master/examples) directory of this repository.
 
 ## Displaying Examples
 Install an HTTP server and run it:
@@ -58,7 +57,7 @@ Available on:
 Hit CTRL-C to stop the server
 ```
 
-Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/test/axes/axes.html
+Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/examples/gallery/objects-in-directional-light.html
 
 ## JSON API for Compact Graphics3D
 
