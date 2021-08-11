@@ -97,7 +97,7 @@ export default {
 
 		return group;
 	},
-	cuboid: ({ color, coords, opacity = 1 }, extent) => {
+	cuboid: ({ color, coords, opacity = 1, edgeForm = {} }, extent) => {
 		const cuboids = new InstancedMesh(
 			new BoxGeometry().translate(0.5, 0.5, 0.5), // translate the geometry so we don't need to calculate the middle of each coordinates-pair
 			new MeshStandardMaterial({
@@ -105,7 +105,72 @@ export default {
 				opacity,
 				transparent: opacity !== 1,
 				depthWrite: opacity === 1,
-				flatShading: true
+				flatShading: true,
+				onBeforeCompile: (shader) => {
+					shader.uniforms.showEdges = { value: edgeForm.showEdges ?? false };
+					shader.uniforms.edgeColor = { value: edgeForm.color ?? [0, 0, 0] };
+
+					shader.vertexShader = `
+						varying vec2 vUv;
+						varying vec3 vViewPosition;
+
+						void main() {
+							#include <begin_vertex>
+							#include <project_vertex>
+
+							vViewPosition = -mvPosition.xyz;
+							vUv = uv;
+						}
+				  	`;
+
+					shader.fragmentShader = `
+						uniform vec3 diffuse;
+						uniform vec3 emissive;
+						uniform vec3 edgeColor;
+						uniform float roughness;
+						uniform float metalness;
+						uniform float opacity;
+						uniform bool showEdges;
+
+						varying vec3 vViewPosition;
+						varying vec3 vNormal;
+						varying vec2 vUv;
+
+						#include <common>
+						#include <bsdfs>
+						#include <lights_pars_begin>
+						#include <lights_physical_pars_fragment>
+
+						void main() {
+							vec4 diffuseColor;
+
+							if (showEdges) {
+								vec2 grid = abs(fract(vUv - 0.5) - 0.5) / fwidth(vUv);
+
+								float factor = min(min(grid.x, grid.y), 1.0);
+
+								diffuseColor = vec4(diffuse * factor + edgeColor * (1.0 - factor), opacity);
+							} else {
+								diffuseColor = vec4(diffuse, opacity);
+							}
+						
+							ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
+
+							#include <roughnessmap_fragment>
+							#include <metalnessmap_fragment>
+							#include <normal_fragment_begin>
+							#include <lights_physical_fragment>
+							#include <lights_fragment_begin>
+							#include <lights_fragment_maps>
+							#include <lights_fragment_end>
+
+							gl_FragColor = vec4(
+								reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + emissive,
+								diffuseColor.a
+							);
+						}
+					`;
+				}
 			}),
 			coords.length / 2
 		);
