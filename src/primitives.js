@@ -107,7 +107,7 @@ export default {
 				depthWrite: opacity === 1,
 				flatShading: true,
 				onBeforeCompile: (shader) => {
-					shader.uniforms.showEdges = { value: edgeForm.showEdges ?? false };
+					shader.uniforms.showEdges = { value: edgeForm.showEdges ?? true };
 					shader.uniforms.edgeColor = { value: edgeForm.color ?? [0, 0, 0] };
 
 					shader.vertexShader = `
