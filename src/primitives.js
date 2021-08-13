@@ -97,7 +97,7 @@ export default {
 
 		return group;
 	},
-	cuboid: ({ color, coords, opacity = 1, edgeForm = {} }, extent) => {
+	cuboid: ({ color, coords, edgeForm = {}, opacity = 1 }, extent) => {
 		const cuboids = new InstancedMesh(
 			new BoxGeometry().translate(0.5, 0.5, 0.5), // translate the geometry so we don't need to calculate the middle of each coordinates-pair
 			new MeshStandardMaterial({
