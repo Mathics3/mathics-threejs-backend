@@ -4,8 +4,8 @@ import {
 	DirectionalLight,
 	Group,
 	Mesh,
-	MeshBasicMaterial,
 	PointLight,
+	ShaderMaterial,
 	SphereGeometry,
 	SpotLight
 } from '../vendors/three.js';
@@ -36,9 +36,7 @@ export default {
 	point: ({ color, coords }, extent, radius) => {
 		const group = new Group();
 
-		const colorHex = new Color(...color).getHex();
-
-		const light = new PointLight(colorHex);
+		const light = new PointLight(new Color(...color).getHex());
 		light.position.set(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
 		);
@@ -47,7 +45,23 @@ export default {
 		// add visible light sphere
 		const lightSphere = new Mesh(
 			new SphereGeometry(0.007 * radius, 16, 8),
-			new MeshBasicMaterial({ color: colorHex })
+			new ShaderMaterial({
+				uniforms: {
+					color: { value: color }
+				},
+				vertexShader: `
+					void main() {
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+					}
+				`,
+				fragmentShader: `
+					uniform vec3 color;
+
+					void main() {
+						gl_FragColor = vec4(color, 1.0);
+					}
+				`
+			})
 		);
 		lightSphere.position.copy(light.position);
 

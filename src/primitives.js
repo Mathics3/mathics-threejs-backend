@@ -15,7 +15,6 @@ import {
 	LineSegments,
 	Matrix4,
 	Mesh,
-	MeshBasicMaterial,
 	MeshLambertMaterial,
 	MeshStandardMaterial,
 	Points,
@@ -36,8 +35,6 @@ import scaleCoordinate from './scaleCoordinate.js';
 export default {
 	arrow: ({ color, coords, opacity = 1 }, extent) => {
 		const group = new Group();
-
-		const colorHex = new Color(...color).getHex();
 
 		const startCoordinate = new Vector3(
 			...(coords[coords.length - 2][0] ?? scaleCoordinate(coords[coords.length - 2][1], extent))
@@ -69,11 +66,23 @@ export default {
 								new Vector3(0, 1, 0)
 							)
 					),
+				new ShaderMaterial({
+					transparent: opacity !== 1,
+					uniforms: {
+						color: { value: [...color, opacity] }
+					},
+					vertexShader: `
+						void main() {
+							gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+						}
+					`,
+					fragmentShader: `
+						uniform vec4 color;
 
-				new MeshBasicMaterial({
-					color: colorHex,
-					opacity,
-					transparent: opacity !== 1
+						void main() {
+							gl_FragColor = color;
+						}
+					`
 				})
 			)
 		);
@@ -1134,7 +1143,7 @@ export default {
 					varying vec3 vViewPosition;
 
 					void main() {
-						vec4 mvPosition = modelViewMatrix * vec4(vec3( position ) + offset, 1.0);
+						vec4 mvPosition = modelViewMatrix * vec4(vec3(position) + offset, 1.0);
 
 						vViewPosition = -mvPosition.xyz;
 
@@ -1158,7 +1167,7 @@ export default {
 
 					void main() {
 						vec4 diffuseColor = vec4(diffuse, opacity);
-						ReflectedLight reflectedLight = ReflectedLight( vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+						ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
 
 						vec3 totalEmissiveRadiance = emissive;
 
@@ -1170,7 +1179,7 @@ export default {
 						#include <lights_fragment_maps>
 						#include <lights_fragment_end>
 
-						gl_FragColor = vec4(reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance, diffuseColor.a);
+						gl_FragColor = vec4(reflectedLight.directDiffuse + reflectedLight.indirectDiffuse, diffuseColor.a);
 					}
 				`
 			})
