@@ -31,6 +31,8 @@ import {
 import earcut from '../vendors/earcut.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
+// "depthWrite: opacity === 1" fix a bug that when you rotate the camera, the transparency is removed from the object
+
 export default {
 	arrow: ({ color, coords, opacity = 1 }, extent) => {
 		const group = new Group();
@@ -103,6 +105,8 @@ export default {
 		return group;
 	},
 	cuboid: ({ color, coords, edgeForm = {}, opacity = 1 }, extent) => {
+		// the edges of the cuboids are drawn in the fragment shader, doing this is faster than putting the edges in a different object
+
 		const cuboids = new InstancedMesh(
 			new BoxGeometry().translate(0.5, 0.5, 0.5), // translate the geometry so we don't need to calculate the middle of each coordinates-pair
 			new ShaderMaterial({
@@ -432,7 +436,7 @@ export default {
 		return spheres;
 	},
 	uniformPolyhedron: ({ color, coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) => {
-		let geometry;
+		let polyhedronGeometry;
 
 		// the magic numbers in the code bellow were captured multipling √(3/8) (see https://en.wikipedia.org/wiki/Tetrahedron#Coordinates_for_a_regular_tetrahedron) by each number of the respective three.js geometry's position and divided by 0.5773502588272095 (the unique number in three.js TetrahedronGeometry's position)
 
@@ -440,7 +444,7 @@ export default {
 			case 'tetrahedron': {
 				const vertexPosition = 0.61237243569 * edgeLength;
 
-				geometry = new InstancedBufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						-vertexPosition,
@@ -485,7 +489,7 @@ export default {
 				break;
 			}
 			case 'octahedron': {
-				geometry = new InstancedBufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						0,
@@ -570,7 +574,7 @@ export default {
 					vertexPosition1 = 0.37846700013 * edgeLength,
 					vertexPosition2 = 0.99083940421 * edgeLength;
 
-				geometry = new InstancedBufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						0,
@@ -906,7 +910,7 @@ export default {
 				const vertexPosition0 = 0.55762203476 * edgeLength,
 					vertexPosition1 = 0.90225142642 * edgeLength;
 
-				geometry = new InstancedBufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						-vertexPosition1,
@@ -1096,25 +1100,25 @@ export default {
 			}
 		}
 
-		const offset = new Float32Array(coords.length * 3);
+		const polyhedronsCenter = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) => {
 			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
-			offset[i * 3] = coordinate[0][0];
-			offset[i * 3 + 1] = coordinate[0][1];
-			offset[i * 3 + 2] = coordinate[0][2];
+			polyhedronsCenter[i * 3] = coordinate[0][0];
+			polyhedronsCenter[i * 3 + 1] = coordinate[0][1];
+			polyhedronsCenter[i * 3 + 2] = coordinate[0][2];
 		});
 
-		geometry.instanceCount = coords.length;
+		polyhedronGeometry.instanceCount = coords.length;
 
-		geometry.setAttribute(
+		polyhedronGeometry.setAttribute(
 			'offset',
-			new InstancedBufferAttribute(offset, 3)
+			new InstancedBufferAttribute(polyhedronsCenter, 3)
 		);
 
 		const polyhedrons = new Mesh(
-			geometry,
+			polyhedronGeometry,
 			new ShaderMaterial({
 				uniforms: {
 					...UniformsLib.lights,
@@ -1172,11 +1176,11 @@ export default {
 			})
 		);
 
+		// without this the polyhedrons disappear when the zoom is big
 		polyhedrons.frustumCulled = false;
-console.log(edgeForm.showEdges)
-console.log(edgeForm)
+
 		if (edgeForm.showEdges === false) {
-			console.log('here')
+			// if the edges aren't shown the work is done
 			return polyhedrons;
 		}
 
@@ -1184,15 +1188,17 @@ console.log(edgeForm)
 
 		group.add(polyhedrons);
 
+		// differently from cuboid's edges, the polyhedron's ones are in a different object. It is very hard or maybe impossible to draw edges with complex shapes in the fragment shader
+
 		const edgesGeometry = new InstancedBufferGeometry().copy(
-			new EdgesGeometry(geometry)
+			new EdgesGeometry(polyhedronGeometry) // "calculate" the edges of the desired polyhedron
 		);
 
 		edgesGeometry.instanceCount = coords.length;
 
 		edgesGeometry.setAttribute(
 			'offset',
-			new InstancedBufferAttribute(offset, 3)
+			new InstancedBufferAttribute(polyhedronsCenter, 3)
 		);
 
 		const edges = new LineSegments(
@@ -1218,6 +1224,7 @@ console.log(edgeForm)
 			})
 		);
 
+		// without this the edges disappear when the zoom is big
 		edges.frustumCulled = false;
 
 		group.add(edges);
