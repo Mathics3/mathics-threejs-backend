@@ -5,10 +5,14 @@ import {
 	Color,
 	CylinderGeometry,
 	DoubleSide,
+	EdgesGeometry,
 	Group,
+	InstancedBufferAttribute,
+	InstancedBufferGeometry,
 	InstancedMesh,
 	Line,
 	LineBasicMaterial,
+	LineSegments,
 	Matrix4,
 	Mesh,
 	MeshBasicMaterial,
@@ -26,6 +30,8 @@ import {
 
 import earcut from '../vendors/earcut.js';
 import scaleCoordinate from './scaleCoordinate.js';
+
+// "depthWrite: opacity === 1" fix a bug that when you rotate the camera, the transparency is removed from the object
 
 export default {
 	arrow: ({ color, coords, opacity = 1 }, extent) => {
@@ -99,6 +105,8 @@ export default {
 		return group;
 	},
 	cuboid: ({ color, coords, edgeForm = {}, opacity = 1 }, extent) => {
+		// the edges of the cuboids are drawn in the fragment shader, doing this is faster than putting the edges in a different object
+
 		const cuboids = new InstancedMesh(
 			new BoxGeometry().translate(0.5, 0.5, 0.5), // translate the geometry so we don't need to calculate the middle of each coordinates-pair
 			new ShaderMaterial({
@@ -427,8 +435,8 @@ export default {
 
 		return spheres;
 	},
-	uniformPolyhedron: ({ color, coords, edgeLength = 1, opacity = 1, subType }, extent) => {
-		let geometry;
+	uniformPolyhedron: ({ color, coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) => {
+		let polyhedronGeometry;
 
 		// the magic numbers in the code bellow were captured multipling √(3/8) (see https://en.wikipedia.org/wiki/Tetrahedron#Coordinates_for_a_regular_tetrahedron) by each number of the respective three.js geometry's position and divided by 0.5773502588272095 (the unique number in three.js TetrahedronGeometry's position)
 
@@ -436,7 +444,7 @@ export default {
 			case 'tetrahedron': {
 				const vertexPosition = 0.61237243569 * edgeLength;
 
-				geometry = new BufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						-vertexPosition,
@@ -481,7 +489,7 @@ export default {
 				break;
 			}
 			case 'octahedron': {
-				geometry = new BufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						0,
@@ -566,7 +574,7 @@ export default {
 					vertexPosition1 = 0.37846700013 * edgeLength,
 					vertexPosition2 = 0.99083940421 * edgeLength;
 
-				geometry = new BufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						0,
@@ -902,7 +910,7 @@ export default {
 				const vertexPosition0 = 0.55762203476 * edgeLength,
 					vertexPosition1 = 0.90225142642 * edgeLength;
 
-				geometry = new BufferGeometry().setAttribute(
+				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
 						-vertexPosition1,
@@ -1092,25 +1100,135 @@ export default {
 			}
 		}
 
-		const polyhedrons = new InstancedMesh(
-			geometry,
-			new MeshStandardMaterial({
-				color: new Color(...color).getHex(),
-				opacity,
+		const polyhedronsCenter = new Float32Array(coords.length * 3);
+
+		coords.forEach((coordinate, i) => {
+			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
+
+			polyhedronsCenter[i * 3] = coordinate[0][0];
+			polyhedronsCenter[i * 3 + 1] = coordinate[0][1];
+			polyhedronsCenter[i * 3 + 2] = coordinate[0][2];
+		});
+
+		polyhedronGeometry.instanceCount = coords.length;
+
+		polyhedronGeometry.setAttribute(
+			'offset',
+			new InstancedBufferAttribute(polyhedronsCenter, 3)
+		);
+
+		const polyhedrons = new Mesh(
+			polyhedronGeometry,
+			new ShaderMaterial({
+				uniforms: {
+					...UniformsLib.lights,
+					diffuse: { value: color },
+					opacity: { value: opacity }
+				},
 				transparent: opacity !== 1,
-				flatShading: true,
-				depthWrite: opacity === 1
-			}),
-			coords.length
+				depthWrite: opacity === 1,
+				lights: true,
+				vertexShader: `
+					attribute vec3 offset;
+
+					varying vec3 vViewPosition;
+
+					void main() {
+						vec4 mvPosition = modelViewMatrix * vec4(vec3( position ) + offset, 1.0);
+
+						vViewPosition = -mvPosition.xyz;
+
+						gl_Position = projectionMatrix * mvPosition;
+					}
+				`,
+				fragmentShader: `
+					#define FLAT_SHADED
+
+					uniform vec3 diffuse;
+					uniform vec3 emissive;
+					uniform float roughness;
+					uniform float metalness;
+					uniform float opacity;
+					varying vec3 vViewPosition;
+
+					#include <common>
+					#include <bsdfs>
+					#include <lights_pars_begin>
+					#include <lights_physical_pars_fragment>
+
+					void main() {
+						vec4 diffuseColor = vec4(diffuse, opacity);
+						ReflectedLight reflectedLight = ReflectedLight( vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+
+						vec3 totalEmissiveRadiance = emissive;
+
+						#include <roughnessmap_fragment>
+						#include <metalnessmap_fragment>
+						#include <normal_fragment_begin>
+						#include <lights_physical_fragment>
+						#include <lights_fragment_begin>
+						#include <lights_fragment_maps>
+						#include <lights_fragment_end>
+
+						gl_FragColor = vec4(reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance, diffuseColor.a);
+					}
+				`
+			})
 		);
 
-		coords.forEach((coordinate, i) =>
-			polyhedrons.setMatrixAt(
-				i,
-				new Matrix4().setPosition(...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent)))
-			)
+		// without this the polyhedrons disappear when the zoom is big
+		polyhedrons.frustumCulled = false;
+
+		if (edgeForm.showEdges === false) {
+			// if the edges aren't shown the work is done
+			return polyhedrons;
+		}
+
+		const group = new Group();
+
+		group.add(polyhedrons);
+
+		// differently from cuboid's edges, the polyhedron's ones are in a different object. It is very hard or maybe impossible to draw edges with complex shapes in the fragment shader
+
+		const edgesGeometry = new InstancedBufferGeometry().copy(
+			new EdgesGeometry(polyhedronGeometry) // "calculate" the edges of the desired polyhedron
 		);
 
-		return polyhedrons;
+		edgesGeometry.instanceCount = coords.length;
+
+		edgesGeometry.setAttribute(
+			'offset',
+			new InstancedBufferAttribute(polyhedronsCenter, 3)
+		);
+
+		const edges = new LineSegments(
+			edgesGeometry,
+			new ShaderMaterial({
+				uniforms: {
+					color: { value: edgeForm.color ?? [0, 0, 0] }
+				},
+				vertexShader: `
+					attribute vec3 offset;
+
+					void main() {
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(vec3(position) + offset, 1.0);
+					}
+				`,
+				fragmentShader: `
+					uniform vec3 color;
+
+					void main() {
+						gl_FragColor = vec4(color, 1.0);
+					}
+				`
+			})
+		);
+
+		// without this the edges disappear when the zoom is big
+		edges.frustumCulled = false;
+
+		group.add(edges);
+
+		return group;
 	}
 };
