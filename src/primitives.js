@@ -1109,34 +1109,34 @@ export default {
 			}
 		}
 
-		const polyhedronsCenter = new Float32Array(coords.length * 3);
+		const polyhedronsCenters = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) => {
 			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
 
-			polyhedronsCenter[i * 3] = coordinate[0][0];
-			polyhedronsCenter[i * 3 + 1] = coordinate[0][1];
-			polyhedronsCenter[i * 3 + 2] = coordinate[0][2];
+			polyhedronsCenters[i * 3] = coordinate[0][0];
+			polyhedronsCenters[i * 3 + 1] = coordinate[0][1];
+			polyhedronsCenters[i * 3 + 2] = coordinate[0][2];
 		});
 
 		polyhedronGeometry.instanceCount = coords.length;
 
 		polyhedronGeometry.setAttribute(
 			'offset',
-			new InstancedBufferAttribute(polyhedronsCenter, 3)
+			new InstancedBufferAttribute(polyhedronsCenters, 3)
 		);
 
 		const polyhedrons = new Mesh(
 			polyhedronGeometry,
 			new ShaderMaterial({
+				transparent: opacity !== 1,
+				depthWrite: opacity === 1,
+				lights: true,
 				uniforms: {
 					...UniformsLib.lights,
 					diffuse: { value: color },
 					opacity: { value: opacity }
 				},
-				transparent: opacity !== 1,
-				depthWrite: opacity === 1,
-				lights: true,
 				vertexShader: `
 					attribute vec3 offset;
 
@@ -1207,7 +1207,7 @@ export default {
 
 		edgesGeometry.setAttribute(
 			'offset',
-			new InstancedBufferAttribute(polyhedronsCenter, 3)
+			new InstancedBufferAttribute(polyhedronsCenters, 3)
 		);
 
 		const edges = new LineSegments(
