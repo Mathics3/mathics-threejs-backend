@@ -104,7 +104,7 @@ export default {
 					new BufferAttribute(coordinates, 3)
 				),
 				new LineBasicMaterial({
-					color: colorHex,
+					color: new Color(...color),
 					opacity,
 					transparent: opacity !== 1
 				})
