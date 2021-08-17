@@ -19,7 +19,7 @@ import scaleCoordinate from './scaleCoordinate.js';
 export default function (
 	container,
 	{
-		axes = { hasaxes: false },
+		axes = {},
 		elements = [],
 		lighting = [],
 		viewpoint
@@ -28,6 +28,8 @@ export default function (
 	innerWidthMultiplier = 0.65
 ) {
 	// TODO: shading, handling of VertexNormals
+
+	axes.hasaxes ??= false;
 
 	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
 		hasAxes, isMouseDown = false,
