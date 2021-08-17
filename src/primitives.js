@@ -73,7 +73,7 @@ export default {
 					},
 					vertexShader: `
 						void main() {
-							gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+							gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 						}
 					`,
 					fragmentShader: `
@@ -126,8 +126,8 @@ export default {
 					...UniformsLib.lights,
 					diffuse: { value: color },
 					edgeColor: { value: edgeForm.color ?? [0, 0, 0] },
-					roughness: { value: 1.0 },
-					metalness: { value: 0.0 },
+					roughness: { value: 1 },
+					metalness: { value: 0 },
 					opacity: { value: opacity },
 					showEdges: { value: edgeForm.showEdges ?? true }
 				},
@@ -304,7 +304,7 @@ export default {
 					#include <bsdfs>
 
 					void main() {
-						ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+						ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
 
 						reflectedLight.indirectDiffuse = vIndirectFront * BRDF_Diffuse_Lambert(diffuse);
 
@@ -513,7 +513,7 @@ export default {
 						// if z.z is 0 the edges doesn't appear
 						z.z += 0.0001;
 
-						vec3 x = normalize(cross(vec3(0.0, 1.0, 0.0), z));
+						vec3 x = normalize(cross(vec3(0, 1, 0), z));
 						vec3 y = cross(z, x);
 
 						float height = distance(cylinderBegin, cylinderEnd);
@@ -521,14 +521,14 @@ export default {
 						// position, rotate and scale the cylinder
 						mat4 cylinderMatrix = mat4(x, 0, y, 0, z * height, 0, cylinderBegin, 1);
 
-						gl_Position = projectionMatrix * modelViewMatrix * cylinderMatrix * vec4(position, 1.0);
+						gl_Position = projectionMatrix * modelViewMatrix * cylinderMatrix * vec4(position, 1);
 					}
 				`,
 				fragmentShader: `
 					uniform vec3 color;
 
 					void main() {
-						gl_FragColor = vec4(color, 1.0);
+						gl_FragColor = vec4(color, 1);
 					}
 				`
 			})
@@ -592,7 +592,7 @@ export default {
 
 					void main() {
 						gl_PointSize = size;
-						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 					}
 				`,
 				fragmentShader: `
@@ -1427,7 +1427,7 @@ export default {
 					varying vec3 vViewPosition;
 
 					void main() {
-						vec4 mvPosition = modelViewMatrix * vec4(vec3(position) + offset, 1.0);
+						vec4 mvPosition = modelViewMatrix * vec4(vec3(position) + offset, 1);
 
 						vViewPosition = -mvPosition.xyz;
 
@@ -1451,7 +1451,7 @@ export default {
 
 					void main() {
 						vec4 diffuseColor = vec4(diffuse, opacity);
-						ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+						ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
 
 						vec3 totalEmissiveRadiance = emissive;
 
@@ -1504,14 +1504,14 @@ export default {
 					attribute vec3 offset;
 
 					void main() {
-						gl_Position = projectionMatrix * modelViewMatrix * vec4(vec3(position) + offset, 1.0);
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(vec3(position) + offset, 1);
 					}
 				`,
 				fragmentShader: `
 					uniform vec3 color;
 
 					void main() {
-						gl_FragColor = vec4(color, 1.0);
+						gl_FragColor = vec4(color, 1);
 					}
 				`
 			})
