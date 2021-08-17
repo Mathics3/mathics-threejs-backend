@@ -30,72 +30,93 @@ import {
 import earcut from '../vendors/earcut.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
-// "depthWrite: opacity === 1" fix a bug that when you rotate the camera, the transparency is removed from the object
+// usually the vertices are stored in the attribute "position"
+
+// the vertex shader is executed for each vertex
+// e.g.:, if we have an attribute "position" with 3 vertices, each with 3 values: x, y and z, the vertex shader would be executed 3 times
+// all the attributes need to have the same number of elements
+// if a geometry have an attribute "position" with 3 vertices and an attribute "color" with 3 colors, the vertex shader would be executed 3 times
+
+// the BufferAttributes are shared for all InstancedBufferGeometry instances
+// the InstancedBufferAttributes are shared for vertices of a instance InstancedBufferGeometry instance
+
+// the fragment shader is executed for every pixel in the primitive
+
+// "depthWrite: opacity === 1" fix a bug that when you rotate the camera, the transparency is removed from the primitive
+
+// "transparent: opacity !== 1" just lets transparent the primitives that have opacity different than 100%, thus improving the performance of opaque primitives
+
+// WebGL only accepts an typed array as attribute, so we need to copy the vertex/coordinate to the buffer
+function copy(buffer, coordinate, index) {
+	buffer[index * 3] = coordinate[0];
+	buffer[index * 3 + 1] = coordinate[1];
+	buffer[index * 3 + 2] = coordinate[2];
+}
 
 export default {
 	arrow: ({ color, coords, opacity = 1 }, extent) => {
 		const group = new Group();
 
+		// last coordinate but one
 		const startCoordinate = new Vector3(
 			...(coords[coords.length - 2][0] ?? scaleCoordinate(coords[coords.length - 2][1], extent))
 		);
 
+		// last coordinate
 		const endCoordinate = new Vector3(
 			...(coords[coords.length - 1][0] ?? scaleCoordinate(coords[coords.length - 1][1], extent))
 		);
 
 		const arrowHeadHeight = 0.2 * startCoordinate.distanceTo(endCoordinate);
 
-		group.add(
-			new Mesh(
-				new CylinderGeometry(
-					0, // radius top
-					0.04 * startCoordinate.distanceTo(endCoordinate), // radius bottom
-					arrowHeadHeight
-				)
-					// move to the left so setPosition works
-					.translate(0, -arrowHeadHeight / 2, 0)
-					// rotate the cylinder 90 degrees to lookAt works
-					.rotateX(Math.PI / 2)
-					.applyMatrix4(
-						new Matrix4()
-							.setPosition(endCoordinate)
-							.lookAt(
-								endCoordinate,
-								startCoordinate,
-								new Vector3(0, 1, 0)
-							)
-					),
-				new ShaderMaterial({
-					transparent: opacity !== 1,
-					uniforms: {
-						color: { value: [...color, opacity] }
-					},
-					vertexShader: `
-						void main() {
-							gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
-						}
-					`,
-					fragmentShader: `
-						uniform vec4 color;
-
-						void main() {
-							gl_FragColor = color;
-						}
-					`
-				})
+		group.add(new Mesh(
+			new CylinderGeometry(
+				0, // radius top, as it is a cone we let it be 0
+				0.2 * arrowHeadHeight, // radius bottom
+				arrowHeadHeight // height
 			)
-		);
+				// move to the left so setPosition works
+				.translate(0, -arrowHeadHeight / 2, 0)
+				// rotate the cylinder 90 degrees to lookAt works
+				.rotateX(Math.PI / 2)
+				.applyMatrix4(
+					new Matrix4()
+						.setPosition(endCoordinate)
+						.lookAt(
+							endCoordinate,
+							startCoordinate,
+							new Vector3(0, 1, 0)
+						)
+				),
+			new ShaderMaterial({
+				transparent: opacity !== 1,
+				uniforms: {
+					color: { value: [...color, opacity] }
+				},
+				vertexShader: `
+					void main() {
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+					}
+				`,
+				fragmentShader: `
+					uniform vec4 color;
+
+					void main() {
+						gl_FragColor = color;
+					}
+				`
+			})
+		));
 
 		const coordinates = new Float32Array(coords.length * 3);
 
-		coords.forEach((coordinate, i) => {
-			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
-
-			coordinates[i * 3] = coordinate[0][0];
-			coordinates[i * 3 + 1] = coordinate[0][1];
-			coordinates[i * 3 + 2] = coordinate[0][2];
-		});
+		coords.forEach((coordinate, i) =>
+			copy(
+				coordinates,
+				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
+				i
+			)
+		);
 
 		group.add(
 			new Line(
@@ -116,8 +137,42 @@ export default {
 	cuboid: ({ color, coords, edgeForm = {}, opacity = 1 }, extent) => {
 		// the edges of the cuboids are drawn in the fragment shader, doing this is faster than putting the edges in a different object
 
-		const cuboids = new InstancedMesh(
+		// number of vertex per coordinate / number of coordinates per cuboid = 3 / 2
+		const cuboidsBegin = new Float32Array(coords.length * 1.5);
+		const cuboidsEnd = new Float32Array(coords.length * 1.5);
+
+		for (let i = 0; i < coords.length / 2; i++) {
+			copy(
+				cuboidsBegin,
+				coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent),
+				i
+			);
+
+			copy(
+				cuboidsEnd,
+				coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent),
+				i
+			);
+		}
+
+		const cuboidGeometry = new InstancedBufferGeometry().copy(
 			new BoxGeometry().translate(0.5, 0.5, 0.5), // translate the geometry so we don't need to calculate the middle of each coordinates-pair
+		);
+
+		cuboidGeometry.instanceCount = coords.length / 2;
+
+		cuboidGeometry.setAttribute(
+			'cuboidBegin',
+			new InstancedBufferAttribute(cuboidsBegin, 3)
+		);
+
+		cuboidGeometry.setAttribute(
+			'cuboidEnd',
+			new InstancedBufferAttribute(cuboidsEnd, 3)
+		);
+
+		const cuboids = new Mesh(
+			cuboidGeometry,
 			new ShaderMaterial({
 				transparent: opacity !== 1,
 				depthWrite: opacity === 1,
@@ -126,18 +181,28 @@ export default {
 					...UniformsLib.lights,
 					diffuse: { value: color },
 					edgeColor: { value: edgeForm.color ?? [0, 0, 0] },
-					roughness: { value: 1 },
-					metalness: { value: 0 },
 					opacity: { value: opacity },
 					showEdges: { value: edgeForm.showEdges ?? true }
 				},
 				vertexShader: `
+					attribute vec3 cuboidBegin;
+					attribute vec3 cuboidEnd;
+
 					varying vec2 vUv;
 					varying vec3 vViewPosition;
 
 					void main() {
-						#include <begin_vertex>
-						#include <project_vertex>
+						// position and scale the cuboid
+						mat4 cuboidMatrix = mat4(
+							cuboidEnd.x - cuboidBegin.x, 0, 0, 0, // row 0
+							0, cuboidEnd.y - cuboidBegin.y, 0, 0, // row 1
+							0, 0, cuboidEnd.z - cuboidBegin.z, 0, // row 2
+							cuboidBegin, 1                        // row 3
+						);
+
+						vec4 mvPosition = modelViewMatrix * cuboidMatrix * vec4(position, 1);
+
+						gl_Position = projectionMatrix * mvPosition;
 
 						vViewPosition = -mvPosition.xyz;
 						vUv = uv;
@@ -148,8 +213,6 @@ export default {
 
 					uniform vec3 diffuse;
 					uniform vec3 edgeColor;
-					uniform float roughness;
-					uniform float metalness;
 					uniform float opacity;
 					uniform bool showEdges;
 
@@ -176,10 +239,14 @@ export default {
 						
 						ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
 
-						#include <roughnessmap_fragment>
-						#include <metalnessmap_fragment>
-						#include <normal_fragment_begin>
-						#include <lights_physical_fragment>
+						vec3 normal = normalize(cross(
+							vec3(dFdx(vViewPosition.x), dFdx(vViewPosition.y), dFdx(vViewPosition.z)),
+							vec3(dFdy(vViewPosition.x), dFdy(vViewPosition.y), dFdy(vViewPosition.z))
+						));
+
+						PhysicalMaterial material;
+						material.diffuseColor = diffuseColor.rgb;
+
 						#include <lights_fragment_begin>
 						#include <lights_fragment_end>
 
@@ -189,26 +256,11 @@ export default {
 						);
 					}
 				`
-			}),
-			coords.length / 2
+			})
 		);
 
-		for (let i = 0; i < coords.length / 2; i++) {
-			const startCoordinate = new Vector3(
-				...(coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent))
-			);
-
-			const endCoordinate = new Vector3(
-				...(coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent))
-			);
-
-			cuboids.setMatrixAt(
-				i,
-				new Matrix4()
-					.setPosition(startCoordinate)
-					.scale(endCoordinate.sub(startCoordinate))
-			);
-		};
+		// without this the cuboids disappear when the zoom is big
+		cuboids.frustumCulled = false;
 
 		return cuboids;
 	},
@@ -218,17 +270,17 @@ export default {
 		const cylindersEnd = new Float32Array(coords.length * 1.5);
 
 		for (let i = 0; i < coords.length / 2; i++) {
-			const startCoordinate = coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent);
+			copy(
+				cylindersBegin,
+				coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent),
+				i
+			);
 
-			const endCoordinate = coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent);
-
-			cylindersBegin[i * 3] = startCoordinate[0];
-			cylindersBegin[i * 3 + 1] = startCoordinate[1];
-			cylindersBegin[i * 3 + 2] = startCoordinate[2];
-
-			cylindersEnd[i * 3] = endCoordinate[0];
-			cylindersEnd[i * 3 + 1] = endCoordinate[1];
-			cylindersEnd[i * 3 + 2] = endCoordinate[2];
+			copy(
+				cylindersEnd,
+				coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent),
+				i
+			);
 		}
 
 		const cylinderGeometry = new InstancedBufferGeometry().copy(
@@ -284,7 +336,12 @@ export default {
 						float height = distance(cylinderBegin, cylinderEnd);
 
 						// position, rotate and scale the cylinder
-						mat4 cylinderMatrix = mat4(x, 0, y, 0, z * height, 0, cylinderBegin, 1);
+						mat4 cylinderMatrix = mat4(
+							x, 0,            // row 0
+							y, 0,            // row 1
+							z * height, 0,   // row 2
+							cylinderBegin, 1 // row 3
+						);
 
 						vec4 mvPosition = modelViewMatrix * cylinderMatrix * vec4(position, 1);
 
@@ -304,13 +361,10 @@ export default {
 					#include <bsdfs>
 
 					void main() {
-						ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
-
-						reflectedLight.indirectDiffuse = vIndirectFront * BRDF_Diffuse_Lambert(diffuse);
-
-						reflectedLight.directDiffuse = vLightFront * BRDF_Diffuse_Lambert(diffuse);
-
-						gl_FragColor = vec4(reflectedLight.directDiffuse + reflectedLight.indirectDiffuse, opacity);
+						gl_FragColor = vec4(
+							vLightFront * BRDF_Diffuse_Lambert(diffuse) + vIndirectFront * BRDF_Diffuse_Lambert(diffuse),
+							opacity
+						);
 					}
 				`
 			})
@@ -330,11 +384,17 @@ export default {
 
 		// differently from cuboid's edges, the cylinders's ones are in a different object. It is very hard or maybe impossible to draw edges with complex shapes in the fragment shader
 
+		// the lines below are the edges' vertices' positions
+		// the magic numbers below are modified from the position attribute of a three.js EdgesGeometry of the cylinder
+		// to get them: console.log(new EdgesGeometry(cylinderGeometry).attributes.position.array)
+
 		const edgesGeometry = new InstancedBufferGeometry()
 			.setAttribute(
 				'position',
 				new BufferAttribute(
 					new Float32Array([
+						// first circle
+
 						0, -1, 0,
 						0.258819043636322, -0.9659258127212524, 0,
 
@@ -406,6 +466,8 @@ export default {
 
 						-0.258819043636322, -0.9659258127212524, 0,
 						0, -1, 0,
+
+						// second circle
 
 						0.258819043636322, -0.9659258127212524, -1,
 						0, -1, -1,
@@ -417,10 +479,9 @@ export default {
 						0.5, -0.8660253882408142, -1,
 
 						0.8660253882408142, -0.5, -1,
-
 						0.7071067690849304, -0.7071067690849304, -1,
-						0.9659258127212524, -0.258819043636322, -1,
 
+						0.9659258127212524, -0.258819043636322, -1,
 						0.8660253882408142, -0.5, -1,
 
 						1, 0, -1,
@@ -483,7 +544,7 @@ export default {
 					3
 				)
 			)
-			// scaling z changes the position of the edges
+			// if we don't scale x and y the edge is smaller than the cylinder, scaling z changes the position of the edges
 			.scale(radius, radius, 1);
 
 		edgesGeometry.instanceCount = coords.length / 2;
@@ -518,8 +579,13 @@ export default {
 
 						float height = distance(cylinderBegin, cylinderEnd);
 
-						// position, rotate and scale the cylinder
-						mat4 cylinderMatrix = mat4(x, 0, y, 0, z * height, 0, cylinderBegin, 1);
+						// position, rotate and scale the edges
+						mat4 cylinderMatrix = mat4(
+							x, 0,            // row 0
+							y, 0,            // row 1
+							z * height, 0,   // row 2
+							cylinderBegin, 1 // row 3
+						);
 
 						gl_Position = projectionMatrix * modelViewMatrix * cylinderMatrix * vec4(position, 1);
 					}
@@ -544,13 +610,13 @@ export default {
 	line: ({ color, coords, opacity = 1 }, extent) => {
 		const coordinates = new Float32Array(coords.length * 3);
 
-		coords.forEach((coordinate, i) => {
-			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
-
-			coordinates[i * 3] = coordinate[0][0];
-			coordinates[i * 3 + 1] = coordinate[0][1];
-			coordinates[i * 3 + 2] = coordinate[0][2];
-		});
+		coords.forEach((coordinate, i) =>
+			copy(
+				coordinates,
+				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
+				i
+			)
+		);
 
 		return new Line(
 			new BufferGeometry().setAttribute(
@@ -558,7 +624,7 @@ export default {
 				new BufferAttribute(coordinates, 3)
 			),
 			new LineBasicMaterial({
-				color: new Color(...color).getHex(),
+				color: new Color(...color),
 				opacity,
 				transparent: opacity !== 1
 			})
@@ -567,13 +633,13 @@ export default {
 	point: ({ color, coords, opacity = 1, pointSize }, extent, canvasSize) => {
 		const coordinates = new Float32Array(coords.length * 3);
 
-		coords.forEach((coordinate, i) => {
-			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
-
-			coordinates[i * 3] = coordinate[0][0];
-			coordinates[i * 3 + 1] = coordinate[0][1];
-			coordinates[i * 3 + 2] = coordinate[0][2];
-		});
+		coords.forEach((coordinate, i) =>
+			copy(
+				coordinates,
+				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
+				i
+			)
+		);
 
 		return new Points(
 			new BufferGeometry().setAttribute(
@@ -619,7 +685,7 @@ export default {
 					...(coords[2][0] ?? scaleCoordinate(coords[2][1], extent))
 				]), 3)
 			);
-		} else {
+		} else { // not a triangle
 			// boolean variables
 			let isXCoplanar = 1, isYCoplanar = 1, isZCoplanar = 1;
 
@@ -677,15 +743,17 @@ export default {
 					geometry.attributes.position.array[i * 3 + 2] = temporaryVector.z;
 				}
 			} else {
+				// we use earcut to "break" the polygon into multiple triangles
+
 				const coordinates = new Float32Array(coords.length * 3);
 
-				coords.forEach((coordinate, i) => {
-					coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
-
-					coordinates[i * 3] = coordinate[0][0];
-					coordinates[i * 3 + 1] = coordinate[0][1];
-					coordinates[i * 3 + 2] = coordinate[0][2];
-				});
+				coords.forEach((coordinate, i) =>
+					copy(
+						coordinates,
+						coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
+						i
+					)
+				);
 
 				geometry = new BufferGeometry()
 					.setAttribute(
@@ -699,7 +767,7 @@ export default {
 		return new Mesh(
 			geometry,
 			new MeshStandardMaterial({
-				color: new Color(...color).getHex(),
+				color: new Color(...color),
 				opacity,
 				transparent: opacity !== 1,
 				flatShading: true,
@@ -711,7 +779,7 @@ export default {
 		const spheres = new InstancedMesh(
 			new SphereGeometry(radius, 48, 48),
 			new MeshLambertMaterial({
-				color: new Color(...color).getHex(),
+				color: new Color(...color),
 				opacity,
 				transparent: opacity !== 1,
 				depthWrite: opacity === 1
@@ -740,42 +808,21 @@ export default {
 				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
-						-vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						-vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						-vertexPosition,
-						-vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						-vertexPosition,
-						vertexPosition,
-						-vertexPosition
+						-vertexPosition, -vertexPosition, vertexPosition,
+						vertexPosition, vertexPosition, vertexPosition,
+						-vertexPosition, vertexPosition, -vertexPosition,
+
+						vertexPosition, -vertexPosition, -vertexPosition,
+						-vertexPosition, vertexPosition, -vertexPosition,
+						vertexPosition, vertexPosition, vertexPosition,
+
+						vertexPosition, -vertexPosition, -vertexPosition,
+						vertexPosition, vertexPosition, vertexPosition,
+						-vertexPosition, -vertexPosition, vertexPosition,
+
+						vertexPosition, -vertexPosition, -vertexPosition,
+						-vertexPosition, -vertexPosition, vertexPosition,
+						-vertexPosition, vertexPosition, -vertexPosition
 					]), 3)
 				);
 
@@ -785,78 +832,37 @@ export default {
 				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
-						0,
-						edgeLength,
-						0,
-						0,
-						0,
-						edgeLength,
-						edgeLength,
-						0,
-						0,
-						0,
-						0,
-						edgeLength,
-						0,
-						-edgeLength,
-						0,
-						edgeLength,
-						0,
-						0,
-						0,
-						-edgeLength,
-						0,
-						0,
-						0,
-						-edgeLength,
-						edgeLength,
-						0,
-						0,
-						0,
-						0,
-						-edgeLength,
-						0,
-						edgeLength,
-						0,
-						edgeLength,
-						0,
-						0,
-						0,
-						edgeLength,
-						0,
-						0,
-						0,
-						-edgeLength,
-						-edgeLength,
-						0,
-						0,
-						0,
-						0,
-						-edgeLength,
-						0,
-						-edgeLength,
-						0,
-						-edgeLength,
-						0,
-						0,
-						0,
-						-edgeLength,
-						0,
-						0,
-						0,
-						edgeLength,
-						-edgeLength,
-						0,
-						0,
-						0,
-						0,
-						edgeLength,
-						0,
-						edgeLength,
-						0,
-						-edgeLength,
-						0,
-						0,
+						0, edgeLength, 0,
+						0, 0, edgeLength,
+						edgeLength, 0, 0,
+
+						0, 0, edgeLength,
+						0, -edgeLength, 0,
+						edgeLength, 0, 0,
+
+						0, -edgeLength, 0,
+						0, 0, -edgeLength,
+						edgeLength, 0, 0,
+
+						0, 0, -edgeLength,
+						0, edgeLength, 0,
+						edgeLength, 0, 0,
+
+						0, edgeLength, 0,
+						0, 0, -edgeLength,
+						-edgeLength, 0, 0,
+
+						0, 0, -edgeLength,
+						0, -edgeLength, 0,
+						-edgeLength, 0, 0,
+
+						0, -edgeLength, 0,
+						0, 0, edgeLength,
+						-edgeLength, 0, 0,
+
+						0, 0, edgeLength,
+						0, edgeLength, 0,
+						-edgeLength, 0, 0
 					]), 3)
 				);
 
@@ -870,330 +876,149 @@ export default {
 				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition1,
-						vertexPosition2,
-						0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition1,
-						vertexPosition2,
-						0,
-						-vertexPosition1,
-						vertexPosition2,
-						0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						0,
-						-vertexPosition1,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition2,
-						0,
-						-vertexPosition1,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition1,
-						vertexPosition2,
-						0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						vertexPosition2,
-						0,
-						-vertexPosition1,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						-vertexPosition2,
-						vertexPosition2,
-						0,
-						-vertexPosition1,
-						0,
-						vertexPosition1,
-						-vertexPosition2,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition2,
-						0,
-						-vertexPosition1,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition2,
-						0,
-						-vertexPosition1,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						-vertexPosition2,
-						0,
-						-vertexPosition1,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						0,
-						vertexPosition1,
-						-vertexPosition2,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						-vertexPosition1,
-						-vertexPosition2,
-						0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						-vertexPosition2,
-						0,
-						-vertexPosition1,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						0,
-						vertexPosition1,
-						-vertexPosition2,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition1,
-						vertexPosition2,
-						0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition1,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition2,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition1,
-						vertexPosition2,
-						0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						0,
-						-vertexPosition1,
-						vertexPosition2,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						0,
-						-vertexPosition1,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						vertexPosition1,
-						-vertexPosition2,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition1,
-						-vertexPosition2,
-						0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						0,
-						-vertexPosition1,
-						-vertexPosition2,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						0,
-						-vertexPosition1,
-						vertexPosition2,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						0,
-						vertexPosition1,
-						vertexPosition2,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition1,
-						-vertexPosition2,
-						0,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						vertexPosition1,
-						-vertexPosition2,
-						0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition2,
-						0,
-						-vertexPosition1,
-						vertexPosition2,
-						0,
-						vertexPosition1,
-						-vertexPosition1,
-						-vertexPosition2,
-						0,
-						vertexPosition1,
-						-vertexPosition2,
-						0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition1,
-						-vertexPosition2,
-						0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
-						0,
-						-vertexPosition1,
-						vertexPosition2,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition0,
+						0, vertexPosition1, vertexPosition2,
+						vertexPosition0, vertexPosition0, vertexPosition0,
+						-vertexPosition0, vertexPosition0, vertexPosition0,
+
+						vertexPosition0, vertexPosition0, vertexPosition0,
+						vertexPosition1, vertexPosition2, 0,
+						-vertexPosition0, vertexPosition0, vertexPosition0,
+
+						vertexPosition1, vertexPosition2, 0,
+						-vertexPosition1, vertexPosition2, 0,
+						-vertexPosition0, vertexPosition0, vertexPosition0,
+
+						vertexPosition2, 0, vertexPosition1,
+						vertexPosition2, 0, -vertexPosition1,
+						vertexPosition0, vertexPosition0, vertexPosition0,
+
+						vertexPosition2, 0, -vertexPosition1,
+						vertexPosition0, vertexPosition0, -vertexPosition0,
+						vertexPosition0, vertexPosition0, vertexPosition0,
+
+						vertexPosition0, vertexPosition0, -vertexPosition0,
+						vertexPosition1, vertexPosition2, 0,
+						vertexPosition0, vertexPosition0, vertexPosition0,
+
+						vertexPosition0, -vertexPosition0, -vertexPosition0,
+						0, -vertexPosition1, -vertexPosition2,
+						vertexPosition2, 0, -vertexPosition1,
+
+						0, -vertexPosition1, -vertexPosition2,
+						0, vertexPosition1, -vertexPosition2,
+						vertexPosition2, 0, -vertexPosition1,
+
+						0, vertexPosition1, -vertexPosition2,
+						vertexPosition0, vertexPosition0, -vertexPosition0,
+						vertexPosition2, 0, -vertexPosition1,
+
+						-vertexPosition0, -vertexPosition0, -vertexPosition0,
+						-vertexPosition2, 0, -vertexPosition1,
+						0, -vertexPosition1, -vertexPosition2,
+
+						-vertexPosition2, 0, -vertexPosition1,
+						-vertexPosition0, vertexPosition0, -vertexPosition0,
+						0, -vertexPosition1, -vertexPosition2,
+
+						-vertexPosition0, vertexPosition0, -vertexPosition0,
+						0, vertexPosition1, -vertexPosition2,
+						0, -vertexPosition1, -vertexPosition2,
+
+						-vertexPosition1, -vertexPosition2, 0,
+						-vertexPosition0, -vertexPosition0, vertexPosition0,
+						-vertexPosition0, -vertexPosition0, -vertexPosition0,
+
+						-vertexPosition0, -vertexPosition0, vertexPosition0,
+						-vertexPosition2, 0, vertexPosition1,
+						-vertexPosition0, -vertexPosition0, -vertexPosition0,
+
+						-vertexPosition2, 0, vertexPosition1,
+						-vertexPosition2, 0, -vertexPosition1,
+						-vertexPosition0, -vertexPosition0, -vertexPosition0,
+
+						0, vertexPosition1, -vertexPosition2,
+						-vertexPosition0, vertexPosition0, -vertexPosition0,
+						vertexPosition0, vertexPosition0, -vertexPosition0,
+
+						-vertexPosition0, vertexPosition0, -vertexPosition0,
+						-vertexPosition1, vertexPosition2, 0,
+						vertexPosition0, vertexPosition0, -vertexPosition0,
+
+						-vertexPosition1, vertexPosition2, 0,
+						vertexPosition1, vertexPosition2, 0,
+						vertexPosition0, vertexPosition0, -vertexPosition0,
+
+						-vertexPosition2, 0, -vertexPosition1,
+						-vertexPosition2, 0, vertexPosition1,
+						-vertexPosition0, vertexPosition0, -vertexPosition0,
+
+						-vertexPosition2, 0, vertexPosition1,
+						-vertexPosition0, vertexPosition0, vertexPosition0,
+						-vertexPosition0, vertexPosition0, -vertexPosition0,
+
+						-vertexPosition0, vertexPosition0, vertexPosition0,
+						-vertexPosition1, vertexPosition2, 0,
+						-vertexPosition0, vertexPosition0, -vertexPosition0,
+
+						-vertexPosition0, -vertexPosition0, vertexPosition0,
+						0, -vertexPosition1, vertexPosition2,
+						-vertexPosition2, 0, vertexPosition1,
+
+						0, -vertexPosition1, vertexPosition2,
+						0, vertexPosition1, vertexPosition2,
+						-vertexPosition2, 0, vertexPosition1,
+
+						0, vertexPosition1, vertexPosition2,
+						-vertexPosition0, vertexPosition0, vertexPosition0,
+						-vertexPosition2, 0, vertexPosition1,
+
+						vertexPosition1, -vertexPosition2, 0,
+						-vertexPosition1, -vertexPosition2, 0,
+						vertexPosition0, -vertexPosition0, -vertexPosition0,
+
+						-vertexPosition1, -vertexPosition2, 0,
+						-vertexPosition0, -vertexPosition0, -vertexPosition0,
+						vertexPosition0, -vertexPosition0, -vertexPosition0,
+
+						-vertexPosition0, -vertexPosition0, -vertexPosition0,
+						0, -vertexPosition1, -vertexPosition2,
+						vertexPosition0, -vertexPosition0, -vertexPosition0,
+
+						0, -vertexPosition1, vertexPosition2,
+						vertexPosition0, -vertexPosition0, vertexPosition0,
+						0, vertexPosition1, vertexPosition2,
+
+						vertexPosition0, -vertexPosition0, vertexPosition0,
+						vertexPosition2, 0, vertexPosition1,
+						0, vertexPosition1, vertexPosition2,
+
+						vertexPosition2, 0, vertexPosition1,
+						vertexPosition0, vertexPosition0, vertexPosition0,
+						0, vertexPosition1, vertexPosition2,
+
+						vertexPosition0, -vertexPosition0, vertexPosition0,
+						vertexPosition1, -vertexPosition2, 0,
+						vertexPosition2, 0, vertexPosition1,
+
+						vertexPosition1, -vertexPosition2, 0,
+						vertexPosition0, -vertexPosition0, -vertexPosition0,
+						vertexPosition2, 0, vertexPosition1,
+
+						vertexPosition0, -vertexPosition0, -vertexPosition0,
+						vertexPosition2, 0, -vertexPosition1,
+						vertexPosition2, 0, vertexPosition1,
+
+						-vertexPosition1, -vertexPosition2, 0,
+						vertexPosition1, -vertexPosition2, 0,
+						-vertexPosition0, -vertexPosition0, vertexPosition0,
+
+						vertexPosition1, -vertexPosition2, 0,
+						vertexPosition0, -vertexPosition0, vertexPosition0,
+						-vertexPosition0, -vertexPosition0, vertexPosition0,
+
+						vertexPosition0, -vertexPosition0, vertexPosition0,
+						0, -vertexPosition1, vertexPosition2,
+						-vertexPosition0, -vertexPosition0, vertexPosition0
 					]), 3)
 				);
 
@@ -1206,186 +1031,85 @@ export default {
 				polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(new Float32Array([
-						-vertexPosition1,
-						0,
-						vertexPosition0,
-						0,
-						vertexPosition0,
-						vertexPosition1,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						0,
-						vertexPosition0,
-						vertexPosition1,
-						vertexPosition0,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						vertexPosition0,
-						vertexPosition1,
-						0,
-						0,
-						vertexPosition0,
-						-vertexPosition1,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						0,
-						vertexPosition0,
-						-vertexPosition1,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						vertexPosition0,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						0,
-						vertexPosition0,
-						vertexPosition1,
-						vertexPosition1,
-						0,
-						vertexPosition0,
-						vertexPosition0,
-						vertexPosition1,
-						0,
-						-vertexPosition1,
-						0,
-						vertexPosition0,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						vertexPosition0,
-						vertexPosition1,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						-vertexPosition1,
-						0,
-						vertexPosition0,
-						0,
-						vertexPosition0,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition1,
-						0,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						0,
-						vertexPosition0,
-						-vertexPosition1,
-						vertexPosition1,
-						0,
-						vertexPosition0,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						vertexPosition0,
-						-vertexPosition1,
-						0,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						vertexPosition0,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						vertexPosition0,
-						-vertexPosition1,
-						0,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition0,
-						-vertexPosition1,
-						0,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						vertexPosition0,
-						vertexPosition0,
-						-vertexPosition1,
-						0,
-						vertexPosition1,
-						0,
-						vertexPosition0,
-						0,
-						vertexPosition0,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						-vertexPosition1,
-						0,
-						vertexPosition0,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						-vertexPosition0,
-						-vertexPosition1,
-						0,
-						vertexPosition0,
-						-vertexPosition1,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition1,
-						0,
-						-vertexPosition0,
-						vertexPosition0,
-						vertexPosition1,
-						0,
-						vertexPosition1,
-						0,
-						vertexPosition0,
+						-vertexPosition1, 0, vertexPosition0,
+						0, vertexPosition0, vertexPosition1,
+						-vertexPosition0, vertexPosition1, 0,
+
+						0, vertexPosition0, vertexPosition1,
+						vertexPosition0, vertexPosition1, 0,
+						-vertexPosition0, vertexPosition1, 0,
+
+						vertexPosition0, vertexPosition1, 0,
+						0, vertexPosition0, -vertexPosition1,
+						-vertexPosition0, vertexPosition1, 0,
+
+						0, vertexPosition0, -vertexPosition1,
+						-vertexPosition1, 0, -vertexPosition0,
+						-vertexPosition0, vertexPosition1, 0,
+
+						-vertexPosition1, 0, -vertexPosition0,
+						-vertexPosition1, 0, vertexPosition0,
+						-vertexPosition0, vertexPosition1, 0,
+
+						0, vertexPosition0, vertexPosition1,
+						vertexPosition1, 0, vertexPosition0,
+						vertexPosition0, vertexPosition1, 0,
+
+						-vertexPosition1, 0, vertexPosition0,
+						0, -vertexPosition0, vertexPosition1,
+						0, vertexPosition0, vertexPosition1,
+
+						-vertexPosition1, 0, -vertexPosition0,
+						-vertexPosition0, -vertexPosition1, 0,
+						-vertexPosition1, 0, vertexPosition0,
+
+						0, vertexPosition0, -vertexPosition1,
+						0, -vertexPosition0, -vertexPosition1,
+						-vertexPosition1, 0, -vertexPosition0,
+
+						vertexPosition0, vertexPosition1, 0,
+						vertexPosition1, 0, -vertexPosition0,
+						0, vertexPosition0, -vertexPosition1,
+
+						vertexPosition1, 0, vertexPosition0,
+						0, -vertexPosition0, vertexPosition1,
+						vertexPosition0, -vertexPosition1, 0,
+
+						0, -vertexPosition0, vertexPosition1,
+						-vertexPosition0, -vertexPosition1, 0,
+						vertexPosition0, -vertexPosition1, 0,
+
+						-vertexPosition0, -vertexPosition1, 0,
+						0, -vertexPosition0, -vertexPosition1,
+						vertexPosition0, -vertexPosition1, 0,
+
+						0, -vertexPosition0, -vertexPosition1,
+						vertexPosition1, 0, -vertexPosition0,
+						vertexPosition0, -vertexPosition1, 0,
+
+						vertexPosition1, 0, -vertexPosition0,
+						vertexPosition1, 0, vertexPosition0,
+						vertexPosition0, -vertexPosition1, 0,
+
+						vertexPosition1, 0, vertexPosition0,
+						0, vertexPosition0, vertexPosition1,
+						0, -vertexPosition0, vertexPosition1,
+
+						0, -vertexPosition0, vertexPosition1,
+						-vertexPosition1, 0, vertexPosition0,
+						-vertexPosition0, -vertexPosition1, 0,
+
+						-vertexPosition0, -vertexPosition1, 0,
+						-vertexPosition1, 0, -vertexPosition0,
+						0, -vertexPosition0, -vertexPosition1,
+
+						0, -vertexPosition0, -vertexPosition1,
+						0, vertexPosition0, -vertexPosition1,
+						vertexPosition1, 0, -vertexPosition0,
+
+						vertexPosition1, 0, -vertexPosition0,
+						vertexPosition0, vertexPosition1, 0,
+						vertexPosition1, 0, vertexPosition0
 					]), 3)
 				);
 
@@ -1395,18 +1119,18 @@ export default {
 
 		const polyhedronsCenters = new Float32Array(coords.length * 3);
 
-		coords.forEach((coordinate, i) => {
-			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
-
-			polyhedronsCenters[i * 3] = coordinate[0][0];
-			polyhedronsCenters[i * 3 + 1] = coordinate[0][1];
-			polyhedronsCenters[i * 3 + 2] = coordinate[0][2];
-		});
+		coords.forEach((coordinate, i) =>
+			copy(
+				polyhedronsCenters,
+				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
+				i
+			)
+		);
 
 		polyhedronGeometry.instanceCount = coords.length;
 
 		polyhedronGeometry.setAttribute(
-			'offset',
+			'polyhedronCenter',
 			new InstancedBufferAttribute(polyhedronsCenters, 3)
 		);
 
@@ -1422,12 +1146,12 @@ export default {
 					opacity: { value: opacity }
 				},
 				vertexShader: `
-					attribute vec3 offset;
+					attribute vec3 polyhedronCenter;
 
 					varying vec3 vViewPosition;
 
 					void main() {
-						vec4 mvPosition = modelViewMatrix * vec4(vec3(position) + offset, 1);
+						vec4 mvPosition = modelViewMatrix * vec4(position + polyhedronCenter, 1);
 
 						vViewPosition = -mvPosition.xyz;
 
@@ -1490,7 +1214,7 @@ export default {
 		edgesGeometry.instanceCount = coords.length;
 
 		edgesGeometry.setAttribute(
-			'offset',
+			'polyhedronCenter',
 			new InstancedBufferAttribute(polyhedronsCenters, 3)
 		);
 
@@ -1501,10 +1225,10 @@ export default {
 					color: { value: edgeForm.color ?? [0, 0, 0] }
 				},
 				vertexShader: `
-					attribute vec3 offset;
+					attribute vec3 polyhedronCenter;
 
 					void main() {
-						gl_Position = projectionMatrix * modelViewMatrix * vec4(vec3(position) + offset, 1);
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(position + polyhedronCenter, 1);
 					}
 				`,
 				fragmentShader: `
