@@ -630,9 +630,17 @@ export default function (
 					container.style.cursor = 'pointer';
 				}
 
-				phi = 2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi;
-				phi = (phi + 2 * Math.PI) % (2 * Math.PI);
+				phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi + 2 * Math.PI) % (2 * Math.PI);
 				theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
+
+				// 1e-12 prevents spinnging from getting stuck
+				theta = Math.max(
+					Math.min(
+						Math.PI - 1e-12,
+						2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta
+					),
+					1e-12
+				);
 
 				updateCameraPosition();
 			}
