@@ -23,7 +23,9 @@
 	},
 	"homepage": "https://github.com/Mathics3/mathics-threejs-backend",
 	"scripts": {
-		"build": "rollup src/index.js --file bundle/tmp.js --format iife && minify bundle/tmp.js > bundle/index.js && rm bundle/tmp.js"
+		"build": "rollup src/index.js --file bundle/tmp.js --format iife && minify bundle/tmp.js > bundle/index.js && rm bundle/tmp.js",
+		"start-server": "http-server &",
+		"test": "npm run start-server && backstop test"
 	},
 	"devDependencies": {
 		"minify": "^7",
