@@ -1,3 +1,18 @@
+// This file contains implmentations using three.js of Mathematica and
+// Mathics Graphics3D primitives like "Sphere", or "Cuboid, etc.
+//
+// A full list of primitives that this might grow to can be found at:
+// https://reference.wolfram.com/language/ref/Graphics3D.html
+//
+// Note that Graphics3D includes a number of 1D and 2D kinds of
+// objects, like Point, Line, Arrow, or Polygon which are extended
+// into 3D.
+//
+// Also note that in contrast to he Mathematica/Mathics name, we
+// downcase the first letter of the corresponding name.  For example,
+// we use the function name "sphere" and "uniformPolyhedron", not
+// "Sphere" and "UnformPolyhedron".
+
 import {
 	BoxGeometry,
 	BufferAttribute,
@@ -35,25 +50,29 @@ import scaleCoordinate from './scaleCoordinate.js';
 // the vertex shader is executed for each vertex
 // e.g.:, if we have an attribute "position" with 3 vertices, each with 3 values: x, y and z, the vertex shader would be executed 3 times
 // all the attributes need to have the same number of elements
-// if a geometry have an attribute "position" with 3 vertices and an attribute "color" with 3 colors, the vertex shader would be executed 3 times
+// if a geometry has an attribute "position" with 3 vertices and an attribute "color" with 3 colors, the vertex shader would be executed 3 times
 
 // the BufferAttributes are shared for all InstancedBufferGeometry instances
 // the InstancedBufferAttributes are shared for vertices of a instance InstancedBufferGeometry instance
 
 // the fragment shader is executed for every pixel in the primitive
 
-// "depthWrite: opacity === 1" fix a bug that when you rotate the camera, the transparency is removed from the primitive
+// "depthWrite: opacity === 1" fixes a bug that occurs when you rotate the camera and the transparency is removed from the primitive
 
 // "transparent: opacity !== 1" just lets transparent the primitives that have opacity different than 100%, thus improving the performance of opaque primitives
 
-// WebGL only accepts an typed array as attribute, so we need to copy the vertex/coordinate to the buffer
-function copy(buffer, coordinate, index) {
-	buffer[index * 3] = coordinate[0];
-	buffer[index * 3 + 1] = coordinate[1];
-	buffer[index * 3 + 2] = coordinate[2];
+// fillInCoord adds "coordinate" coordBuffer[index].  coordBuffer is
+// preallocated for efficiency on GPUs. Also, WebGL only accepts a
+// typed array as an attribute.
+function fillInCoord(coordBuffer, coordinate, index) {
+	coordBuffer[index * 3] = coordinate[0];
+	coordBuffer[index * 3 + 1] = coordinate[1];
+	coordBuffer[index * 3 + 2] = coordinate[2];
 }
 
 export default {
+	// See https://reference.wolfram.com/language/ref/Arrow
+	// for the high-level description of what is being rendered.
 	arrow: ({ color, coords, opacity = 1 }, extent) => {
 		const group = new Group();
 
@@ -111,7 +130,7 @@ export default {
 		const coordinates = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) =>
-			copy(
+		       fillInCoord(
 				coordinates,
 				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
 				i
@@ -134,21 +153,23 @@ export default {
 
 		return group;
 	},
+	// See https://reference.wolfram.com/language/ref/Cuboid
+	// for the high-level description of what is being rendered.
 	cuboid: ({ color, coords, edgeForm = {}, opacity = 1 }, extent) => {
-		// the edges of the cuboids are drawn in the fragment shader, doing this is faster than putting the edges in a different object
+		// the edges of the cuboids are drawn in the fragment shader; doing this is faster than putting the edges in a different object
 
 		// number of vertex per coordinate / number of coordinates per cuboid = 3 / 2
 		const cuboidsBegin = new Float32Array(coords.length * 1.5);
 		const cuboidsEnd = new Float32Array(coords.length * 1.5);
 
 		for (let i = 0; i < coords.length / 2; i++) {
-			copy(
+			fillInCoord(
 				cuboidsBegin,
 				coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent),
 				i
 			);
 
-			copy(
+			fillInCoord(
 				cuboidsEnd,
 				coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent),
 				i
@@ -236,7 +257,7 @@ export default {
 						} else {
 							diffuseColor = vec4(diffuse, opacity);
 						}
-						
+
 						ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
 
 						vec3 normal = normalize(cross(
@@ -263,20 +284,25 @@ export default {
 		cuboids.frustumCulled = false;
 
 		return cuboids;
+
+
+
 	},
+	// See https://reference.wolfram.com/language/ref/Cylinder
+	// for the high-level description of what is being rendered.
 	cylinder: ({ color, coords, edgeForm = {}, opacity = 1, radius = 1 }, extent) => {
 		// number of vertex per coordinate / number of coordinates per cylinder = 3 / 2
 		const cylindersBegin = new Float32Array(coords.length * 1.5);
 		const cylindersEnd = new Float32Array(coords.length * 1.5);
 
 		for (let i = 0; i < coords.length / 2; i++) {
-			copy(
+			fillInCoord(
 				cylindersBegin,
 				coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent),
 				i
 			);
 
-			copy(
+			fillInCoord(
 				cylindersEnd,
 				coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent),
 				i
@@ -607,11 +633,13 @@ export default {
 
 		return group;
 	},
+	// See https://reference.wolfram.com/language/ref/Line
+	// for the high-level description of what is being rendered.
 	line: ({ color, coords, opacity = 1 }, extent) => {
 		const coordinates = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) =>
-			copy(
+			fillInCoord(
 				coordinates,
 				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
 				i
@@ -630,11 +658,13 @@ export default {
 			})
 		);
 	},
+	// See https://reference.wolfram.com/language/ref/Point
+	// for the high-level description of what is being rendered.
 	point: ({ color, coords, opacity = 1, pointSize }, extent, canvasSize) => {
 		const coordinates = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) =>
-			copy(
+			fillInCoord(
 				coordinates,
 				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
 				i
@@ -673,6 +703,8 @@ export default {
 			})
 		);
 	},
+	// See https://reference.wolfram.com/language/ref/Polygon
+	// for the high-level description of what is being rendered.
 	polygon: ({ color, coords, opacity = 1 }, extent) => {
 		let geometry;
 
@@ -748,7 +780,7 @@ export default {
 				const coordinates = new Float32Array(coords.length * 3);
 
 				coords.forEach((coordinate, i) =>
-					copy(
+					fillInCoord(
 						coordinates,
 						coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
 						i
@@ -775,6 +807,8 @@ export default {
 			})
 		);
 	},
+	// See https://reference.wolfram.com/language/ref/Sphere
+	// for the high-level description of what is being rendered.
 	sphere: ({ color, coords, opacity = 1, radius }, extent) => {
 		const spheres = new InstancedMesh(
 			new SphereGeometry(radius, 48, 48),
@@ -796,6 +830,8 @@ export default {
 
 		return spheres;
 	},
+	// See https://reference.wolfram.com/language/ref/UniformPolyhedron
+	// for the high-level description of what is being rendered.
 	uniformPolyhedron: ({ color, coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) => {
 		let polyhedronGeometry;
 
@@ -1120,7 +1156,7 @@ export default {
 		const polyhedronsCenters = new Float32Array(coords.length * 3);
 
 		coords.forEach((coordinate, i) =>
-			copy(
+			fillInCoord(
 				polyhedronsCenters,
 				coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
 				i
@@ -1193,7 +1229,7 @@ export default {
 			})
 		);
 
-		// without this the polyhedrons disappear when the zoom is big
+		// without this, the polyhedrons disappear when the zoom is big
 		polyhedrons.frustumCulled = false;
 
 		if (edgeForm.showEdges === false) {
@@ -1241,7 +1277,7 @@ export default {
 			})
 		);
 
-		// without this the edges disappear when the zoom is big
+		// without this, the edges disappear when the zoom is big
 		edges.frustumCulled = false;
 
 		group.add(edges);
