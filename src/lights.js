@@ -2,11 +2,7 @@ import {
 	AmbientLight,
 	Color,
 	DirectionalLight,
-	Group,
-	Mesh,
 	PointLight,
-	ShaderMaterial,
-	SphereGeometry,
 	SpotLight
 } from '../vendors/three.js';
 
