@@ -24,11 +24,13 @@ import {
 	Group,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
+	InstancedMesh,
 	Line,
 	LineBasicMaterial,
 	LineSegments,
 	Matrix4,
 	Mesh,
+	MeshLambertMaterial,
 	MeshStandardMaterial,
 	Points,
 	Quaternion,
@@ -787,70 +789,24 @@ export default {
 	// See https://reference.wolfram.com/language/ref/Sphere
 	// for the high-level description of what is being rendered.
 	sphere: ({ color, coords, opacity = 1, radius }, extent) => {
-		const sphereGeometry = new InstancedBufferGeometry().copy(
-			new SphereGeometry(radius, 48, 48)
+		const spheres = new InstancedMesh(
+			new SphereGeometry(radius, 48, 48),
+			new MeshLambertMaterial({
+				color: new Color(...color),
+				opacity,
+				transparent: opacity !== 1,
+				depthWrite: opacity === 1
+			}),
+			coords.length
 		);
 
-		sphereGeometry.instanceCount = coords.length;
-
-		sphereGeometry.setAttribute(
-			'sphereCenter',
-			new InstancedBufferAttribute(
-				getPopulatedCoordinateBuffer(coords, extent),
-				3
+		// Set the spheres centers.
+		coords.forEach((coordinate, i) =>
+			spheres.setMatrixAt(
+				i,
+				new Matrix4().setPosition(...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent)))
 			)
 		);
-
-		const spheres = new Mesh(
-			sphereGeometry,
-			new ShaderMaterial({
-				lights: true,
-				uniforms: {
-					...UniformsLib.lights,
-					diffuse: { value: color },
-					opacity: { value: opacity }
-				},
-				vertexShader: `
-					attribute vec3 sphereCenter;
-
-					varying vec3 vLightFront;
-					varying vec3 vIndirectFront;
-
-					#include <common>
-					#include <bsdfs>
-					#include <lights_pars_begin>
-
-					void main() {
-						vec4 mvPosition = modelViewMatrix * vec4(position + sphereCenter, 1);
-
-						gl_Position = projectionMatrix * mvPosition;
-
-						vec3 transformedNormal = normalMatrix * normal;
-
-						#include <lights_lambert_vertex>
-					}
-				`,
-				fragmentShader: `
-					uniform vec3 diffuse;
-					uniform float opacity;
-
-					varying vec3 vLightFront;
-					varying vec3 vIndirectFront;
-
-					#include <common>
-					#include <bsdfs>
-
-					void main() {
-						gl_FragColor = vec4(
-							vLightFront * BRDF_Diffuse_Lambert(diffuse) + vIndirectFront * BRDF_Diffuse_Lambert(diffuse),
-							opacity
-						);
-					}
-				`
-			})
-		);
-
-		spheres.frustumCulled = false;
 
 		return spheres;
 	},
