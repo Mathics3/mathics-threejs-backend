@@ -13,7 +13,7 @@ import {
 
 import calculateExtent from './extent.js';
 import lightFunctions from './lights.js';
-import primitiveFunctions from './primitives.js';
+import primitiveFunctions from './primitives/index.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
 export default function (
