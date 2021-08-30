@@ -12,15 +12,44 @@
 				elements: [
 					{
 						type: 'cylinder',
-						color: [0.5, 0.5, 0.5],
+						color: [1, 1, 1],
+						coords: [
+							[[-2, -2, -2]],
+							[[-1, -1, -1]]
+						],
+						edgeForm: { color: [1, 0, 0] },
+						radius: 1
+					},
+					{
+						type: 'cylinder',
+						color: [1, 1, 1],
 						coords: [
 							[[0, 0, 0]],
 							[[1, 1, 1]],
-							[null, [0.5, 0.5, 0.5]],
+							[[1, 1, 1]],
 							[[2, 2, 2]]
 						],
 						opacity: 0.5,
-						radius: 1
+						radius: 2
+					},
+					{
+						type: 'cylinder',
+						color: [0.3, 0.3, 0.3],
+						coords: [
+							[[3, 3, 3]],
+							[[3, 4, 3]]
+						],
+						opacity: 0.5,
+						radius: 1,
+						edgeForm: { showEdges: false }
+					},
+					{
+						type: 'cylinder',
+						color: [1, 0.5, 0],
+						coords: [
+							[null, [0.2, 0.8, 0]],
+							[null, [0.2, 0.8, 1]]
+						]
 					}
 				],
 				lighting: [
@@ -30,7 +59,7 @@
 					},
 					{
 						type: 'directional',
-						color: [1, 1, 1],
+						color: [0.7, 0.7, 0.7],
 						coords: [null, [1, 1, 1]]
 					}
 				],

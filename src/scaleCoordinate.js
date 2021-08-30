@@ -1,4 +1,3 @@
-// maybe implement a cached version?
 export default function (coordinate, extent) {
 	return [
 		coordinate[0] * (extent.xmax - extent.xmin) + extent.xmin,
