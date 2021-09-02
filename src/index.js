@@ -21,7 +21,7 @@ function translationLayer(div, object) {
 		// }
 	}
 
-	object.elements.forEach((primitive) => {
+	object.elements?.forEach((primitive) => {
 		if (primitive.faceColor) {
 			primitive.color = primitive.faceColor;
 		}
@@ -29,7 +29,7 @@ function translationLayer(div, object) {
 		primitive.color = primitive.color.slice(0, 3);
 	});
 
-	object.lighting.forEach((light) => {
+	object.lighting?.forEach((light) => {
 		if (light.position) {
 			light.coords = [light.position];
 		}
