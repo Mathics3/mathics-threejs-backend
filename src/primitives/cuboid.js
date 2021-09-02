@@ -46,77 +46,75 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 				showEdges: { value: edgeForm.showEdges ?? true }
 			},
 			vertexShader: `
-					attribute vec3 cuboidBegin;
-					attribute vec3 cuboidEnd;
+				attribute vec3 cuboidBegin;
+				attribute vec3 cuboidEnd;
 
-					varying vec2 vUv;
-					varying vec3 vViewPosition;
+				varying vec2 vUv;
+				varying vec3 vViewPosition;
 
-					void main() {
-						// position and scale the cuboid
-						mat4 cuboidMatrix = mat4(
-							cuboidEnd.x - cuboidBegin.x, 0, 0, 0, // row 0
-							0, cuboidEnd.y - cuboidBegin.y, 0, 0, // row 1
-							0, 0, cuboidEnd.z - cuboidBegin.z, 0, // row 2
-							cuboidBegin, 1                        // row 3
-						);
+				void main() {
+					// position and scale the cuboid
+					mat4 cuboidMatrix = mat4(
+						cuboidEnd.x - cuboidBegin.x, 0, 0, 0, // row 0
+						0, cuboidEnd.y - cuboidBegin.y, 0, 0, // row 1
+						0, 0, cuboidEnd.z - cuboidBegin.z, 0, // row 2
+						cuboidBegin, 1                        // row 3
+					);
 
-						vec4 mvPosition = modelViewMatrix * cuboidMatrix * vec4(position, 1);
+					vec4 mvPosition = modelViewMatrix * cuboidMatrix * vec4(position, 1);
 
-						gl_Position = projectionMatrix * mvPosition;
+					gl_Position = projectionMatrix * mvPosition;
 
-						vViewPosition = -mvPosition.xyz;
-						vUv = uv;
-					}
-				`,
+					vViewPosition = -mvPosition.xyz;
+					vUv = uv;
+				}
+			`,
 			fragmentShader: `
-					#define FLAT_SHADED
+				uniform vec3 diffuse;
+				uniform vec3 edgeColor;
+				uniform float opacity;
+				uniform bool showEdges;
 
-					uniform vec3 diffuse;
-					uniform vec3 edgeColor;
-					uniform float opacity;
-					uniform bool showEdges;
+				varying vec3 vViewPosition;
+				varying vec2 vUv;
 
-					varying vec3 vViewPosition;
-					varying vec2 vUv;
+				#include <common>
+				#include <bsdfs>
+				#include <lights_pars_begin>
+				#include <lights_physical_pars_fragment>
 
-					#include <common>
-					#include <bsdfs>
-					#include <lights_pars_begin>
-					#include <lights_physical_pars_fragment>
+				void main() {
+					vec4 diffuseColor;
 
-					void main() {
-						vec4 diffuseColor;
+					if (showEdges) {
+						vec2 grid = abs(fract(vUv - 0.5) - 0.5) / fwidth(vUv);
 
-						if (showEdges) {
-							vec2 grid = abs(fract(vUv - 0.5) - 0.5) / fwidth(vUv);
+						float factor = min(min(grid.x, grid.y), 1.0);
 
-							float factor = min(min(grid.x, grid.y), 1.0);
-
-							diffuseColor = vec4(diffuse * factor + edgeColor * (1.0 - factor), opacity);
-						} else {
-							diffuseColor = vec4(diffuse, opacity);
-						}
-
-						ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
-
-						vec3 normal = normalize(cross(
-							vec3(dFdx(vViewPosition.x), dFdx(vViewPosition.y), dFdx(vViewPosition.z)),
-							vec3(dFdy(vViewPosition.x), dFdy(vViewPosition.y), dFdy(vViewPosition.z))
-						));
-
-						PhysicalMaterial material;
-						material.diffuseColor = diffuseColor.rgb;
-
-						#include <lights_fragment_begin>
-						#include <lights_fragment_end>
-
-						gl_FragColor = vec4(
-							reflectedLight.directDiffuse + reflectedLight.indirectDiffuse,
-							diffuseColor.a
-						);
+						diffuseColor = vec4(diffuse * factor + edgeColor * (1.0 - factor), opacity);
+					} else {
+						diffuseColor = vec4(diffuse, opacity);
 					}
-				`
+
+					ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
+
+					vec3 normal = normalize(cross(
+						vec3(dFdx(vViewPosition.x), dFdx(vViewPosition.y), dFdx(vViewPosition.z)),
+						vec3(dFdy(vViewPosition.x), dFdy(vViewPosition.y), dFdy(vViewPosition.z))
+					));
+
+					PhysicalMaterial material;
+					material.diffuseColor = diffuseColor.rgb;
+
+					#include <lights_fragment_begin>
+					#include <lights_fragment_end>
+
+					gl_FragColor = vec4(
+						reflectedLight.directDiffuse + reflectedLight.indirectDiffuse,
+						opacity
+					);
+				}
+			`
 		})
 	);
 

@@ -356,50 +356,50 @@ export default function({ color, coords, edgeForm = {}, edgeLength = 1, opacity 
 				opacity: { value: opacity }
 			},
 			vertexShader: `
-					attribute vec3 polyhedronCenter;
+				attribute vec3 polyhedronCenter;
 
-					varying vec3 vViewPosition;
+				varying vec3 vViewPosition;
 
-					void main() {
-						vec4 mvPosition = modelViewMatrix * vec4(position + polyhedronCenter, 1);
+				void main() {
+					vec4 mvPosition = modelViewMatrix * vec4(position + polyhedronCenter, 1);
 
-						vViewPosition = -mvPosition.xyz;
+					vViewPosition = -mvPosition.xyz;
 
-						gl_Position = projectionMatrix * mvPosition;
-					}
-				`,
+					gl_Position = projectionMatrix * mvPosition;
+				}
+			`,
 			fragmentShader: `
-					#define FLAT_SHADED
+				#define FLAT_SHADED
 
-					uniform vec3 diffuse;
-					uniform vec3 emissive;
-					uniform float roughness;
-					uniform float metalness;
-					uniform float opacity;
-					varying vec3 vViewPosition;
+				uniform vec3 diffuse;
+				uniform vec3 emissive;
+				uniform float roughness;
+				uniform float metalness;
+				uniform float opacity;
+				varying vec3 vViewPosition;
 
-					#include <common>
-					#include <bsdfs>
-					#include <lights_pars_begin>
-					#include <lights_physical_pars_fragment>
+				#include <common>
+				#include <bsdfs>
+				#include <lights_pars_begin>
+				#include <lights_physical_pars_fragment>
 
-					void main() {
-						vec4 diffuseColor = vec4(diffuse, opacity);
-						ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
+				void main() {
+					vec4 diffuseColor = vec4(diffuse, opacity);
+					ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
 
-						vec3 totalEmissiveRadiance = emissive;
+					vec3 totalEmissiveRadiance = emissive;
 
-						#include <roughnessmap_fragment>
-						#include <metalnessmap_fragment>
-						#include <normal_fragment_begin>
-						#include <lights_physical_fragment>
-						#include <lights_fragment_begin>
-						#include <lights_fragment_maps>
-						#include <lights_fragment_end>
+					#include <roughnessmap_fragment>
+					#include <metalnessmap_fragment>
+					#include <normal_fragment_begin>
+					#include <lights_physical_fragment>
+					#include <lights_fragment_begin>
+					#include <lights_fragment_maps>
+					#include <lights_fragment_end>
 
-						gl_FragColor = vec4(reflectedLight.directDiffuse + reflectedLight.indirectDiffuse, diffuseColor.a);
-					}
-				`
+					gl_FragColor = vec4(reflectedLight.directDiffuse + reflectedLight.indirectDiffuse, diffuseColor.a);
+				}
+			`
 		})
 	);
 

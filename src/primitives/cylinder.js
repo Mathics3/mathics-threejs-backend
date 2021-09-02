@@ -47,60 +47,60 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 				opacity: { value: opacity }
 			},
 			vertexShader: `
-					attribute vec3 cylinderBegin;
-					attribute vec3 cylinderEnd;
+				attribute vec3 cylinderBegin;
+				attribute vec3 cylinderEnd;
 
-					varying vec3 vLightFront;
-					varying vec3 vIndirectFront;
+				varying vec3 vLightFront;
+				varying vec3 vIndirectFront;
 
-					#include <common>
-					#include <bsdfs>
-					#include <lights_pars_begin>
+				#include <common>
+				#include <bsdfs>
+				#include <lights_pars_begin>
 
-					void main() {
-						vec3 z = normalize(cylinderBegin - cylinderEnd);
-						// if z.z is 0 the cylinder doesn't appear
-						z.z += 0.0001;
+				void main() {
+					vec3 z = normalize(cylinderBegin - cylinderEnd);
+					// if z.z is 0 the cylinder doesn't appear
+					z.z += 0.0001;
 
-						vec3 x = normalize(cross(vec3(0, 1, 0), z));
-						vec3 y = cross(z, x);
+					vec3 x = normalize(cross(vec3(0, 1, 0), z));
+					vec3 y = cross(z, x);
 
-						float height = distance(cylinderBegin, cylinderEnd);
+					float height = distance(cylinderBegin, cylinderEnd);
 
-						// position, rotate and scale the cylinder
-						mat4 cylinderMatrix = mat4(
-							x, 0,            // row 0
-							y, 0,            // row 1
-							z * height, 0,   // row 2
-							cylinderBegin, 1 // row 3
-						);
+					// position, rotate and scale the cylinder
+					mat4 cylinderMatrix = mat4(
+						x, 0,            // row 0
+						y, 0,            // row 1
+						z * height, 0,   // row 2
+						cylinderBegin, 1 // row 3
+					);
 
-						vec4 mvPosition = modelViewMatrix * cylinderMatrix * vec4(position, 1);
+					vec4 mvPosition = modelViewMatrix * cylinderMatrix * vec4(position, 1);
 
-						gl_Position = projectionMatrix * mvPosition;
+					gl_Position = projectionMatrix * mvPosition;
 
-						vec3 transformedNormal = normalMatrix * normal;
+					vec3 transformedNormal = normalMatrix * normal;
 
-						#include <lights_lambert_vertex>
-					}
-				`,
+					#include <lights_lambert_vertex>
+				}
+			`,
 			fragmentShader: `
-					uniform vec3 diffuse;
-					uniform float opacity;
+				uniform vec3 diffuse;
+				uniform float opacity;
 
-					varying vec3 vLightFront;
-					varying vec3 vIndirectFront;
+				varying vec3 vLightFront;
+				varying vec3 vIndirectFront;
 
-					#include <common>
-					#include <bsdfs>
+				#include <common>
+				#include <bsdfs>
 
-					void main() {
-						gl_FragColor = vec4(
-							(vLightFront + vIndirectFront) * BRDF_Lambert(diffuse),
-							opacity
-						);
-					}
-				`
+				void main() {
+					gl_FragColor = vec4(
+						(vLightFront + vIndirectFront) * BRDF_Lambert(diffuse),
+						opacity
+					);
+				}
+			`
 		})
 	);
 
