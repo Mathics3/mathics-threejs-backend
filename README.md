@@ -31,7 +31,7 @@ drawGraphics3D(
 )
 ```
 
-Lots of other examples can be found in the [examples](https://github.com/Mathics3/mathics-threejs-backend/tree/master/examples) directory of this repository.
+Lots of other examples can be found in the [docs](https://github.com/Mathics3/mathics-threejs-backend/tree/master/docs) directory of this repository.
 
 ## Displaying Examples
 Install an HTTP server and run it:
@@ -49,7 +49,7 @@ The above only needs to be done once to set up an HTTP server to use. If you alr
 Otherwise, start the HTTP server that was just installed:
 
 ```console
-$ ./node_modules/http-server/bin/http-server  # Do this once per session
+$ npm run start-server  # Do this once per session
 Starting up http-server, serving ./
 Available on:
   http://127.0.0.1:8080
@@ -57,7 +57,7 @@ Available on:
 Hit CTRL-C to stop the server
 ```
 
-Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/examples/gallery/objects-in-directional-light.html
+Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/docs/gallery/objects-in-directional-light.html
 
 ## JSON API for Compact Graphics3D
 
