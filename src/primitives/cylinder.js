@@ -96,7 +96,7 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 
 					void main() {
 						gl_FragColor = vec4(
-							vLightFront * BRDF_Diffuse_Lambert(diffuse) + vIndirectFront * BRDF_Diffuse_Lambert(diffuse),
+							(vLightFront + vIndirectFront) * BRDF_Lambert(diffuse),
 							opacity
 						);
 					}
