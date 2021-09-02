@@ -49,7 +49,7 @@ The above only needs to be done once to set up an HTTP server to use. If you alr
 Otherwise, start the HTTP server that was just installed:
 
 ```console
-$ ./node_modules/http-server/bin/http-server  # Do this once per session
+$ npm run start-server  # Do this once per session
 Starting up http-server, serving ./
 Available on:
   http://127.0.0.1:8080
