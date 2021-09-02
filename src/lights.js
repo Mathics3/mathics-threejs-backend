@@ -2,6 +2,7 @@ import {
 	AmbientLight,
 	Color,
 	DirectionalLight,
+	Group,
 	PointLight,
 	SpotLight
 } from '../vendors/three.js';
@@ -28,9 +29,13 @@ export default {
 			...(target[0] ?? scaleCoordinate(target[1], extent))
 		);
 
-		light.target.updateMatrixWorld();
+		const group = new Group();
 
-		return light;
+		group.add(light);
+		// We need to add the target to the scene so the its matrixWorld is updated in every camera move.
+		group.add(light.target);
+
+		return group;
 	},
 	point: ({ color, coords }, extent) => {
 		const light = new PointLight(new Color(...color).getHex());
