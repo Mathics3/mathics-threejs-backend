@@ -57,7 +57,7 @@ Available on:
 Hit CTRL-C to stop the server
 ```
 
-Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/examples/gallery/objects-in-directional-light.html
+Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/docs/objects-in-directional-light.html
 
 ## JSON API for Compact Graphics3D
 
