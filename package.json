@@ -23,6 +23,7 @@
 	},
 	"homepage": "https://github.com/Mathics3/mathics-threejs-backend",
 	"scripts": {
+		"approve": "backstop approve",
 		"build": "rollup src/index.js --file docs/tmp.js --format iife && minify docs/tmp.js > docs/build.js && rm docs/tmp.js",
 		"start-server": "http-server &",
 		"test": "npm run start-server && backstop test"
