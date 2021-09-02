@@ -3,7 +3,7 @@
 	"version": "0.6.1",
 	"threejs_revision": 132,
 	"description": "Mathics 3D Graphics backend using three.js",
-	"main": "bundle/index.js",
+	"main": "docs/build.js",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Mathics3/mathics-threejs-backend.git"
@@ -23,7 +23,7 @@
 	},
 	"homepage": "https://github.com/Mathics3/mathics-threejs-backend",
 	"scripts": {
-		"build": "rollup src/index.js --file bundle/tmp.js --format iife && minify bundle/tmp.js > bundle/index.js && rm bundle/tmp.js",
+		"build": "rollup src/index.js --file docs/tmp.js --format iife && minify docs/tmp.js > docs/build.js && rm docs/tmp.js",
 		"start-server": "http-server &",
 		"test": "npm run start-server && backstop test"
 	},
