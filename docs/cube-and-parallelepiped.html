@@ -11,28 +11,21 @@
 			{
 				elements: [
 					{
-						type: 'sphere',
-						color: [1, 1, 1],
-						radius: 1,
-						coords: [[[0, 0, 0]]]
-					},
-					{
 						type: 'cuboid',
 						color: [1, 1, 1],
-						coords: [[[1, 2, -1]], [[2, 3, 1]]],
+						coords: [
+							[[-1, -1, -1]], // cube begin
+							[[0, 0, 0]],    // cube end
+							[[0, 0, 0]],    // parallelepiped begin
+							[[1, 2, 1]]     // parallelepiped end
+						],
 						edgeForm: { showEdges: false }
-					},
-					{
-						type: 'uniformPolyhedron',
-						subType: 'dodecahedron',
-						color: [1, 1, 1],
-						coords: [[[3, -1, 0]]]
 					}
 				],
 				lighting: [
 					{
 						type: 'directional',
-						color: [1, 0.5, 0],
+						color: [1, 1, 1],
 						coords: [[1, 1, 1]]
 					}
 				],

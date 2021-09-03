@@ -11,28 +11,21 @@
 			{
 				elements: [
 					{
-						type: 'sphere',
+						type: 'cylinder',
 						color: [1, 1, 1],
-						radius: 1,
-						coords: [[[0, 0, 0]]]
-					},
-					{
-						type: 'cuboid',
-						color: [1, 1, 1],
-						coords: [[[1, 2, -1]], [[2, 3, 1]]],
+						coords: [
+							[[-1, -1, -1]], // first cylinder begin
+							[[0, 0, 0]],    // first cylinder end
+							[[0, 0, 0]],    // second cylinder begin
+							[[1, 1, 1]]     // second cylinder end
+						],
 						edgeForm: { showEdges: false }
-					},
-					{
-						type: 'uniformPolyhedron',
-						subType: 'dodecahedron',
-						color: [1, 1, 1],
-						coords: [[[3, -1, 0]]]
 					}
 				],
 				lighting: [
 					{
 						type: 'directional',
-						color: [1, 0.5, 0],
+						color: [1, 1, 1],
 						coords: [[1, 1, 1]]
 					}
 				],

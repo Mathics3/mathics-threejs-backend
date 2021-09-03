@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<body>
+	<main id="main"></main>
+
+	<script src="build.js"></script>
+
+	<script>
+		drawGraphics3d(
+			document.getElementById('main'),
+			{
+				elements: [
+					{
+						type: 'polygon',
+						color: [1, 1, 0],
+						coords: [
+							[[0, 0, 0]],
+							[[0, 1, 0]],
+							[[0, 1, 1]],
+							[[0, 0, 1]]
+						]
+					}
+				],
+				viewpoint: [2, -4, 4]
+			}
+		);
+	</script>
+</body>
