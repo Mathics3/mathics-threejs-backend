@@ -58,17 +58,17 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 				color: { value: [...color, opacity] }
 			},
 			vertexShader: `
-					void main() {
-						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
-					}
-				`,
+				void main() {
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+				}
+			`,
 			fragmentShader: `
-					uniform vec4 color;
+				uniform vec4 color;
 
-					void main() {
-						gl_FragColor = color;
-					}
-				`
+				void main() {
+					gl_FragColor = color;
+				}
+			`
 		})
 	));
 

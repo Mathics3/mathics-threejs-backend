@@ -115,7 +115,7 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 
 	group.add(cylinders);
 
-	// Differently from cuboid's edges, the cylinders's ones are in a different object. It is very hard or maybe impossible to draw edges with complex shapes in the fragment shader.
+	// Differently from cuboid's edges, the cylinders' ones are in a different object. It is very hard or maybe impossible to draw edges with complex shapes in the fragment shader.
 
 	// The lines below are the edges' vertices' positions.
 	// The magic numbers below are modified from the position attribute of a three.js EdgesGeometry of the cylinder.
@@ -299,37 +299,37 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 				color: { value: edgeForm.color ?? [0, 0, 0] }
 			},
 			vertexShader: `
-					attribute vec3 cylinderBegin;
-					attribute vec3 cylinderEnd;
+				attribute vec3 cylinderBegin;
+				attribute vec3 cylinderEnd;
 
-					void main() {
-						vec3 z = normalize(cylinderBegin - cylinderEnd);
-						// If z.z is 0 the edges doesn't appear.
-						z.z += 0.0001;
+				void main() {
+					vec3 z = normalize(cylinderBegin - cylinderEnd);
+					// If z.z is 0 the edges doesn't appear.
+					z.z += 0.0001;
 
-						vec3 x = normalize(cross(vec3(0, 1, 0), z));
-						vec3 y = cross(z, x);
+					vec3 x = normalize(cross(vec3(0, 1, 0), z));
+					vec3 y = cross(z, x);
 
-						float height = distance(cylinderBegin, cylinderEnd);
+					float height = distance(cylinderBegin, cylinderEnd);
 
-						// position, rotate and scale the edges
-						mat4 cylinderMatrix = mat4(
-							x, 0,            // row 0
-							y, 0,            // row 1
-							z * height, 0,   // row 2
-							cylinderBegin, 1 // row 3
-						);
+					// position, rotate and scale the edges
+					mat4 cylinderMatrix = mat4(
+						x, 0,            // row 0
+						y, 0,            // row 1
+						z * height, 0,   // row 2
+						cylinderBegin, 1 // row 3
+					);
 
-						gl_Position = projectionMatrix * modelViewMatrix * cylinderMatrix * vec4(position, 1);
-					}
-				`,
+					gl_Position = projectionMatrix * modelViewMatrix * cylinderMatrix * vec4(position, 1);
+				}
+			`,
 			fragmentShader: `
-					uniform vec3 color;
+				uniform vec3 color;
 
-					void main() {
-						gl_FragColor = vec4(color, 1);
-					}
-				`
+				void main() {
+					gl_FragColor = vec4(color, 1);
+				}
+			`
 		})
 	);
 

@@ -434,19 +434,19 @@ export default function({ color, coords, edgeForm = {}, edgeLength = 1, opacity 
 				color: { value: edgeForm.color ?? [0, 0, 0] }
 			},
 			vertexShader: `
-					attribute vec3 polyhedronCenter;
+				attribute vec3 polyhedronCenter;
 
-					void main() {
-						gl_Position = projectionMatrix * modelViewMatrix * vec4(position + polyhedronCenter, 1);
-					}
-				`,
+				void main() {
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(position + polyhedronCenter, 1);
+				}
+			`,
 			fragmentShader: `
-					uniform vec3 color;
+				uniform vec3 color;
 
-					void main() {
-						gl_FragColor = vec4(color, 1);
-					}
-				`
+				void main() {
+					gl_FragColor = vec4(color, 1);
+				}
+			`
 		})
 	);
 
