@@ -32,6 +32,7 @@
 // "object.frustumCulled = false" without this instanced objects disappear when the zoom is big.
 
 import arrow from './arrow.js';
+import cone from './cone.js';
 import cuboid from './cuboid.js';
 import cylinder from './cylinder.js';
 import line from './line.js';
@@ -42,6 +43,7 @@ import uniformPolyhedron from './uniformPolyhedron.js';
 
 export default {
 	arrow,
+	cone,
 	cuboid,
 	cylinder,
 	line,
