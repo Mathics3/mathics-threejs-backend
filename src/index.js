@@ -6,18 +6,22 @@ function translationLayer(div, object) {
 		const versionArray = object.protocol.match(/\d/g);
 
 		if (parseInt(versionArray[0]) !== 1) {
-			div.style.color = 'red';
-			div.innerText = `The major version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}.`;
+			const warning = document.createElement('p');
 
-			return;
+			warning.style.color = 'yellow';
+			warning.innerText = `The major version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}. Trying to draw the graphics.`;
+
+			div.appendChild(warning);
 		}
 
-		// the code bellow is commented as the number can't be smaller than 0
+		// The code bellow is commented as the number can't be smaller than 0.
 		// if (parseInt(versionArray[1]) < 0) {
-		// 	div.style.color = 'red';
-		// 	div.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${versionArray[1]}.`;
+		// 	const warning = document.createElement('p');
 
-		// 	return;
+		// 	warning.style.color = 'yellow';
+		// 	warning.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${versionArray[1]}. Trying to draw the graphics.`;
+
+		// 	div.appendChild(warning);
 		// }
 	}
 
