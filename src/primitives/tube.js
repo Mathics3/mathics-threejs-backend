@@ -67,10 +67,10 @@ function mergeBufferGeometries(geometries) {
 // See https://reference.wolfram.com/language/ref/Tube.html
 // for the high-level description of what is being rendered.
 export default function ({ color, coords, opacity = 1, radius = 1 }, extent) {
-	// It isn't using getCoordinatesBuffer because CatmullRomCurve3 receives an array of Vector3s.
-	// TubeGeometry receives a Curve, but Mathics' Tube recives an array of coordinates, so we use CatmullRomCurve3 to convert the coordinates to a three.js' Curve.
+	// TubeGeometry receives a Curve, but Mathics' Tube recives an array of coordinates, so we use CatmullRomCurve3 to convert the coordinates into a Curve.
 	// Curve.getPoint receives a flot between 0 and 1, where 0 is the 1st coordinate and 1 is the last.
 	const curve = new CatmullRomCurve3(
+		// It isn't using getCoordinatesBuffer because CatmullRomCurve3 receives an array of Vector3s.
 		coords.map((coordinate) => new Vector3(
 			...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
 		))
