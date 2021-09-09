@@ -50,9 +50,9 @@ export default function (elements) {
 				}
 			}));
 		} else {
-			// the extent isn't calculated correctly for cylinders, their extent should be transformationVector * radius
-
-			// the calculated extent for uniformPolyhedron is approximated
+			// The extent isn't calculated correctly for cylinders, their extent should be transformationVector * radius.
+			// The calculated extent for polyhedrons is approximated.
+			// The calculated extent for tubes is approximated.
 
 			const radius = element.radius ?? element.pointSize ?? element.edgeLength ?? 1;
 
