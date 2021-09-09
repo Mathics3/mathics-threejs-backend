@@ -39,6 +39,7 @@ import line from './line.js';
 import point from './point.js';
 import polygon from './polygon.js';
 import sphere from './sphere.js';
+import tube from './tube.js';
 import uniformPolyhedron from './uniformPolyhedron.js';
 
 export default {
@@ -50,5 +51,6 @@ export default {
 	point,
 	polygon,
 	sphere,
+	tube,
 	uniformPolyhedron
 };

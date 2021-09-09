@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<body>
+	<main id="main"></main>
+
+	<script type="module">
+		import drawGraphics3d from '../../src/index.js';
+
+		drawGraphics3d(
+			document.getElementById('main'),
+			{
+				elements: [
+					{
+						type: 'tube',
+						radius: 0.25,
+						color: [1, 1, 1],
+						coords: [
+							[null, [0, 1, 0]],
+							[null, [0, 0, 0]],
+							[[1, 1, 1]],
+							[[1, 2, 1]],
+							[[0, 2, 1]]
+						],
+						opacity: 0.5
+					},
+					{
+						type: 'tube',
+						radius: 0.1,
+						color: [1, 1, 1],
+						coords: [
+							[[2, 2, 2]],
+							[[3, 3, 3]]
+						]
+					}
+				],
+				lighting: [
+					{
+						type: 'directional',
+						coords: [null, [1, 1, 1]],
+						color: [1, 0, 0]
+					}
+				],
+				viewpoint: [2, -4, 4]
+			}
+		);
+	</script>
+</body>
