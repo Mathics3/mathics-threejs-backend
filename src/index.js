@@ -14,15 +14,16 @@ function translationLayer(div, object) {
 			div.appendChild(warning);
 		}
 
-		// The code bellow is commented as the number can't be smaller than 0.
-		// if (parseInt(versionArray[1]) < 0) {
-		// 	const warning = document.createElement('p');
+		// The code bellow need to be commented in 1.0, 2.0, 3.0, ...
+		// as the number can't be smaller than 0.
+		if (parseInt(versionArray[1]) < 1) {
+			const warning = document.createElement('p');
 
-		// 	warning.style.color = 'yellow';
-		// 	warning.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${versionArray[1]}. Trying to draw the graphics.`;
+			warning.style.color = 'yellow';
+			warning.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${versionArray[1]}. Trying to draw the graphics.`;
 
-		// 	div.appendChild(warning);
-		// }
+			div.appendChild(warning);
+		}
 	}
 
 	object.elements?.forEach((primitive) => {
