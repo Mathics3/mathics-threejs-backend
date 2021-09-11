@@ -22,13 +22,7 @@ jobs:
           node-version: 15.x
 
       - name: Install dependencies
-        run: npm install -g backstopjs http-server
-
-      - name: Start the local server
-        run: http-server &
+        run: npm install backstopjs http-server
 
       - name: Run the tests
-        run: backstop test
-
-      - name: Stop the local server
-        run: exit 0
+        run: npm run test
