@@ -25,12 +25,14 @@
 	"scripts": {
 		"approve": "backstop approve",
 		"build": "rollup src/index.js --file docs/tmp.js --format iife && minify docs/tmp.js > docs/build.js && rm docs/tmp.js",
-		"start-server": "http-server &",
-		"test": "npm run start-server && backstop test"
+		"start-server": "node scripts/server.js",
+		"test": "node scripts/test.js"
+	},
+	"dependencies": {
+		"express": "^4"
 	},
 	"devDependencies": {
 		"backstopjs": "^5",
-		"http-server": "^13",
 		"minify": "^7",
 		"rollup": "^2"
 	}
