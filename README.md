@@ -37,9 +37,9 @@ Lots of other examples can be found in the [examples](https://github.com/Mathics
 Install an HTTP server and run it:
 
 ```console
-$ npm install http-server # Do this only one time.
+$ npm install --production # Only install the necessary dependencies. Do this only one time.
 ...
-added 30 packages from 40 contributors and audited 30 packages in 1.595s
+added 57 packages, and audited 58 packages in 1s
 ...
 found 0 vulnerabilities
 ```
@@ -50,10 +50,10 @@ Otherwise, start the HTTP server that was just installed:
 
 ```console
 $ npm run start-server  # Do this once per session
-Starting up http-server, serving ./
-Available on:
-  http://127.0.0.1:8080
 ...
+Server running at http://localhost:8080/
+See our gallery in http://localhost:8080/docs/
+
 Hit CTRL-C to stop the server
 ```
 
