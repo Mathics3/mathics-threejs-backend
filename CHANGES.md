@@ -1,4 +1,8 @@
-We are happy in announce 1.0.0!
+CHANGES
+=======
+
+1.0.0
+-----
 
 New features:
 - Add `edgeForm` to cylinders (#32)
@@ -7,7 +11,7 @@ New features:
 
 Improvements:
 - Update three.js to r132 (#32)
-- Improve package.json (#26)
+- Improve package.json (#26, #33)
 - Improve the documentation and add live examples without downloading (#37)
 - Improve protocol version checking (#41)
 - Decrease spheres RAM usage
