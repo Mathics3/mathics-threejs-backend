@@ -31,9 +31,6 @@
 	"dependencies": {
 		"express": "^4"
 	},
-	"dependencies": {
-		"http-server": "^13"
-	},
 	"devDependencies": {
 		"backstopjs": "^5",
 		"minify": "^7",
