@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+1.0.1
+-----
+
+Fix bug in revision checking.
+
 1.0.0
 -----
 
