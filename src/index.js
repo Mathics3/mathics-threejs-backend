@@ -12,14 +12,11 @@ function translationLayer(div, object) {
 			warning.innerText = `The major revision version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}. Trying to draw the graphics.`;
 
 			div.appendChild(warning);
-		} else if (parseInt(versionArray[1]) < 1) {
-			// The code bellow need to be commented in 1.0, 2.0, 3.0, ...
-			// as the number can't be smaller than 0.
-
+		} else if (parseInt(versionArray[1]) > 1) {
 			const warning = document.createElement('p');
 
 			warning.style.color = 'yellow';
-			warning.innerText = `The minor revision version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[1]}. Trying to draw the graphics.`;
+			warning.innerText = `The minor revision version of mathics-threejs-backend is 1, but it was expected to be at least ${versionArray[1]}. Trying to draw the graphics.`;
 
 			div.appendChild(warning);
 		}
