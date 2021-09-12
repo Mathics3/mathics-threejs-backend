@@ -9,7 +9,7 @@ function translationLayer(div, object) {
 			const warning = document.createElement('p');
 
 			warning.style.color = 'yellow';
-			warning.innerText = `The major version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}. Trying to draw the graphics.`;
+			warning.innerText = `The major revision version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}. Trying to draw the graphics.`;
 
 			div.appendChild(warning);
 		} else if (parseInt(versionArray[1]) < 1) {
@@ -19,7 +19,7 @@ function translationLayer(div, object) {
 			const warning = document.createElement('p');
 
 			warning.style.color = 'yellow';
-			warning.innerText = `The minor version of mathics-threejs-backend is 0, but it was expected to be ${versionArray[1]}. Trying to draw the graphics.`;
+			warning.innerText = `The minor revision version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[1]}. Trying to draw the graphics.`;
 
 			div.appendChild(warning);
 		}
