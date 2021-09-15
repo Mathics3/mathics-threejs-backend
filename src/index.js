@@ -1,6 +1,6 @@
 import drawGraphics3d from './graphics3d.js';
 
-function translationLayer(div, object) {
+function translationLayer(container, object) {
 	if (object.protocol) {
 		// protocol version is X.Y, so it is an array of two elements: major version and minor version
 		const versionArray = object.protocol.match(/\d/g);
@@ -11,14 +11,14 @@ function translationLayer(div, object) {
 			warning.style.color = 'yellow';
 			warning.innerText = `The major revision version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}. Trying to draw the graphics.`;
 
-			div.appendChild(warning);
+			container.appendChild(warning);
 		} else if (parseInt(versionArray[1]) > 1) {
 			const warning = document.createElement('p');
 
 			warning.style.color = 'yellow';
 			warning.innerText = `The minor revision version of mathics-threejs-backend is 1, but it was expected to be at least ${versionArray[1]}. Trying to draw the graphics.`;
 
-			div.appendChild(warning);
+			container.appendChild(warning);
 		}
 	}
 
