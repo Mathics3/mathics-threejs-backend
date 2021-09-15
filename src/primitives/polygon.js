@@ -100,7 +100,11 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 						3
 					)
 				)
-				.setIndex(earcut(coordinates));
+				.setIndex(earcut(
+					coordinates,
+					[], // hole indices (we have no holes, so an empty array)
+					3 // dimension
+				));
 		}
 	};
 
