@@ -102,7 +102,7 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 				)
 				.setIndex(earcut(coordinates));
 		}
-	};
+	}
 
 	return new Mesh(
 		geometry,
@@ -114,4 +114,4 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 			side: DoubleSide
 		})
 	);
-};
+}

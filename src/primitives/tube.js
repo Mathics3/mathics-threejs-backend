@@ -162,4 +162,4 @@ export default function ({ color, coords, opacity = 1, radius = 1 }, extent) {
 			`
 		})
 	);
-};
+}

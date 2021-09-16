@@ -14,7 +14,7 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
 // See https://reference.wolfram.com/language/ref/UniformPolyhedron
 // for the high-level description of what is being rendered.
-export default function({ color, coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) {
+export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) {
 	let polyhedronGeometry;
 
 	// The magic numbers in the code bellow were captured multipling √(3/8) (see https://en.wikipedia.org/wiki/Tetrahedron#Coordinates_for_a_regular_tetrahedron) by each number of the respective three.js geometry's position and divided by 0.5773502588272095 (the unique number in three.js TetrahedronGeometry's position).
@@ -455,4 +455,4 @@ export default function({ color, coords, edgeForm = {}, edgeLength = 1, opacity 
 	group.add(edges);
 
 	return group;
-};
+}

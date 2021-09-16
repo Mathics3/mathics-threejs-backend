@@ -121,4 +121,4 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 	cuboids.frustumCulled = false;
 
 	return cuboids;
-};
+}
