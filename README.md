@@ -26,7 +26,7 @@ drawGraphics3D(
                 color: [1, 1, 1]
             }
         ],
-        viewpoint: [2.6, -4.8, 4.0]
+        viewpoint: [2.6, -4.8, 4]
     }
 )
 ```
