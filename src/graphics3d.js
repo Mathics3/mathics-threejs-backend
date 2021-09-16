@@ -64,7 +64,7 @@ export default function (
 	const radius = viewPoint.length();
 
 	onMouseDownTheta = theta = Math.acos(viewPoint.z / radius);
-	onMouseDownPhi = phi = (Math.atan2(viewPoint.y, viewPoint.x) + 2 * Math.PI) % (2 * Math.PI);
+	onMouseDownPhi = phi = Math.atan2(viewPoint.y, viewPoint.x) % (2 * Math.PI);
 
 	const scene = new Scene(),
 		camera = new PerspectiveCamera(
@@ -102,7 +102,7 @@ export default function (
 		};
 
 		if (temporaryPosition.length() !== 0) {
-			result.phi = (Math.atan2(temporaryPosition.y, temporaryPosition.x) + 2 * Math.PI) % (2 * Math.PI);
+			result.phi = Math.atan2(temporaryPosition.y, temporaryPosition.x) % (2 * Math.PI);
 			result.theta = Math.asin(temporaryPosition.z / result.radius);
 		}
 
@@ -632,7 +632,7 @@ export default function (
 					container.style.cursor = 'pointer';
 				}
 
-				phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi + 2 * Math.PI) % (2 * Math.PI);
+				phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi) % (2 * Math.PI);
 				theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
 
 				// 1e-12 prevents spinnging from getting stuck
