@@ -114,7 +114,7 @@ export default function (
 	lighting.forEach((element) => {
 		const light = lightFunctions[element.type](element, extent);
 
-		if (light.type === 'DirectionalLight') {
+		if (element.type === 'directional') {
 			lights.push(light);
 			initialLightPosition.push(getInitialLightPosition(element.coords));
 		}
