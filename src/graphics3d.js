@@ -68,8 +68,11 @@ export default function (
 
 	const radius = viewPoint.length();
 
-	onMouseDownTheta = theta = Math.acos(viewPoint.z / radius);
-	onMouseDownPhi = phi = Math.atan2(viewPoint.y, viewPoint.x) % (2 * Math.PI);
+	// See https://en.wikipedia.org/wiki/Spherical_coordinate_system#Cartesian_coordinates
+	// z and y are swapped because in the Wikipedia formula, z is up
+	// (while here, y is up)
+	onMouseDownTheta = theta = Math.atan((viewPoint.x ** 2 + viewPoint.z ** 2) ** 0.5 / viewPoint.y);
+	onMouseDownPhi = phi = Math.atan(viewPoint.z / viewPoint.x);
 
 	const scene = new Scene(),
 		camera = new PerspectiveCamera(
@@ -85,20 +88,21 @@ export default function (
 		camera.position.set(
 			// Convert the polar coordinates into absolute ones.
 			radius * Math.sin(theta) * Math.cos(phi),
-			radius * Math.sin(theta) * Math.sin(phi),
-			radius * Math.cos(theta)
+			radius * Math.cos(theta),
+			// Swap y and z is the same as rotate the plane.
+			// In the proccess of rotating the plane, we negate z.
+			-radius * Math.sin(theta) * Math.sin(phi)
 		).add(focus);
 
 		camera.lookAt(focus);
 	}
 
 	updateCameraPosition();
-	camera.up.set(0, 0, 1);
 
 	scene.add(camera);
 
 	function getInitialLightPosition(coordinate) {
-		// initial light position in spherical polar coordinates
+		// Initial light position.
 		const temporaryPosition = new Vector3(
 			...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
 		);
@@ -110,8 +114,9 @@ export default function (
 		};
 
 		if (temporaryPosition.length() !== 0) {
-			result.phi = Math.atan2(temporaryPosition.y, temporaryPosition.x) % (2 * Math.PI);
-			result.theta = Math.asin(temporaryPosition.z / result.radius);
+			// Transform the cartesian coordinates into spherical ones.
+			result.theta = Math.atan((temporaryPosition.x ** 2 + temporaryPosition.z ** 2) ** 0.5 / temporaryPosition.y);
+			result.phi = Math.atan(temporaryPosition.z / temporaryPosition.x);
 		}
 
 		return result;
@@ -134,8 +139,8 @@ export default function (
 		lights.forEach((light, i) => {
 			light.position.set(
 				initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.cos(phi + initialLightPosition[i].phi),
-				initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.sin(phi + initialLightPosition[i].phi),
-				initialLightPosition[i].radius * Math.cos(theta + initialLightPosition[i].theta)
+				initialLightPosition[i].radius * Math.cos(theta + initialLightPosition[i].theta),
+				-initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.sin(phi + initialLightPosition[i].phi)
 			).add(focus);
 		});
 	}
@@ -597,7 +602,7 @@ export default function (
 				}
 
 				const cameraX = new Vector3(
-					-radius * Math.cos(theta) * Math.sin(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
+					radius * Math.cos(theta) * Math.sin(phi) * (theta < 0.5 * Math.PI ? -1 : 1),
 					radius * Math.cos(theta) * Math.cos(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
 					0
 				).normalize();
@@ -631,7 +636,7 @@ export default function (
 				);
 
 				camera.updateProjectionMatrix();
-			} else { // spin
+			} else { // spin (aka. rotate)
 				if (isCtrlDown || isShiftDown) {
 					onMouseDownPosition[0] = event.clientX;
 					onMouseDownPosition[1] = event.clientY;
@@ -640,14 +645,13 @@ export default function (
 					container.style.cursor = 'pointer';
 				}
 
-				phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi) % (2 * Math.PI);
-				theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
+				phi = onMouseDownPhi + 2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize;
 
 				// 1e-12 prevents spinnging from getting stuck
 				theta = Math.max(
 					Math.min(
 						Math.PI - 1e-12,
-						2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta
+						onMouseDownTheta + 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize
 					),
 					1e-12
 				);
