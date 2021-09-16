@@ -16,6 +16,11 @@ import lightFunctions from './lights.js';
 import primitiveFunctions from './primitives/index.js';
 import scaleCoordinate from './scaleCoordinate.js';
 
+// The camera position calculing is based in spherical polar coordinates
+// See https://en.wikipedia.org/wiki/Spherical_coordinate_system
+// θ = theta
+// φ = phi
+
 export default function (
 	container,
 	{
@@ -75,7 +80,10 @@ export default function (
 		);
 
 	function updateCameraPosition() {
+		// We are adding the focus because we don't consider it in the camera position.
+		// Doing it, the rotation isn't around (0, 0, 0), but around the scene center.
 		camera.position.set(
+			// Convert the polar coordinates into absolute ones.
 			radius * Math.sin(theta) * Math.cos(phi),
 			radius * Math.sin(theta) * Math.sin(phi),
 			radius * Math.cos(theta)
