@@ -37,7 +37,8 @@ Lots of other examples can be found in the [examples](https://github.com/Mathics
 Install an HTTP server and run it:
 
 ```console
-$ npm install --production # Only install the necessary dependencies. Do this only one time.
+$ # Only install the necessary dependencies. Do this only one time.
+$ npm install @mathicsorg/mathics-threejs-backend --production
 ...
 added 57 packages, and audited 58 packages in 1s
 ...
