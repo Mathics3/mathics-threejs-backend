@@ -84,6 +84,7 @@ export default function (
 		camera.lookAt(focus);
 	}
 
+	// Without this the initial axes postion is wrong.
 	updateCameraPosition();
 	camera.up.set(0, 0, 1);
 
@@ -180,7 +181,7 @@ export default function (
 
 	// draw the axes
 	if (axes.hasaxes instanceof Array) {
-		hasAxes = [...axes.hasaxes];
+		hasAxes = axes.hasaxes;
 	} else {
 		hasAxes = [axes.hasaxes, axes.hasaxes, axes.hasaxes];
 	}
