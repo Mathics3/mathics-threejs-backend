@@ -33,7 +33,7 @@
 		"express": "^4"
 	},
 	"devDependencies": {
-		"backstopjs": "^5",
+		"backstopjs": "^6",
 		"minify": "^7",
 		"rollup": "^2"
 	}
