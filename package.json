@@ -3,6 +3,7 @@
 	"version": "1.0.1",
 	"threejs_revision": 132,
 	"description": "Mathics 3D Graphics backend using three.js",
+	"source": "src/index.js",
 	"main": "docs/build.js",
 	"repository": {
 		"type": "git",
