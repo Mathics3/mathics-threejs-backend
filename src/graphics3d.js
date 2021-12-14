@@ -12,9 +12,8 @@ import {
 } from '../vendors/three.js';
 
 import calculateExtent from './extent.js';
-import lightFunctions from './lights.js';
+import lightFunctions, { getInitialLightPosition, positionLights } from './lights.js';
 import primitiveFunctions from './primitives/index.js';
-import scaleCoordinate from './scaleCoordinate.js';
 
 export default function (
 	container,
@@ -90,48 +89,21 @@ export default function (
 
 	scene.add(camera);
 
-	function getInitialLightPosition(coordinate) {
-		// initial light position in spherical polar coordinates
-		const temporaryPosition = new Vector3(
-			...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
-		);
-
-		const result = {
-			radius: radius * temporaryPosition.length(),
-			phi: 0,
-			theta: 0
-		};
-
-		if (temporaryPosition.length() !== 0) {
-			result.phi = Math.atan2(temporaryPosition.y, temporaryPosition.x) % (2 * Math.PI);
-			result.theta = Math.asin(temporaryPosition.z / result.radius);
-		}
-
-		return result;
-	}
-
-	const lights = [], initialLightPosition = [];
+	const lights = [];
 
 	lighting.forEach((element) => {
 		const light = lightFunctions[element.type](element, extent);
 
 		if (element.type === 'directional') {
+			const position = getInitialLightPosition(element.coords, radius, extent);
+			light.radius = position.radius;
+			light.theta = position.theta;
+			light.phi = position.phi;
 			lights.push(light);
-			initialLightPosition.push(getInitialLightPosition(element.coords));
 		}
 
 		scene.add(light);
 	});
-
-	function positionLights() {
-		lights.forEach((light, i) => {
-			light.position.set(
-				initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.cos(phi + initialLightPosition[i].phi),
-				initialLightPosition[i].radius * Math.sin(theta + initialLightPosition[i].theta) * Math.sin(phi + initialLightPosition[i].phi),
-				initialLightPosition[i].radius * Math.cos(theta + initialLightPosition[i].theta)
-			).add(focus);
-		});
-	}
 
 	const boundingBox = new LineSegments(
 		new BufferGeometry().setAttribute(
@@ -530,7 +502,7 @@ export default function (
 	container.appendChild(renderer.domElement);
 
 	function render() {
-		positionLights();
+		positionLights(lights, theta, phi, focus);
 		renderer.render(scene, camera);
 	}
 
