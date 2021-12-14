@@ -1,5 +1,24 @@
 {
 	"id": "backstop_default",
+	"paths": {
+		"bitmaps_reference": "backstop_data/bitmaps_reference",
+		"bitmaps_test": "backstop_data/bitmaps_test",
+		"html_report": "backstop_data/html_report"
+	},
+	"report": [
+		"browser"
+	],
+	"engine": "puppeteer",
+	"engineOptions": {
+		"args": [
+			"--no-sandbox",
+			"--disable-setuid-sandbox"
+		]
+	},
+	"asyncCaptureLimit": 5,
+	"asyncCompareLimit": 50,
+	"debug": false,
+	"debugWindow": false,
 	"viewports": [
 		{
 			"label": "main",
@@ -104,18 +123,5 @@
 			"delay": 1000,
 			"misMatchThreshold": 0.01
 		}
-	],
-	"paths": {
-		"bitmaps_reference": "backstop_data/bitmaps_reference",
-		"bitmaps_test": "backstop_data/bitmaps_test",
-		"html_report": "backstop_data/html_report"
-	},
-	"report": [
-		"browser"
-	],
-	"engine": "puppeteer",
-	"asyncCaptureLimit": 5,
-	"asyncCompareLimit": 50,
-	"debug": false,
-	"debugWindow": false
+	]
 }
