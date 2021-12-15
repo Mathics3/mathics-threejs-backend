@@ -1,6 +1,19 @@
 CHANGES
 =======
 
+1.0.2
+-----
+
+Improvements:
+- Update three.js to r135
+
+Internals:
+- Update BackstopJS to 6.x
+- Remove duplicated error when `npm test` fails (#46)
+- Add `build-fast` script for debugging purposes, this doesn't mangle the function and variable names
+- Move some functions to lights.js for better organization
+- Move some functions to the new axes.js file for better organization
+
 1.0.1
 -----
 
