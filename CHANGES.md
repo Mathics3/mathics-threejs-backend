@@ -9,6 +9,7 @@ Improvements:
 
 Internals:
 - Replace MeshStandardMaterial by a custom ShaderMaterial in polygons
+-  Allow setting the port for the server (npm start-server [port])
 
 Bug fixes:
 - Stop hiding polygons behind other polygons
