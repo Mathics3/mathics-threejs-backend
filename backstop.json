@@ -100,6 +100,12 @@
 			"misMatchThreshold": 0.01
 		},
 		{
+			"label": "Non-axis-parallel coplanar polygon",
+			"url": "http://localhost:8080/examples/test/coplanar_polygon.html",
+			"delay": 1000,
+			"misMatchThreshold": 0.01
+		},
+		{
 			"label": "Polygon",
 			"url": "http://localhost:8080/examples/test/polygon.html",
 			"delay": 1000,
