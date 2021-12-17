@@ -24,6 +24,7 @@ function toCanvasCoords(position, camera) {
 	);
 }
 
+// i is 0, 1 or 2.
 function getTickDirection(i, radius, theta, phi, axesGeometry, boundingBox) {
 	const tickDirection = new Vector3();
 	const tickLength = 0.005 * radius;
@@ -56,7 +57,7 @@ function getTickDirection(i, radius, theta, phi, axesGeometry, boundingBox) {
 				tickDirection.setX(tickLength);
 			}
 		}
-	} else if (i === 2) {
+	} else {
 		if ((0.25 * Math.PI < phi < 0.75 * Math.PI) || (1.25 * Math.PI < phi < 1.75 * Math.PI)) {
 			if (axesGeometry[2].attributes.position.array[0] > boundingBox.position.x) {
 				tickDirection.setX(-tickLength);
@@ -129,7 +130,7 @@ export function updateAxes(hasAxes, axes, ticks, ticksSmall, axesGeometry, bound
 				} else if (i === 1) {
 					ticks[i].geometry.attributes.position.array[j * 6 + 1] = value;
 					ticks[i].geometry.attributes.position.array[j * 6 + 4] = value;
-				} else if (i === 2) {
+				} else {
 					ticks[i].geometry.attributes.position.array[j * 6 + 2] = value;
 					ticks[i].geometry.attributes.position.array[j * 6 + 5] = value;
 				}
@@ -155,7 +156,7 @@ export function updateAxes(hasAxes, axes, ticks, ticksSmall, axesGeometry, bound
 				} else if (i === 1) {
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = value;
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = value;
-				} else if (i === 2) {
+				} else {
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = value;
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = value;
 				}

@@ -1,8 +1,13 @@
-// This file contains implmentations using three.js of Mathematica and
+// This file exports implmentations using three.js of Mathematica and
 // Mathics Graphics3D primitives like "Sphere", or "Cuboid, etc.
 
 // A full list of primitives that this might grow to can be found at:
 // https://reference.wolfram.com/language/ref/Graphics3D.html
+
+// Each primitive function takes 2 parameters and returns a three.js
+// object. The 1st parameter is the primitive object (an element of
+// the elements array) and the 2nd parameter is the extent, it is used
+// in some primitives to calculate position, borders size, ...
 
 // Note that Graphics3D includes a number of 1D and 2D kinds of
 // objects, like Point, Line, Arrow, or Polygon which are extended

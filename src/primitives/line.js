@@ -10,6 +10,8 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
 // See https://reference.wolfram.com/language/ref/Line
 // for the high-level description of what is being rendered.
+// Differently from WL's Line, our lines aren't affected by
+// lightning and therefore don't have VertexNormals.
 export default function ({ color, coords, opacity = 1 }, extent) {
 	return new Line(
 		new BufferGeometry().setAttribute(

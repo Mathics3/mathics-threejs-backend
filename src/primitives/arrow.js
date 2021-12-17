@@ -33,11 +33,13 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 
 	const arrowHeadHeight = 0.2 * startCoordinate.distanceTo(endCoordinate);
 
+	// arrow head
 	group.add(new Mesh(
 		new CylinderGeometry(
 			0, // radius top, as it is a cone we let it be 0
 			0.2 * arrowHeadHeight, // radius bottom
-			arrowHeadHeight // height
+			arrowHeadHeight, // height
+			8 // radial segments
 		)
 			// move to the left so setPosition works
 			.translate(0, -arrowHeadHeight / 2, 0)
@@ -72,6 +74,7 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 		})
 	));
 
+	// arrow body
 	group.add(
 		new Line(
 			new BufferGeometry().setAttribute(

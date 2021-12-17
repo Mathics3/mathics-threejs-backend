@@ -1,3 +1,9 @@
+// Unlike the primitives, all lights are in the same file.
+// Each light function takes 2 parameters and returns a three.js object.
+// The 1st parameter is the light object (an element of the lighting array)
+// and the 2nd parameter is the extent, it's used in some lights to calculate
+// the light's position.
+
 import {
 	AmbientLight,
 	Color,

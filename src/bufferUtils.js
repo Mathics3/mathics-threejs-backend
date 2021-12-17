@@ -1,6 +1,7 @@
 import scaleCoordinate from './scaleCoordinate.js';
 
-// coordinateBuffer is preallocated for efficiency on GPUs. Also, WebGL only accepts a typed array as an attribute.
+// coordinateBuffer is preallocated for efficiency on GPUs.
+// Also, WebGL only accepts a typed array as an attribute.
 function copyIntoCoordinateBuffer(coordinateBuffer, coordinate, index) {
 	coordinateBuffer[index * 3] = coordinate[0];
 	coordinateBuffer[index * 3 + 1] = coordinate[1];

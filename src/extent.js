@@ -94,14 +94,18 @@ export default function (elements) {
 		}
 	});
 
+	// The comments bellow are also valid for ymin/ymax and zmin/zmax.
 	if (extent.xmin > extent.xmax) {
+		// xmin should be smaller than xmax, swap them.
 		[extent.xmin, extent.xmax] = [extent.xmax, extent.xmin];
 	} else if (extent.xmin === extent.xmax) {
+		// There is only one non-scaled coordinate, so we transform this extent
+		// into another, otherwise nothing would appear in the screen.
 		if (extent.xmin < 0) {
 			[extent.xmin, extent.xmax] = [2 * extent.xmin, 0];
 		} else if (extent.xmin > 0) {
 			[extent.xmin, extent.xmax] = [0, 2 * extent.xmin];
-		} else {
+		} else { // xmin === xmax === 0
 			[extent.xmin, extent.xmax] = [-1, 1];
 		}
 	}
