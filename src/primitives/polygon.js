@@ -16,6 +16,67 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 import earcut from '../../vendors/earcut.js';
 import scaleCoordinate from '../scaleCoordinate.js';
 
+// Get the unit normal vector from the 1st, 2nd and last coordinate
+// (these numbers were choosen because the vectors 1st->2nd and last->2nd
+// have different directions, what is necessary for some calculations)
+// Note: a "better" way to do this is compute an approximation plane
+// by taking linear least squares, but that would be way slower and
+// there would be only difference for very specific polygons.
+// (see https://en.wikipedia.org/wiki/Linear_least_squares)
+function getNormalVector(coordinates, extent) {
+	const vectorA = new Vector3(
+		...coordinates[0][0] ?? scaleCoordinate(coordinates[0][1], extent)
+	);
+	const vectorB = new Vector3(
+		...coordinates[1][0] ?? scaleCoordinate(coordinates[1][1], extent)
+	);
+	const vectorC = new Vector3(
+		...coordinates[coordinates.length - 1][0] ?? scaleCoordinate(coordinates[coordinates.length - 1][1], extent)
+	);
+
+	// cross product of 2 vectors with different directions in the plane
+	// (A - B) x (C - B)
+	return vectorA.sub(vectorB).cross(vectorC.sub(vectorB)).normalize();
+}
+
+// Test if the coordinates are coplanar by checking if the distance
+// of each coordinate to the plane is less than a threshold.
+// This function also returns the normal because otherwise
+// `getNormalVector` would be called twice.
+// We don't need to do `coordinate = coordinate - Δ` because the
+// converting function (applyQuaternion(...)) is just going to return a bit
+// displaced 2d coordinate (what would also happen if we subtract Δ)
+// (no errors appear if the coordinates are not perfectly coplanar)
+// Note: Δ is the distance between the coordinate and the plane
+function getCoplanarityAndNormal(coordinates, extent) {
+	// normal = ⟨A, B, C⟩
+	const normalVector = getNormalVector(coordinates, extent);
+
+	// P = ⟨a, b, c⟩
+	const pointP = new Vector3(
+		...coordinates[0][0] ?? scaleCoordinate(coordinates[0][1], extent)
+	);
+
+	// D = unit normal ⋅ P
+	const D = normalVector.dot(pointP);
+
+	const threshold = 1e-2;
+
+	for (let i = 0; i < coordinates.length; i++) {
+		const [x, y, z] = coordinates[i][0] ?? scaleCoordinate(coordinates[i][1], extent);
+
+		// Given a point P = ⟨x, y, z⟩, the distance between P and the plane is:
+		// (A x + B y + C z - D) / normal vector length
+		// normal vector length is 1 as the normal vector is a unit vector
+		// We take the module because the point can be under and over the plane.
+		if (Math.abs(normalVector.x * x + normalVector.y * y + normalVector.z * z - D) > threshold) {
+			return [false, normalVector];
+		}
+	}
+
+	return [true, normalVector];
+}
+
 // See https://reference.wolfram.com/language/ref/Polygon
 // for the high-level description of what is being rendered.
 export default function ({ color, coords, opacity = 1 }, extent) {
@@ -31,29 +92,10 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 			]), 3)
 		);
 	} else { // not a triangle
-		// boolean variables
-		let isXCoplanar = 1, isYCoplanar = 1, isZCoplanar = 1;
+		const [isCoplanar, normalVector] = getCoplanarityAndNormal(coords, extent);
 
-		coords.forEach((coordinate) => {
-			coordinate[0] ??= scaleCoordinate(coordinate[1], extent);
-
-			if (coordinate[0][0] !== coords[0][0][0]) {
-				isXCoplanar = 0;
-			}
-			if (coordinate[0][1] !== coords[0][0][1]) {
-				isYCoplanar = 0;
-			}
-			if (coordinate[0][2] !== coords[0][0][2]) {
-				isZCoplanar = 0;
-			}
-		});
-
-		if (isXCoplanar || isYCoplanar || isZCoplanar) {
-			const normalVector = new Vector3(
-				isXCoplanar,
-				isYCoplanar,
-				isZCoplanar
-			), normalZVector = new Vector3(0, 0, 1);
+		if (isCoplanar) {
+			const normalZVector = new Vector3(0, 0, 1);
 
 			// apply the quaternion "zero" all z values, we can't draw a shape with non-zero z values
 			geometry = new ShapeGeometry(new Shape(

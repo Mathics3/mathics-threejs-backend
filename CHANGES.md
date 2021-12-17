@@ -4,6 +4,9 @@ CHANGES
 dev
 ---
 
+Improvements:
+- Allow non-axis-parallel coplanar polygons. Before mathics-threejs-backend could only handle coplanar polygons with all x, y, or z coordinates the same. Now it can handle all coplanar polygons without holes
+
 Internals:
 - Replace MeshStandardMaterial by a custom ShaderMaterial in polygons
 
