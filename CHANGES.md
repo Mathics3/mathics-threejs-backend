@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+dev
+---
+
+Internals:
+- Replace MeshStandardMaterial by a custom ShaderMaterial in polygons
+
+Bug fixes:
+- Stop hiding polygons behind other polygons
+
 1.0.2
 -----
 
