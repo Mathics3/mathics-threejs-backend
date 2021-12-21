@@ -171,10 +171,8 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 			`,
 			fragmentShader: `
 				uniform vec3 diffuse;
-				uniform float roughness;
 				uniform float opacity;
 				uniform vec3 ambientLightColor;
-				uniform vec3 lightProbe[9];
 
 				varying vec3 vViewPosition;
 
@@ -184,29 +182,21 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 				struct IncidentLight {
 					vec3 color;
 					vec3 direction;
-					bool visible;
 				};
 
 				struct ReflectedLight {
 					vec3 directDiffuse;
-					vec3 directSpecular;
 					vec3 indirectDiffuse;
-					vec3 indirectSpecular;
 				};
 
 				struct GeometricContext {
 					vec3 position;
 					vec3 normal;
-					vec3 viewDir;
 				};
-
-				vec3 BRDF_Lambert(const in vec3 diffuseColor) {
-					return RECIPROCAL_PI * diffuseColor;
-				}
 
 				float getDistanceAttenuation(const in float lightDistance, const in float cutoffDistance, const in float decayExponent) {
 					if (cutoffDistance > 0.0 && decayExponent > 0.0) {
-						return pow(saturate(- lightDistance / cutoffDistance + 1.0), decayExponent);
+						return pow(saturate(-lightDistance / cutoffDistance + 1.0), decayExponent);
 					}
 					return 1.0;
 				}
@@ -223,10 +213,9 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 
 					uniform DirectionalLight directionalLights[NUM_DIR_LIGHTS];
 
-					void getDirectionalLightInfo(const in DirectionalLight directionalLight, const in GeometricContext geometry, out IncidentLight light) {
+					void getDirectionalLightInfo(const in DirectionalLight directionalLight, out IncidentLight light) {
 						light.color = directionalLight.color;
 						light.direction = directionalLight.direction;
-						light.visible = true;
 					}
 				#endif
 				#if NUM_POINT_LIGHTS > 0
@@ -243,9 +232,7 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 						vec3 lVector = pointLight.position - geometry.position;
 						light.direction = normalize(lVector);
 						float lightDistance = length(lVector);
-						light.color = pointLight.color;
-						light.color *= getDistanceAttenuation(lightDistance, pointLight.distance, pointLight.decay);
-						light.visible = (light.color != vec3(0.0));
+						light.color = pointLight.color * getDistanceAttenuation(lightDistance, pointLight.distance, pointLight.decay);
 					}
 				#endif
 				#if NUM_SPOT_LIGHTS > 0
@@ -268,50 +255,37 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 						float spotAttenuation = getSpotAttenuation(spotLight.coneCos, spotLight.penumbraCos, angleCos);
 						if (spotAttenuation > 0.0) {
 							float lightDistance = length(lVector);
-							light.color = spotLight.color * spotAttenuation;
-							light.color *= getDistanceAttenuation(lightDistance, spotLight.distance, spotLight.decay);
-							light.visible = (light.color != vec3(0.0));
+							light.color = spotLight.color * spotAttenuation * getDistanceAttenuation(lightDistance, spotLight.distance, spotLight.decay);
 						} else {
 							light.color = vec3(0.0);
-							light.visible = false;
 						}
 					}
 				#endif
 
-				struct PhysicalMaterial {
-					vec3 diffuseColor;
-					float roughness;
-					vec3 specularColor;
-				};
-
-				void RE_Direct(const in IncidentLight directLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight) {
+				void RE_Direct(const in IncidentLight directLight, const in GeometricContext geometry, const in vec3 diffuseColor, inout ReflectedLight reflectedLight) {
 					float dotNL = saturate(dot(geometry.normal, directLight.direction));
 					vec3 irradiance = dotNL * directLight.color;
-					reflectedLight.directDiffuse += irradiance * BRDF_Lambert(material.diffuseColor);
+					reflectedLight.directDiffuse += irradiance * RECIPROCAL_PI * diffuseColor;
 				}
+
 				void main() {
 					vec4 diffuseColor = vec4(diffuse, opacity);
-					ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
-					float faceDirection = gl_FrontFacing ? 1.0 : - 1.0;
-					vec3 fdx = vec3(dFdx(vViewPosition.x), dFdx(vViewPosition.y), dFdx(vViewPosition.z));
-					vec3 fdy = vec3(dFdy(vViewPosition.x), dFdy(vViewPosition.y), dFdy(vViewPosition.z));
-					vec3 normal = normalize(cross(fdx, fdy));
-					vec3 geometryNormal = normal;
-					PhysicalMaterial material;
-					material.diffuseColor = diffuseColor.rgb;
-					vec3 dxy = max(abs(dFdx(geometryNormal)), abs(dFdy(geometryNormal)));
-					GeometricContext geometry;
-					geometry.position = -vViewPosition;
-					geometry.normal = normal;
-					geometry.viewDir = normalize(vViewPosition);
+
+					ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0));
+
+					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
+
+					GeometricContext geometry = GeometricContext(-vViewPosition, normal);
+
 					IncidentLight directLight;
+
 					#if (NUM_POINT_LIGHTS > 0)
 						PointLight pointLight;
 						#pragma unroll_loop_start
 						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 							pointLight = pointLights[i];
 							getPointLightInfo(pointLight, geometry, directLight);
-							RE_Direct(directLight, geometry, material, reflectedLight);
+							RE_Direct(directLight, geometry, diffuseColor.rgb, reflectedLight);
 						}
 						#pragma unroll_loop_end
 					#endif
@@ -321,7 +295,7 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
 							spotLight = spotLights[i];
 							getSpotLightInfo(spotLight, geometry, directLight);
-							RE_Direct(directLight, geometry, material, reflectedLight);
+							RE_Direct(directLight, geometry, diffuseColor.rgb, reflectedLight);
 						}
 						#pragma unroll_loop_end
 					#endif
@@ -330,14 +304,14 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 						#pragma unroll_loop_start
 						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
 							directionalLight = directionalLights[i];
-							getDirectionalLightInfo(directionalLight, geometry, directLight);
-							RE_Direct(directLight, geometry, material, reflectedLight);
+							getDirectionalLightInfo(directionalLight, directLight);
+							RE_Direct(directLight, geometry, diffuseColor.rgb, reflectedLight);
 						}
 						#pragma unroll_loop_end
 					#endif
 
 					gl_FragColor = vec4(
-						reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + ambientLightColor * BRDF_Lambert(material.diffuseColor),
+						reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + ambientLightColor * RECIPROCAL_PI * diffuseColor.rgb,
 						diffuseColor.a
 					);
 				}
