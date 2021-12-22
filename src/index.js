@@ -12,7 +12,7 @@ function translationLayer(container, object) {
 			warning.innerText = `The major revision version of mathics-threejs-backend is 1, but it was expected to be ${versionArray[0]}. Trying to draw the graphics.`;
 
 			container.appendChild(warning);
-		} else if (parseInt(versionArray[1]) > 1) {
+		} else if (parseInt(versionArray[1]) > 2) {
 			const warning = document.createElement('p');
 
 			warning.style.color = 'yellow';
