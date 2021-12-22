@@ -4,6 +4,9 @@ CHANGES
 dev
 ---
 
+Improvements:
+- Change the API revision to 1.2
+
 New features:
 - Add `edgeForm` to polygons (#50)
 - Add `vertexNormals` to polygons (#51)
