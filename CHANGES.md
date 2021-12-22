@@ -6,6 +6,7 @@ dev
 
 Improvements:
 - Allow setting `maxSize` and `innerWidthMultiplier` from the translation layer. This was only possible to use with the "ES6 module" version of the library
+- Allow setting a custom extent (#52)
 
 1.0.3
 ---
