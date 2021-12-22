@@ -1,15 +1,21 @@
 CHANGES
 =======
 
-1.0.3
+dev
 ---
+
+New features:
+- Add `edgeForm` to polygons (#50)
+
+1.0.3
+-----
 
 Improvements:
 - Allow non-axis-parallel coplanar polygons. Before mathics-threejs-backend could only handle coplanar polygons with all x, y, or z coordinates the same. Now it can handle all coplanar polygons without holes
 
 Internals:
 - Replace MeshStandardMaterial by a custom ShaderMaterial in polygons
--  Allow setting the port for the server (npm start-server [port])
+- Allow setting the port for the server (npm start-server [port])
 
 Bug fixes:
 - Stop hiding polygons behind other polygons
