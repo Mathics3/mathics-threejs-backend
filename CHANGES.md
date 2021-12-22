@@ -6,6 +6,7 @@ dev
 
 New features:
 - Add `edgeForm` to polygons (#50)
+- Add `vertexNormals` to polygons (#51)
 
 1.0.3
 -----

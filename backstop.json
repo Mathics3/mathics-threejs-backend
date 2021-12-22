@@ -128,6 +128,12 @@
 			"url": "http://localhost:8080/examples/test/uniformPolyhedron.html",
 			"delay": 1000,
 			"misMatchThreshold": 0.01
+		},
+		{
+			"label": "Polygon with custom vertex normals",
+			"url": "http://localhost:8080/examples/test/vertexNormals.html",
+			"delay": 1000,
+			"misMatchThreshold": 0.01
 		}
 	]
 }
