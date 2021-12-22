@@ -6,6 +6,7 @@ dev
 
 Improvements:
 - Change the API revision to 1.2
+- Allow setting `maxSize` and `innerWidthMultiplier` from the translation layer. This was only possible to use with the "ES6 module" version of the library
 
 New features:
 - Add `edgeForm` to polygons (#50)
