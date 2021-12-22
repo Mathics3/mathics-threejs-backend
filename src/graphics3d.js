@@ -19,6 +19,7 @@ export default function (
 	container,
 	{
 		axes = {},
+		extent,
 		elements = [],
 		lighting = [],
 		viewpoint
@@ -29,6 +30,7 @@ export default function (
 	// TODO: shading, handling of VertexNormals
 
 	axes.hasaxes ??= false;
+	extent ??= calculateExtent(elements);
 
 	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
 		hasAxes, isMouseDown = false,
@@ -39,8 +41,6 @@ export default function (
 	container.style.width = canvasSize + 'px';
 	// to avoid overflow when a tick numbers is out of the parent element
 	container.style.height = canvasSize + 10 + 'px';
-
-	const extent = calculateExtent(elements);
 
 	// where the camera is looking (initialized on center of the scene)
 	const focus = new Vector3(
