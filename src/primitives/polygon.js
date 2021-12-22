@@ -2,6 +2,8 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	DoubleSide,
+	Group,
+	LineSegments,
 	Mesh,
 	Quaternion,
 	ShaderMaterial,
@@ -79,7 +81,7 @@ function getCoplanarityAndNormal(coordinates, extent) {
 
 // See https://reference.wolfram.com/language/ref/Polygon
 // for the high-level description of what is being rendered.
-export default function ({ color, coords, opacity = 1 }, extent) {
+export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) {
 	let geometry;
 
 	if (coords.length === 3) { // triangle
@@ -146,7 +148,7 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 		}
 	}
 
-	return new Mesh(
+	const polygon = new Mesh(
 		geometry,
 		new ShaderMaterial({
 			lights: true,
@@ -318,4 +320,43 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 			`
 		})
 	);
+
+	// Differently from cuboids and other primitives, the polygons
+	// DON'T have edges by default.
+	if (edgeForm.showEdges !== true) {
+		// If the edges aren't shown the work is done.
+		return polygon;
+	}
+
+	const group = new Group();
+
+	group.add(polygon);
+
+	// Differently from polyhedrons, polygons use a Mesh and a material
+	// with "wirefram: true". This is slower than LineSegments, but
+	// creating a new BufferGeometry is also slow and uses more RAM
+	// (LineSegments don't support indexed BufferGeometries).
+	group.add(new Mesh(
+		geometry,
+		new ShaderMaterial({
+			wireframe: true,
+			uniforms: {
+				color: { value: edgeForm.color ?? [0, 0, 0] }
+			},
+			vertexShader: `
+				void main() {
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+				}
+			`,
+			fragmentShader: `
+				uniform vec3 color;
+
+				void main() {
+					gl_FragColor = vec4(color, 1);
+				}
+			`
+		})
+	));
+
+	return group;
 }
