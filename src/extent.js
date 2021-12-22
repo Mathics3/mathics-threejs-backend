@@ -56,7 +56,7 @@ export default function (elements) {
 
 			const radius = element.radius ?? element.pointSize ?? element.edgeLength ?? 1;
 
-			element.coords.forEach((coordinate => {
+			element.coords.forEach(((coordinate) => {
 				if (coordinate[0]) {
 					if (isFirstCoordinate) {
 						extent.xmin = coordinate[0][0] - radius;

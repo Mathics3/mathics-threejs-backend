@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<body>
+	<p>This polygon should have shadows in its upper side. It doesn't have because we are setting custom vertex normals.</p>
+
+	<main id="main"></main>
+
+	<script src="build.js"></script>
+
+	<script>
+		drawGraphics3d(
+			document.getElementById('main'),
+			{
+				elements: [
+					{
+						type: 'polygon',
+						color: [1, 1, 1],
+						coords: [
+							[[0, 0, 0]],
+							[[1, 1, 1]],
+							[[0, 1, 1]]
+						],
+						vertexNormals: [
+							[1, -1, 1],
+							[1, -1, 1],
+							[1, -1, 1]
+						]
+					}
+				],
+				lighting: [
+					{
+						type: 'point',
+						color: [1, 1, 1],
+						coords: [[1, 0, 1]]
+					}
+				],
+				viewpoint: [2, -4, 4]
+			}
+		);
+	</script>
+</body>

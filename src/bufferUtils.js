@@ -1,11 +1,23 @@
 import scaleCoordinate from './scaleCoordinate.js';
 
-// coordinateBuffer is preallocated for efficiency on GPUs.
+// This is usually used to copy a coordinate into a coordinate buffer.
+// The coordinates buffers are preallocated for efficiency on GPUs.
 // Also, WebGL only accepts a typed array as an attribute.
-function copyIntoCoordinateBuffer(coordinateBuffer, coordinate, index) {
-	coordinateBuffer[index * 3] = coordinate[0];
-	coordinateBuffer[index * 3 + 1] = coordinate[1];
-	coordinateBuffer[index * 3 + 2] = coordinate[2];
+// array is a 3-elements array
+// index is the element index, the biggest index in a 3n-elements buffer is
+// n - 1 (the first element is 0)
+export function copyArray3IntoBuffer(buffer, array, index) {
+	buffer[index * 3] = array[0];
+	buffer[index * 3 + 1] = array[1];
+	buffer[index * 3 + 2] = array[2];
+}
+
+// The same as copyArray3IntoBuffer, but with
+// a Vector3 instead of a 3-element array.
+export function copyVector3IntoBuffer(buffer, vector, index) {
+	buffer[index * 3] = vector.x;
+	buffer[index * 3 + 1] = vector.y;
+	buffer[index * 3 + 2] = vector.z;
 }
 
 // Create a coordinate buffer and copy the coordinates from coords to it.
@@ -16,7 +28,7 @@ export function getPopulatedCoordinateBuffer(coords, extent) {
 	const coordinateBuffer = new Float32Array(coords.length * 3);
 
 	coords.forEach((coordinate, i) =>
-		copyIntoCoordinateBuffer(
+		copyArray3IntoBuffer(
 			coordinateBuffer,
 			coordinate[0] ?? scaleCoordinate(coordinate[1], extent),
 			i
@@ -35,13 +47,13 @@ export function get2PopulatedCoordinateBuffers(coords, extent) {
 	const coordinateBuffer2 = new Float32Array(coords.length * 1.5);
 
 	for (let i = 0; i < coords.length / 2; i++) {
-		copyIntoCoordinateBuffer(
+		copyArray3IntoBuffer(
 			coordinateBuffer1,
 			coords[i * 2][0] ?? scaleCoordinate(coords[i * 2][1], extent),
 			i
 		);
 
-		copyIntoCoordinateBuffer(
+		copyArray3IntoBuffer(
 			coordinateBuffer2,
 			coords[i * 2 + 1][0] ?? scaleCoordinate(coords[i * 2 + 1][1], extent),
 			i

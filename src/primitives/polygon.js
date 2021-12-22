@@ -3,7 +3,6 @@ import {
 	BufferGeometry,
 	DoubleSide,
 	Group,
-	LineSegments,
 	Mesh,
 	Quaternion,
 	ShaderMaterial,
@@ -13,7 +12,11 @@ import {
 	Vector3
 } from '../../vendors/three.js';
 
-import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
+import {
+	copyArray3IntoBuffer,
+	copyVector3IntoBuffer,
+	getPopulatedCoordinateBuffer
+} from '../bufferUtils.js';
 
 import earcut from '../../vendors/earcut.js';
 import scaleCoordinate from '../scaleCoordinate.js';
@@ -81,7 +84,7 @@ function getCoplanarityAndNormal(coordinates, extent) {
 
 // See https://reference.wolfram.com/language/ref/Polygon
 // for the high-level description of what is being rendered.
-export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) {
+export default function ({ color, coords, edgeForm = {}, opacity = 1, vertexNormals = {} }, extent) {
 	let geometry;
 
 	if (coords.length === 3) { // triangle
@@ -126,10 +129,11 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 					)
 				);
 
-				// copy the temporary vector to the "position" buffer
-				geometry.attributes.position.array[i * 3] = temporaryVector.x;
-				geometry.attributes.position.array[i * 3 + 1] = temporaryVector.y;
-				geometry.attributes.position.array[i * 3 + 2] = temporaryVector.z;
+				copyVector3IntoBuffer(
+					geometry.attributes.position.array,
+					temporaryVector,
+					i
+				);
 			}
 		} else {
 			// We use earcut to "break" the polygon into multiple triangles. We can't draw if we don't do it.
@@ -148,6 +152,23 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 		}
 	}
 
+	// Contains elements from vertexNormals and NaNs for the other
+	// elements if normals.length > vertexNormals.length
+	// When the value is NaN, it is going to be re-calculated
+	// in the vertex shader (we can't do it here because each pixel
+	// may have a different normal value).
+	const normals = new Float32Array(geometry.attributes.position.count * 3);
+
+	for (let i = 0; i < normals.length / 3; i++) {
+		copyArray3IntoBuffer(
+			normals,
+			vertexNormals[i] ?? [NaN, NaN, NaN],
+			i
+		);
+	}
+
+	geometry.setAttribute('normal', new BufferAttribute(normals, 3));
+
 	const polygon = new Mesh(
 		geometry,
 		new ShaderMaterial({
@@ -162,6 +183,7 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 			},
 			vertexShader: `
 				varying vec3 vViewPosition;
+				varying vec3 vNormal;
 
 				void main() {
 					vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -169,6 +191,7 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 					gl_Position = projectionMatrix * mvPosition;
 
 					vViewPosition = -mvPosition.xyz;
+					vNormal = normal;
 				}
 			`,
 			fragmentShader: `
@@ -177,6 +200,7 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 				uniform vec3 ambientLightColor;
 
 				varying vec3 vViewPosition;
+				varying vec3 vNormal;
 
 				#define RECIPROCAL_PI 0.3183098861837907
 				#define saturate(a) clamp(a, 0.0, 1.0)
@@ -189,11 +213,6 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 				struct ReflectedLight {
 					vec3 directDiffuse;
 					vec3 indirectDiffuse;
-				};
-
-				struct GeometricContext {
-					vec3 position;
-					vec3 normal;
 				};
 
 				float getDistanceAttenuation(const in float lightDistance, const in float cutoffDistance, const in float decayExponent) {
@@ -230,8 +249,8 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 
 					uniform PointLight pointLights[NUM_POINT_LIGHTS];
 
-					void getPointLightInfo(const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight light) {
-						vec3 lVector = pointLight.position - geometry.position;
+					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
+						vec3 lVector = pointLight.position + vViewPosition;
 						light.direction = normalize(lVector);
 						float lightDistance = length(lVector);
 						light.color = pointLight.color * getDistanceAttenuation(lightDistance, pointLight.distance, pointLight.decay);
@@ -250,8 +269,8 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 
 					uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
 
-					void getSpotLightInfo(const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light) {
-						vec3 lVector = spotLight.position - geometry.position;
+					void getSpotLightInfo(const in SpotLight spotLight, out IncidentLight light) {
+						vec3 lVector = spotLight.position + vViewPosition;
 						light.direction = normalize(lVector);
 						float angleCos = dot(light.direction, spotLight.direction);
 						float spotAttenuation = getSpotAttenuation(spotLight.coneCos, spotLight.penumbraCos, angleCos);
@@ -264,20 +283,18 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 					}
 				#endif
 
-				void RE_Direct(const in IncidentLight directLight, const in GeometricContext geometry, const in vec3 diffuseColor, inout ReflectedLight reflectedLight) {
-					float dotNL = saturate(dot(geometry.normal, directLight.direction));
+				void RE_Direct(const in IncidentLight directLight, const in vec3 diffuseColor, const in vec3 normal, inout ReflectedLight reflectedLight) {
+					float dotNL = saturate(dot(normal, directLight.direction));
 					vec3 irradiance = dotNL * directLight.color;
 					reflectedLight.directDiffuse += irradiance * RECIPROCAL_PI * diffuseColor;
 				}
 
 				void main() {
 					vec4 diffuseColor = vec4(diffuse, opacity);
+					// If x is NaN, then y and z are also NaN.
+					vec3 normal = isnan(vNormal.x) ? normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition))) : vNormal;
 
 					ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0));
-
-					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
-
-					GeometricContext geometry = GeometricContext(-vViewPosition, normal);
 
 					IncidentLight directLight;
 
@@ -286,8 +303,8 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 						#pragma unroll_loop_start
 						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 							pointLight = pointLights[i];
-							getPointLightInfo(pointLight, geometry, directLight);
-							RE_Direct(directLight, geometry, diffuseColor.rgb, reflectedLight);
+							getPointLightInfo(pointLight, directLight);
+							RE_Direct(directLight, diffuseColor.rgb, normal, reflectedLight);
 						}
 						#pragma unroll_loop_end
 					#endif
@@ -296,8 +313,8 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 						#pragma unroll_loop_start
 						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
 							spotLight = spotLights[i];
-							getSpotLightInfo(spotLight, geometry, directLight);
-							RE_Direct(directLight, geometry, diffuseColor.rgb, reflectedLight);
+							getSpotLightInfo(spotLight, directLight);
+							RE_Direct(directLight, diffuseColor.rgb, normal, reflectedLight);
 						}
 						#pragma unroll_loop_end
 					#endif
@@ -307,7 +324,7 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
 							directionalLight = directionalLights[i];
 							getDirectionalLightInfo(directionalLight, directLight);
-							RE_Direct(directLight, geometry, diffuseColor.rgb, reflectedLight);
+							RE_Direct(directLight, diffuseColor.rgb, normal, reflectedLight);
 						}
 						#pragma unroll_loop_end
 					#endif
