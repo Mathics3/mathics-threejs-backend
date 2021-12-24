@@ -7,6 +7,7 @@ import {
 	LineSegments,
 	Mesh,
 	ShaderMaterial,
+	RawShaderMaterial,
 	UniformsLib
 } from '../../vendors/three.js';
 
@@ -356,9 +357,9 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 				opacity: { value: opacity }
 			},
 			vertexShader: `
-				attribute vec3 polyhedronCenter;
+				in vec3 polyhedronCenter;
 
-				varying vec3 vViewPosition;
+				out vec3 vViewPosition;
 
 				void main() {
 					vec4 mvPosition = modelViewMatrix * vec4(position + polyhedronCenter, 1);
@@ -369,35 +370,131 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 				}
 			`,
 			fragmentShader: `
-				#define FLAT_SHADED
+				in vec3 vViewPosition;
 
 				uniform vec3 diffuse;
-				uniform vec3 emissive;
-				uniform float roughness;
-				uniform float metalness;
 				uniform float opacity;
-				varying vec3 vViewPosition;
+				uniform vec3 ambientLightColor;
 
-				#include <common>
-				#include <bsdfs>
-				#include <lights_pars_begin>
-				#include <lights_physical_pars_fragment>
+				#define RECIPROCAL_PI 0.3183098861837907
+				#define saturate(a) clamp(a, 0.0, 1.0)
+
+				struct IncidentLight {
+					vec3 color;
+					vec3 direction;
+				};
+
+				float getDistanceAttenuation(const in float lightDistance, const in float cutoffDistance, const in float decayExponent) {
+					if (cutoffDistance > 0.0 && decayExponent > 0.0) {
+						return pow(saturate(-lightDistance / cutoffDistance + 1.0), decayExponent);
+					}
+					return 1.0;
+				}
+
+				float getSpotAttenuation(const in float coneCosine, const in float penumbraCosine, const in float angleCosine) {
+					return smoothstep(coneCosine, penumbraCosine, angleCosine);
+				}
+
+				#if NUM_DIR_LIGHTS > 0
+					struct DirectionalLight {
+						vec3 direction;
+						vec3 color;
+					};
+
+					uniform DirectionalLight directionalLights[NUM_DIR_LIGHTS];
+
+					void getDirectionalLightInfo(const in DirectionalLight directionalLight, out IncidentLight light) {
+						light.color = directionalLight.color;
+						light.direction = directionalLight.direction;
+					}
+				#endif
+				#if NUM_POINT_LIGHTS > 0
+					struct PointLight {
+						vec3 position;
+						vec3 color;
+						float distance;
+						float decay;
+					};
+
+					uniform PointLight pointLights[NUM_POINT_LIGHTS];
+
+					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
+						vec3 lVector = pointLight.position + vViewPosition;
+						light.direction = normalize(lVector);
+						float lightDistance = length(lVector);
+						light.color = pointLight.color * getDistanceAttenuation(lightDistance, pointLight.distance, pointLight.decay);
+					}
+				#endif
+				#if NUM_SPOT_LIGHTS > 0
+					struct SpotLight {
+						vec3 position;
+						vec3 direction;
+						vec3 color;
+						float distance;
+						float decay;
+						float coneCos;
+						float penumbraCos;
+					};
+
+					uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
+
+					void getSpotLightInfo(const in SpotLight spotLight, out IncidentLight light) {
+						vec3 lVector = spotLight.position + vViewPosition;
+						light.direction = normalize(lVector);
+						float angleCos = dot(light.direction, spotLight.direction);
+						float spotAttenuation = getSpotAttenuation(spotLight.coneCos, spotLight.penumbraCos, angleCos);
+						if (spotAttenuation > 0.0) {
+							float lightDistance = length(lVector);
+							light.color = spotLight.color * spotAttenuation * getDistanceAttenuation(lightDistance, spotLight.distance, spotLight.decay);
+						} else {
+							light.color = vec3(0.0);
+						}
+					}
+				#endif
+
+				vec3 RE_Direct(const in IncidentLight directLight, const in vec3 normal) {
+					float dotNL = saturate(dot(normal, directLight.direction));
+
+					return dotNL * directLight.color * RECIPROCAL_PI * diffuse;
+				}
 
 				void main() {
-					vec4 diffuseColor = vec4(diffuse, opacity);
-					ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
+					// If x is NaN, then y and z are also NaN.
+					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
 
-					vec3 totalEmissiveRadiance = emissive;
+					vec3 reflectedLight = vec3(0.0);
 
-					#include <roughnessmap_fragment>
-					#include <metalnessmap_fragment>
-					#include <normal_fragment_begin>
-					#include <lights_physical_fragment>
-					#include <lights_fragment_begin>
-					#include <lights_fragment_maps>
-					#include <lights_fragment_end>
+					IncidentLight directLight;
 
-					gl_FragColor = vec4(reflectedLight.directDiffuse + reflectedLight.indirectDiffuse, diffuseColor.a);
+					#if NUM_POINT_LIGHTS > 0
+						PointLight pointLight;
+						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
+							pointLight = pointLights[i];
+							getPointLightInfo(pointLight, directLight);
+							reflectedLight += RE_Direct(directLight, normal);
+						}
+					#endif
+					#if NUM_SPOT_LIGHTS > 0
+						SpotLight spotLight;
+						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
+							spotLight = spotLights[i];
+							getSpotLightInfo(spotLight, directLight);
+							reflectedLight += RE_Direct(directLight, normal);
+						}
+					#endif
+					#if NUM_DIR_LIGHTS > 0
+						DirectionalLight directionalLight;
+						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
+							directionalLight = directionalLights[i];
+							getDirectionalLightInfo(directionalLight, directLight);
+							reflectedLight += RE_Direct(directLight, normal);
+						}
+					#endif
+
+					pc_fragColor = vec4(
+						reflectedLight + ambientLightColor * diffuse * RECIPROCAL_PI,
+						opacity
+					);
 				}
 			`
 		})
@@ -429,22 +526,28 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 
 	const edges = new LineSegments(
 		edgesGeometry,
-		new ShaderMaterial({
+		new RawShaderMaterial({
 			uniforms: {
 				color: { value: edgeForm.color ?? [0, 0, 0] }
 			},
-			vertexShader: `
-				attribute vec3 polyhedronCenter;
+			vertexShader: `#version 300 es
+				in vec3 position;
+				in vec3 polyhedronCenter;
+
+				uniform mat4 projectionMatrix;
+				uniform mat4 modelViewMatrix;
 
 				void main() {
 					gl_Position = projectionMatrix * modelViewMatrix * vec4(position + polyhedronCenter, 1);
 				}
 			`,
-			fragmentShader: `
-				uniform vec3 color;
+			fragmentShader: `#version 300 es
+				uniform lowp vec3 color;
+
+				out lowp vec4 pc_fragColor;
 
 				void main() {
-					gl_FragColor = vec4(color, 1);
+					pc_fragColor = vec4(color, 1);
 				}
 			`
 		})

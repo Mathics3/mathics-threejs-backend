@@ -5,6 +5,7 @@ import {
 	Group,
 	Mesh,
 	Quaternion,
+	RawShaderMaterial,
 	ShaderMaterial,
 	Shape,
 	ShapeGeometry,
@@ -182,8 +183,8 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, vertexNorm
 				opacity: { value: opacity }
 			},
 			vertexShader: `
-				varying vec3 vViewPosition;
-				varying vec3 vNormal;
+				out vec3 vViewPosition;
+				out vec3 vNormal;
 
 				void main() {
 					vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -195,12 +196,12 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, vertexNorm
 				}
 			`,
 			fragmentShader: `
+				in vec3 vViewPosition;
+				in vec3 vNormal;
+
 				uniform vec3 diffuse;
 				uniform float opacity;
 				uniform vec3 ambientLightColor;
-
-				varying vec3 vViewPosition;
-				varying vec3 vNormal;
 
 				#define RECIPROCAL_PI 0.3183098861837907
 				#define saturate(a) clamp(a, 0.0, 1.0)
@@ -208,11 +209,6 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, vertexNorm
 				struct IncidentLight {
 					vec3 color;
 					vec3 direction;
-				};
-
-				struct ReflectedLight {
-					vec3 directDiffuse;
-					vec3 indirectDiffuse;
 				};
 
 				float getDistanceAttenuation(const in float lightDistance, const in float cutoffDistance, const in float decayExponent) {
@@ -283,55 +279,48 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, vertexNorm
 					}
 				#endif
 
-				void RE_Direct(const in IncidentLight directLight, const in vec3 diffuseColor, const in vec3 normal, inout ReflectedLight reflectedLight) {
+				vec3 RE_Direct(const in IncidentLight directLight, const in vec3 normal) {
 					float dotNL = saturate(dot(normal, directLight.direction));
-					vec3 irradiance = dotNL * directLight.color;
-					reflectedLight.directDiffuse += irradiance * RECIPROCAL_PI * diffuseColor;
+
+					return dotNL * directLight.color * RECIPROCAL_PI * diffuse;
 				}
 
 				void main() {
-					vec4 diffuseColor = vec4(diffuse, opacity);
 					// If x is NaN, then y and z are also NaN.
 					vec3 normal = isnan(vNormal.x) ? normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition))) : vNormal;
 
-					ReflectedLight reflectedLight = ReflectedLight(vec3(0.0), vec3(0.0));
+					vec3 reflectedLight = vec3(0.0);
 
 					IncidentLight directLight;
 
-					#if (NUM_POINT_LIGHTS > 0)
+					#if NUM_POINT_LIGHTS > 0
 						PointLight pointLight;
-						#pragma unroll_loop_start
 						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 							pointLight = pointLights[i];
 							getPointLightInfo(pointLight, directLight);
-							RE_Direct(directLight, diffuseColor.rgb, normal, reflectedLight);
+							reflectedLight += RE_Direct(directLight, normal);
 						}
-						#pragma unroll_loop_end
 					#endif
-					#if (NUM_SPOT_LIGHTS > 0)
+					#if NUM_SPOT_LIGHTS > 0
 						SpotLight spotLight;
-						#pragma unroll_loop_start
 						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
 							spotLight = spotLights[i];
 							getSpotLightInfo(spotLight, directLight);
-							RE_Direct(directLight, diffuseColor.rgb, normal, reflectedLight);
+							reflectedLight += RE_Direct(directLight, normal);
 						}
-						#pragma unroll_loop_end
 					#endif
-					#if (NUM_DIR_LIGHTS > 0)
+					#if NUM_DIR_LIGHTS > 0
 						DirectionalLight directionalLight;
-						#pragma unroll_loop_start
 						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
 							directionalLight = directionalLights[i];
 							getDirectionalLightInfo(directionalLight, directLight);
-							RE_Direct(directLight, diffuseColor.rgb, normal, reflectedLight);
+							reflectedLight += RE_Direct(directLight, normal);
 						}
-						#pragma unroll_loop_end
 					#endif
 
-					gl_FragColor = vec4(
-						reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + ambientLightColor * RECIPROCAL_PI * diffuseColor.rgb,
-						diffuseColor.a
+					pc_fragColor = vec4(
+						reflectedLight + ambientLightColor * diffuse * RECIPROCAL_PI,
+						opacity
 					);
 				}
 			`
@@ -355,21 +344,28 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, vertexNorm
 	// (LineSegments don't support indexed BufferGeometries).
 	group.add(new Mesh(
 		geometry,
-		new ShaderMaterial({
+		new RawShaderMaterial({
 			wireframe: true,
 			uniforms: {
 				color: { value: edgeForm.color ?? [0, 0, 0] }
 			},
-			vertexShader: `
+			vertexShader: `#version 300 es
+				in vec3 position;
+
+				uniform mat4 projectionMatrix;
+				uniform mat4 modelViewMatrix;
+
 				void main() {
 					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 				}
 			`,
-			fragmentShader: `
-				uniform vec3 color;
+			fragmentShader: `#version 300 es
+				uniform lowp vec3 color;
+
+				out lowp vec4 pc_fragColor;
 
 				void main() {
-					gl_FragColor = vec4(color, 1);
+					pc_fragColor = vec4(color, 1.0);
 				}
 			`
 		})

@@ -1,9 +1,8 @@
 import {
 	BufferAttribute,
 	BufferGeometry,
-	Color,
 	Line,
-	LineBasicMaterial
+	RawShaderMaterial
 } from '../../vendors/three.js';
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
@@ -21,10 +20,31 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 				3
 			)
 		),
-		new LineBasicMaterial({
-			color: new Color(...color),
+		new RawShaderMaterial({
 			opacity,
-			transparent: opacity !== 1
+			transparent: opacity !== 1,
+			uniforms: {
+				color: { value: [...color, opacity] }
+			},
+			vertexShader: `#version 300 es
+				in vec3 position;
+
+				uniform mat4 projectionMatrix;
+				uniform mat4 modelViewMatrix;
+
+				void main() {
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+				}
+			`,
+			fragmentShader: `#version 300 es
+				uniform lowp vec4 color;
+
+				out lowp vec4 pc_fragColor;
+
+				void main() {
+					pc_fragColor = color;
+				}
+			`
 		})
 	);
 }

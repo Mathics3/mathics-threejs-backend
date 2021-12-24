@@ -46,11 +46,11 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 				showEdges: { value: edgeForm.showEdges ?? true }
 			},
 			vertexShader: `
-				attribute vec3 cuboidBegin;
-				attribute vec3 cuboidEnd;
+				in vec3 cuboidBegin;
+				in vec3 cuboidEnd;
 
-				varying vec2 vUv;
-				varying vec3 vViewPosition;
+				out vec2 vUv;
+				out vec3 vViewPosition;
 
 				void main() {
 					// position and scale the cuboid
@@ -70,47 +70,144 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 				}
 			`,
 			fragmentShader: `
+				in vec3 vViewPosition;
+				in vec2 vUv;
+
 				uniform vec3 diffuse;
 				uniform vec3 edgeColor;
 				uniform float opacity;
 				uniform bool showEdges;
+				uniform vec3 ambientLightColor;
 
-				varying vec3 vViewPosition;
-				varying vec2 vUv;
+				#define RECIPROCAL_PI 0.3183098861837907
+				#define saturate(a) clamp(a, 0.0, 1.0)
 
-				#include <common>
-				#include <bsdfs>
-				#include <lights_pars_begin>
-				#include <lights_physical_pars_fragment>
+				struct IncidentLight {
+					vec3 color;
+					vec3 direction;
+				};
+
+				float getDistanceAttenuation(const in float lightDistance, const in float cutoffDistance, const in float decayExponent) {
+					if (cutoffDistance > 0.0 && decayExponent > 0.0) {
+						return pow(saturate(-lightDistance / cutoffDistance + 1.0), decayExponent);
+					}
+					return 1.0;
+				}
+
+				#if NUM_DIR_LIGHTS > 0
+					struct DirectionalLight {
+						vec3 direction;
+						vec3 color;
+					};
+
+					uniform DirectionalLight directionalLights[NUM_DIR_LIGHTS];
+
+					void getDirectionalLightInfo(const in DirectionalLight directionalLight, out IncidentLight light) {
+						light.color = directionalLight.color;
+						light.direction = directionalLight.direction;
+					}
+				#endif
+				#if NUM_POINT_LIGHTS > 0
+					struct PointLight {
+						vec3 position;
+						vec3 color;
+						float distance;
+						float decay;
+					};
+
+					uniform PointLight pointLights[NUM_POINT_LIGHTS];
+
+					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
+						vec3 lVector = pointLight.position + vViewPosition;
+
+						light.direction = normalize(lVector);
+						light.color = pointLight.color + getDistanceAttenuation(length(lVector), pointLight.distance, pointLight.decay);
+					}
+				#endif
+				#if NUM_SPOT_LIGHTS > 0
+					struct SpotLight {
+						vec3 position;
+						vec3 direction;
+						vec3 color;
+						float distance;
+						float decay;
+						float coneCos;
+						float penumbraCos;
+					};
+
+					float getSpotAttenuation(const in float coneCosine, const in float penumbraCosine, const in float angleCosine) {
+						return smoothstep(coneCosine, penumbraCosine, angleCosine);
+					}
+
+					uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
+
+					void getSpotLightInfo(const in SpotLight spotLight, out IncidentLight light) {
+						vec3 lVector = spotLight.position + vViewPosition;
+						light.direction = normalize(lVector);
+
+						float angleCos = dot(light.direction, spotLight.direction);
+						float spotAttenuation = getSpotAttenuation(spotLight.coneCos, spotLight.penumbraCos, angleCos);
+
+						if (spotAttenuation > 0.0) {
+							light.color = spotLight.color * spotAttenuation + getDistanceAttenuation(length(lVector), spotLight.distance, spotLight.decay);
+						} else {
+							light.color = vec3(0.0);
+						}
+					}
+				#endif
+
+				vec3 RE_Direct(const in IncidentLight directLight, const in vec3 normal, const in vec3 diffuseColor) {
+					float dotNL = saturate(dot(normal, directLight.direction));
+					return dotNL * directLight.color * diffuseColor * RECIPROCAL_PI;
+				}
 
 				void main() {
-					vec4 diffuseColor;
+					vec3 diffuseColor;
 
 					if (showEdges) {
 						vec2 grid = abs(fract(vUv - 0.5) - 0.5) / fwidth(vUv);
 
 						float factor = min(min(grid.x, grid.y), 1.0);
 
-						diffuseColor = vec4(diffuse * factor + edgeColor * (1.0 - factor), opacity);
+						diffuseColor = (diffuse - edgeColor) * factor + edgeColor;
 					} else {
-						diffuseColor = vec4(diffuse, opacity);
+						diffuseColor = diffuse;
 					}
 
-					ReflectedLight reflectedLight = ReflectedLight(vec3(0), vec3(0), vec3(0), vec3(0));
+					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
 
-					vec3 normal = normalize(cross(
-						vec3(dFdx(vViewPosition.x), dFdx(vViewPosition.y), dFdx(vViewPosition.z)),
-						vec3(dFdy(vViewPosition.x), dFdy(vViewPosition.y), dFdy(vViewPosition.z))
-					));
+					vec3 reflectedLight = vec3(0.0);
 
-					PhysicalMaterial material;
-					material.diffuseColor = diffuseColor.rgb;
+					IncidentLight directLight;
+					#if NUM_POINT_LIGHTS > 0
+						PointLight pointLight;
+						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
+							pointLight = pointLights[i];
+							getPointLightInfo(pointLight, directLight);
+							reflectedLight += RE_Direct(directLight, normal, diffuseColor);
+						}
+					#endif
+					#if NUM_SPOT_LIGHTS > 0
+						SpotLight spotLight;
+						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
+							spotLight = spotLights[i];
+							getSpotLightInfo(spotLight, directLight);
+							reflectedLight += RE_Direct(directLight, normal, diffuseColor);
+						}
+					#endif
+					#if NUM_DIR_LIGHTS > 0
+						DirectionalLight directionalLight;
+						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
+							directionalLight = directionalLights[i];
+							getDirectionalLightInfo(directionalLight, directLight);
+							reflectedLight += RE_Direct(directLight, normal, diffuseColor);
+						}
+					#endif
+	
+					reflectedLight += ambientLightColor * diffuseColor * RECIPROCAL_PI;
 
-					#include <lights_fragment_begin>
-					#include <lights_fragment_end>
-
-					gl_FragColor = vec4(
-						reflectedLight.directDiffuse + reflectedLight.indirectDiffuse,
+					pc_fragColor = vec4(
+						reflectedLight,
 						opacity
 					);
 				}
