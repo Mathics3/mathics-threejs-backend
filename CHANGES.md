@@ -13,6 +13,9 @@ New features:
 - Add `edgeForm` to polygons (#50)
 - Add `vertexNormals` to polygons (#51)
 
+Internals:
+- Convert all materials to ShaderMaterial/RawShaderMaterial (#53)
+
 1.0.3
 -----
 

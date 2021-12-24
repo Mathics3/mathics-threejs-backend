@@ -2,7 +2,7 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	Points,
-	ShaderMaterial
+	RawShaderMaterial
 } from '../../vendors/three.js';
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
@@ -20,14 +20,18 @@ export default function ({ color, coords, opacity = 1, pointSize }, extent, canv
 				3
 			)
 		),
-		new ShaderMaterial({
+		new RawShaderMaterial({
 			transparent: true,
 			depthWrite: false,
 			uniforms: {
 				size: { value: pointSize * canvasSize },
 				color: { value: [...color, opacity] }
 			},
-			vertexShader: `
+			vertexShader: `#version 300 es
+				in vec3 position;
+
+				uniform mat4 projectionMatrix;
+				uniform mat4 modelViewMatrix;
 				uniform float size;
 
 				void main() {
@@ -35,13 +39,15 @@ export default function ({ color, coords, opacity = 1, pointSize }, extent, canv
 					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 				}
 			`,
-			fragmentShader: `
-				uniform vec4 color;
+			fragmentShader: `#version 300 es
+				uniform lowp vec4 color;
+
+				out lowp vec4 pc_fragColor;
 
 				void main() {
 					if (length(gl_PointCoord - vec2(0.5)) > 0.5) discard;
 
-					gl_FragColor = color;
+					pc_fragColor = color;
 				}
 			`
 		})
