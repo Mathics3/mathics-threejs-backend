@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<body>
+	<main id="main"></main>
+
+	<script type="module">
+		import drawGraphics3d from '../../src/index.js';
+
+		drawGraphics3d(
+			document.getElementById('main'),
+			{
+				elements: [
+					{
+						type: 'line',
+						dashed: true,
+						gapSize: 30,
+						color: [1, 0, 1],
+						coords: [
+							[[0, 0, 0]],
+							[null, [0, 1, 0]],
+							[[1, 1, 1]]
+						]
+					}
+				],
+				viewpoint: [2, -4, 4]
+			}
+		);
+	</script>
+</body>

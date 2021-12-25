@@ -88,6 +88,12 @@
 			"misMatchThreshold": 0.01
 		},
 		{
+			"label": "Dahsed line",
+			"url": "http://localhost:8080/examples/test/dashed_line.html",
+			"delay": 1000,
+			"misMatchThreshold": 0.01
+		},
+		{
 			"label": "Line",
 			"url": "http://localhost:8080/examples/test/line.html",
 			"delay": 1000,
