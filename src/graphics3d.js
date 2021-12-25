@@ -4,7 +4,6 @@ import {
 	Color,
 	LineSegments,
 	PerspectiveCamera,
-	RawShaderMaterial,
 	Scene,
 	Vector3,
 	WebGLRenderer
@@ -14,6 +13,7 @@ import calculateExtent from './extent.js';
 import { axesIndices, positionAxes, positionTickNumbers, updateAxes } from './axes.js';
 import lightFunctions, { getInitialLightPosition, positionLights } from './lights.js';
 import primitiveFunctions from './primitives/index.js';
+import { getBasicMaterial } from './shader.js';
 
 export default function (
 	container,
@@ -146,25 +146,7 @@ export default function (
 				extent.xmin, extent.ymax, extent.zmin,
 			]), 3)
 		),
-		new RawShaderMaterial({
-			vertexShader: `#version 300 es
-				in vec3 position;
-
-				uniform mat4 projectionMatrix;
-				uniform mat4 modelViewMatrix;
-
-				void main() {
-					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
-				}
-			`,
-			fragmentShader: `#version 300 es
-				out lowp vec4 pc_fragColor;
-
-				void main() {
-					pc_fragColor = vec4(0.4, 0.4, 0.4, 1.0);
-				}
-			`
-		})
+		getBasicMaterial([0.4, 0.4, 0.4], 1)
 	);
 
 	scene.add(boundingBox);
@@ -181,25 +163,7 @@ export default function (
 
 	// axes ticks
 	const
-		tickMaterial = new RawShaderMaterial({
-			vertexShader: `#version 300 es
-				in vec3 position;
-
-				uniform mat4 projectionMatrix;
-				uniform mat4 modelViewMatrix;
-
-				void main() {
-					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
-				}
-			`,
-			fragmentShader: `#version 300 es
-				out lowp vec4 pc_fragColor;
-
-				void main() {
-					pc_fragColor = vec4(0.0, 0.0, 0.0, 1.0);
-				}
-			`
-		}),
+		tickMaterial = getBasicMaterial([0, 0, 0], 1),
 		ticks = new Array(3),
 		ticksSmall = new Array(3);
 

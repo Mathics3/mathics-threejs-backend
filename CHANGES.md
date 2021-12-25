@@ -10,6 +10,7 @@ Improvements:
 
 Internals:
 - Convert all materials to ShaderMaterial/RawShaderMaterial (#53)
+- Move some shaders to shader.js (#54)
 
 1.0.3
 ---
