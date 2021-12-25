@@ -12,6 +12,7 @@ Improvements:
 New features:
 - Add `edgeForm` to polygons (#50)
 - Add `vertexNormals` to polygons (#51)
+- Add `dashed` and `gapSize` to lines (#55)
 
 Internals:
 - Convert all materials to ShaderMaterial/RawShaderMaterial (#53)
