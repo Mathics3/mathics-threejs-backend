@@ -12,6 +12,7 @@ Improvements:
 Internals:
 - Convert all materials to ShaderMaterial/RawShaderMaterial (#53)
 - Move some shaders to shader.js (#54)
+- Replace BoxGeometry by lower-level BufferGeometry (#56)
 
 1.0.3
 ---
