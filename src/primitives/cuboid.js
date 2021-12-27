@@ -1,5 +1,5 @@
 import {
-	BoxGeometry,
+	BufferAttribute,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
 	Mesh,
@@ -16,21 +16,89 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) 
 
 	const [cuboidsBegin, cuboidsEnd] = get2PopulatedCoordinateBuffers(coords, extent);
 
-	const cuboidGeometry = new InstancedBufferGeometry().copy(
-		new BoxGeometry().translate(0.5, 0.5, 0.5), // translate the geometry so we don't need to calculate the middle of each coordinates-pair
-	);
+	const cuboidGeometry = new InstancedBufferGeometry()
+		.setAttribute(
+			'position',
+			new BufferAttribute(new Float32Array([
+				1, 1, 1,
+				1, 1, 0,
+				1, 0, 1,
+				1, 0, 0,
+				0, 1, 0,
+				0, 1, 1,
+				0, 0, 0,
+				0, 0, 1,
+				0, 1, 0,
+				1, 1, 0,
+				0, 1, 1,
+				1, 1, 1,
+				0, 0, 1,
+				1, 0, 1,
+				0, 0, 0,
+				1, 0, 0,
+				0, 1, 1,
+				1, 1, 1,
+				0, 0, 1,
+				1, 0, 1,
+				1, 1, 0,
+				0, 1, 0,
+				1, 0, 0,
+				0, 0, 0
+			]), 3)
+		)
+		.setAttribute(
+			'uv',
+			new BufferAttribute(new Float32Array([
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0
+			]), 2)
+		)
+		.setAttribute(
+			'cuboidBegin',
+			new InstancedBufferAttribute(cuboidsBegin, 3)
+		)
+		.setAttribute(
+			'cuboidEnd',
+			new InstancedBufferAttribute(cuboidsEnd, 3)
+		)
+		.setIndex([
+			0, 2, 1,
+			2, 3, 1,
+			4, 6, 5,
+			6, 7, 5,
+			8, 10, 9,
+			10, 11, 9,
+			12, 14, 13,
+			14, 15, 13,
+			16, 18, 17,
+			18, 19, 17,
+			20, 22, 21,
+			22, 23, 21
+		]);
 
 	cuboidGeometry.instanceCount = coords.length / 2;
-
-	cuboidGeometry.setAttribute(
-		'cuboidBegin',
-		new InstancedBufferAttribute(cuboidsBegin, 3)
-	);
-
-	cuboidGeometry.setAttribute(
-		'cuboidEnd',
-		new InstancedBufferAttribute(cuboidsEnd, 3)
-	);
 
 	const cuboids = new Mesh(
 		cuboidGeometry,
