@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	{% seo %}
+	<link rel="stylesheet" href="{{ "/assets/css/style.css" | relative_url }}" />
+	<script src="{{ "/build.js" | relative_url }}"></script>
+</head>
+
+<body>
+	<div class="wrapper">
+		<header>
+			<h1><a href="/mathics-threejs-backend">{{ site.title | default: site.github.repository_name }}</a></h1>
+
+			{% include Sidebar.html %}
+		</header>
+		<section>
+			{{ content }}
+
+			<footer>&copy;2021, The Mathics Team.</footer>
+		</section>
+	</div>
+
+	<script src="{{ "/build.js" | relative_url }}"></script>
+	<script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
+</body>
+
+</html>

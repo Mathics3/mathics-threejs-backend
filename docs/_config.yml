@@ -1,0 +1,14 @@
+name: mathics-threejs-backend
+description: Mathics 3D Graphics backend documentation and examples
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+url: https://mathics3.github.io/mathics-threejs-backend
+baseurl: /
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+
+
