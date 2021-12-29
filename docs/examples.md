@@ -15,6 +15,7 @@ folder of the documentation (/docs)".
 - [Coplanar polygon](examples/coplanar-polygon)
 - [Cube and parallelepiped](examples/cube-and-parallelepiped)
 - [Cylinders with green edges](examples/cylinder-with-green-edges)
+- [Dashed line](examples/dashed-line)
 - [Dodecahedron](examples/dodecahedron)
 - [Icosahedron](examples/icosahedron)
 - [Polygon with multiple faces](examples/multi-face-polygon)
