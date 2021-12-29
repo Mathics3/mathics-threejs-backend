@@ -23,17 +23,14 @@ The good news is that [earcut](https://github.com/mapbox/earcut) deals well with
 
 The current implementation also can't draw coplanar polygons with holes. We still need to implement the [even-odd rule](https://en.wikipedia.org/wiki/Even%E2%80%93odd_rule).
 
-Both this and [multi-face](#Multi-face) lets [earcut](https://github.com/mapbox/earcut) divide the polygon into multiple triangles.  
+Both this and [multi-face](#multi-face) lets [earcut](https://github.com/mapbox/earcut) divide the polygon into multiple triangles.  
 A thing that [earcut](https://github.com/mapbox/earcut) doesn't do very well is diving coplanar 3d polygons into triangles.  
 But [earcut](https://github.com/mapbox/earcut) has a 2d mode, so we convert our 3d polygon into a 2d one.
 
 This can be done applying a quaternion:
 ```js
-const normalVector = new Vector3(
-    isXCoplanar,
-    isYCoplanar,
-    isZCoplanar
-), normalZVector = new Vector3(0, 0, 1);
+const normalVector = getNormalVector(coordinates, extent);
+const normalZVector = new Vector(0, 0, 1); // plane where z = 0
 
 coordinate.applyQuaternion(
     new Quaternion().setFromUnitVectors(
@@ -43,9 +40,9 @@ coordinate.applyQuaternion(
 )
 ```
 
-The code above converts the 3d coordinates into 2d ones by swapping the z value with the coplanar one.  
-e.g.: if the x value is the same in all coordinates, then x and z are swapped.  
-**Note**: for 2d the z value is ignored.
+The code above converts the 3d coordinates into a 2d position in the plane.
+
+**Note**: in 2d the z values are ignored.
 
 three.js `ShapeGeometry` then calls [earcut](https://github.com/mapbox/earcut).  
 
@@ -61,7 +58,7 @@ for (let i = 0; i < coords.length; i++) {
 }
 ```
 
-Then we need to swap the coplanar value with z again:
+Then we need to convert the 2d coordinate into 3d:
 ```js
 coordinateVector.applyQuaternion(
     new Quaternion().setFromUnitVectors(
