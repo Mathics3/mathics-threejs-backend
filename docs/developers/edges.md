@@ -1,6 +1,7 @@
-The edges can be drawn in 2 ways:
+The edges can be drawn in 3 ways:
 - [inside the primitive's shader](#shader-method)
 - [in their own object](#object-method)
+- [like a common geometry](#wireframe-true)
 
 # Shader method
 This is only possible for simple objects.
@@ -40,4 +41,26 @@ import { EdgesGeometry, yourObjectGeometryHere } from 'path_to_threejs';
 const geometry = yourObjectGeometryHere();
 
 console.log(EdgesGeometry(geometry).attributes.position.array);
+```
+
+# Wireframe true
+This is the easiest way to draw edges, but it is only possible when the
+edges should be in every corners, not just the hard-corners.  
+e.g.: `wireframe: true` in a dodecahedron would lead to lines passing
+through its faces but this works in a
+[multi-face polygon](/mathics-threejs-backend/primitives/polygon).
+
+This is slower than the [object method](#object-method) but accepts
+a indexed geometry, so in some cases it can be faster, use less RAM
+and be simpler than the [object method](#object-method).
+
+This is used in [polygon](/mathics-threejs-backend/primitives/polygon).
+
+To draw the edges this way you need to add the property `wireframe: true`
+to the material of the object:
+```js
+const material = new ShaderMaterial({
+	wireframe: true,
+	...
+});
 ```
