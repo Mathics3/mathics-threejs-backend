@@ -60,6 +60,5 @@ Hit CTRL-C to stop the server
 
 Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/docs/objects-in-directional-light.html
 
-## JSON API for Compact Graphics3D
-
-See the [wiki](https://github.com/Mathics3/mathics-threejs-backend/wiki) for the JSON API description for Graphics3D Primitives.
+## Documentation and examples
+You can see the documentation and more live examples [here](https://mathics3.github.io/mathics-threejs-backend).
