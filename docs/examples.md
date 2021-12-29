@@ -31,6 +31,7 @@ folder of the documentation (/docs)".
 - [White sphere with directional light](examples/sphere-with-directional-light)
 - [Spheres with center pointlight](examples/spheres-with-center-pointlight)
 - [Tetrahedron](examples/tetrahedron)
+- [Triangle with edges](examples/triangle-with-edges)
 - [Yellow line](examples/yellow-line)
 - [Sphere with yellow spotlight](examples/yellow-spotlight)
 - [Yellow triangle](examples/yellow-triangle)
