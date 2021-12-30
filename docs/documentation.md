@@ -35,6 +35,13 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, it receives th
     - `ticks` (type: [number[], number[], string[]][3]) — array containing the ticks' information for, respectively, x, y and z axes. The ticks' information is an array of three elements: big ticks' coordinates, small ticks' coordinates, big ticks' labels. Default: `[]`
     - `ticks_style` (type: [color[3]](/mathics-threejs-backend/types/color)) — array containing the ticks' colors for, respectively, x, y and z axes. Default: `[[0, 0, 0], [0, 0, 0], [0, 0, 0]]` (all ticks are black)
   - `elements` (type: [element[]](/mathics-threejs-backend/types/color) — array of primitives, default: `[]`
+  - `extent` (type: object) — the size of the bounding box. This is optional, only use this if you don't want the deault behaviour. This is an object with the following properties:
+    - `xmin` (type: number)
+    - `ymin` (type: number)
+    - `zmin` (type: number)
+    - `xmax` (type: number)
+    - `ymax` (type: number)
+    - `zmax` (type: number)
   - `lighting` (type: [element[]](/mathics-threejs-backend/types/element)) — array of lights, default: `[]`
   - `viewpoint` (type: number[3]) — the normalized camera coordinate (normalized means that the coordinate is going to be scaled, e.g. `[1, 1, 1]` is the upper back right corner of the bounding box independently from its size)
   - `protocol` (type: string) — protocol version (current is `1.1`), if it isn't compatible a warning is shown instead of the graphics. Only availiable in production version
@@ -72,7 +79,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, it receives th
                   type: 'sphere',
                   color: [1, 1, 1],
                   coords: [
-                      [[0, 0, 0]]
+                      [[0.5, 0.5, 0.5]]
                   ],
                   radius: 0.5
               }
@@ -121,7 +128,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, it receives th
                       type: 'sphere',
                       color: [1, 1, 1],
                       coords: [
-                          [[0, 0, 0]]
+                          [[0.5, 0.5, 0.5]]
                       ],
                       radius: 0.5
                   }
