@@ -66,7 +66,7 @@ Add a spotlight to the scene.
               lighting: [
                   {
                       type: 'spot',
-                      color: [1, 1, 1],,
+                      color: [1, 1, 1],
                       coords: [null, [1, 1, 1]],
                       target: [[0, 0, 0]]
                   }

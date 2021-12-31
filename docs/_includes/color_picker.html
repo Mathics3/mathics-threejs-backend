@@ -1,0 +1,152 @@
+<div style='display: flex; justify-content: center; flex-direction: row; align-items: center;'>
+  	<canvas width='300px' height='300px' id='color-canvas'></canvas>
+  	<canvas style='margin-left: 10px;' width='35px' height='300px' id='color-strip-canvas'></canvas>
+  </div>
+
+  <div style='height: 5px; width: 5px; border-radius: 50%; border: 1px solid black; position: absolute; z-index: 1; display: none;' id='marker-1'></div>
+  <div style='height: 5px; width: 5px; border-radius: 50%; border: 1px solid black; position: absolute; z-index: 1; display: none;' id='marker-2'></div>
+
+  <p style='text-align: center;'>
+  	Red:
+  	<span id='red'>0.50</span>
+  	Green:
+  	<span id='green'>0.50</span>
+  	Blue:
+  	<span id='blue'>0.50</span>
+  </p>
+  
+  <script>
+  	const marker1 = document.getElementById('marker-1');
+  	const marker2 = document.getElementById('marker-2');
+  
+  	function updateMarker1Position(event) {
+  		marker1.style.display = 'block';
+
+  		const { left, top } = colorCanvas.getBoundingClientRect();
+  		marker1.style.left = `${event.clientX - left + colorCanvas.offsetLeft}px`;
+  		marker1.style.top = `${event.clientY - top + colorCanvas.offsetTop}px`;
+  
+  		const pixel = colorContext.getImageData(
+  			event.clientX - left,
+  			event.clientY - top,
+  			1,
+  			1
+  		).data;
+  
+  		document.getElementById('red').innerText = (pixel[0] / 255).toFixed(2);
+  		document.getElementById('green').innerText = (pixel[1] / 255).toFixed(2);
+  		document.getElementById('blue').innerText = (pixel[2] / 255).toFixed(2);
+  	}
+
+  	function updateMarker2Position(event) {
+  		marker2.style.display = 'block';
+
+  		const { left, top } = colorStripCanvas.getBoundingClientRect();
+  		marker2.style.top = `${event.clientY - top + colorStripCanvas.offsetTop}px`;
+  
+  		const colorStripPixel = colorStripContext.getImageData(
+  			event.clientX - left,
+  			event.clientY - top,
+  			1,
+  			1
+  		).data;
+
+  		color = `rgba(${colorStripPixel[0]}, ${colorStripPixel[1]}, ${colorStripPixel[2]}, 1)`;
+
+  		fillGradient();
+
+  		const pixel = colorStripContext.getImageData(
+  			marker1.offsetTop - colorCanvas.offsetTop,
+  			marker1.offsetLeft - colorCanvas.offsetLeft,
+  			1,
+  			1
+  		).data;
+  
+  		document.getElementById('red').innerText = (pixel[0] / 255).toFixed(2);
+  		document.getElementById('green').innerText = (pixel[1] / 255).toFixed(2);
+  		document.getElementById('blue').innerText = (pixel[2] / 255).toFixed(2);
+  	}
+
+  	function fillGradient() {
+  		colorContext.fillStyle = color;
+  		colorContext.fillRect(
+  			0,
+  			0,
+  			colorCanvas.width,
+  			colorCanvas.height
+  		);
+
+  		const gradientWhite = colorContext.createLinearGradient(
+  			0,
+  			0,
+  			colorCanvas.width,
+  			0
+  		);
+  		gradientWhite.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  		gradientWhite.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+  		colorContext.fillStyle = gradientWhite;
+  		colorContext.fillRect(
+  			0,
+  			0,
+  			colorCanvas.width,
+  			colorCanvas.height
+  		);
+
+  		const gradientBlack = colorContext.createLinearGradient(
+  			0,
+  			0,
+  			0,
+  			colorCanvas.height
+  		);
+  		gradientBlack.addColorStop(0, 'rgba(0,0,0,0)');
+  		gradientBlack.addColorStop(1, 'rgba(0,0,0,1)');
+
+  		colorContext.fillStyle = gradientBlack;
+  		colorContext.fillRect(
+  			0,
+  			0,
+  			colorCanvas.width,
+  			colorCanvas.height
+  		);
+  	}
+
+  	const colorCanvas = document.getElementById('color-canvas');
+  	const colorContext = colorCanvas.getContext('2d');
+
+  	const colorStripCanvas = document.getElementById('color-strip-canvas');
+  	const colorStripContext = colorStripCanvas.getContext('2d');
+
+  	marker2.style.left = `${colorStripCanvas.offsetLeft + 15}px`;
+
+  	colorStripContext.rect(
+  		0,
+  		0,
+  		colorStripCanvas.width,
+  		colorStripCanvas.height
+  	);
+
+  	const colorStripGradient = colorStripContext.createLinearGradient(
+  		0,
+  		0,
+  		0,
+  		colorStripCanvas.height
+  	);
+  	colorStripGradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
+  	colorStripGradient.addColorStop(0.17, 'rgba(255, 255, 0, 1)');
+  	colorStripGradient.addColorStop(0.34, 'rgba(0, 255, 0, 1)');
+  	colorStripGradient.addColorStop(0.51, 'rgba(0, 255, 255, 1)');
+  	colorStripGradient.addColorStop(0.68, 'rgba(0, 0, 255, 1)');
+  	colorStripGradient.addColorStop(0.85, 'rgba(255, 0, 255, 1)');
+  	colorStripGradient.addColorStop(1, 'rgba(255, 0, 0, 1)');
+
+  	colorStripContext.fillStyle = colorStripGradient;
+  	colorStripContext.fill();
+
+  	let color = 'rgba(255, 255, 255, 1)';
+  
+  	fillGradient();
+
+  	colorCanvas.addEventListener('click', updateMarker1Position);
+  	colorStripCanvas.addEventListener('click', updateMarker2Position);
+  </script>
