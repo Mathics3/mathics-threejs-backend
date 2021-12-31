@@ -62,10 +62,10 @@ Draw cylinders from the even-numbered positions to the odd ones.
       "edgeForm": { "color": [1, 0, 0] }
   }
   ```
-  <div class='center' id='graphics-container'></div>
+  <div class='center' id='graphics-container-2'></div>
   <script>
       drawGraphics3d(
-          document.getElementById('graphics-container'),
+          document.getElementById('graphics-container-2'),
           {
               elements: [
                   {

@@ -43,7 +43,7 @@ Add an infinitely far camera-follower light to the scene.
       "coords": [[1, 1, 1]]
   }
   ```
-<div class='center' id='graphics-container-2'></div>
+  <div class='center' id='graphics-container-2'></div>
   <script>
       drawGraphics3d(
           document.getElementById('graphics-container-2'),

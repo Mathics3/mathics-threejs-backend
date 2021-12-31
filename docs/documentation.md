@@ -97,10 +97,10 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
       0.75 // innerWidthMultiplier
   );
   ```
-  <div style='position: relative;' class='center' id='graphics-container'></div>
+  <div style='position: relative;' class='center' id='graphics-container-1'></div>
   <script>
       drawGraphics3d(
-          document.getElementById('graphics-container'),
+          document.getElementById('graphics-container-1'),
           {
               axes: {
                   hasaxes: true,
@@ -144,6 +144,19 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
           },
           600, // maxSize
           0.75 // innerWidthMultiplier
+      );
+  </script>
+- ```js
+  drawGraphics3d(
+      document.getElementById('graphics-container'),
+      { viewpoint: [2, -4, 4] }
+  );
+  ```
+  <div class='center' id='graphics-container-2'></div>
+  <script>
+      drawGraphics3d(
+          document.getElementById('graphics-container-2'),
+          { viewpoint: [2, -4, 4] }
       );
   </script>
 

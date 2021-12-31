@@ -1,10 +1,10 @@
 A color is an array of 3 floats, for the red, green and blue value. A value should be in the range 0 to 1.
 
-To convert a 0-255 number to 0-1 you just need to divide 1 by the number.
+To convert a 0-255 number to 0-1 you just need to divide the number by 255.
 
 ## Examples
 - ```jsonc
-  [
+  [ // #ffff00
       1, // red
       1, // green
       0, // blue
