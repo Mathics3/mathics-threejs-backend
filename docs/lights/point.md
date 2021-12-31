@@ -54,7 +54,7 @@ Add a light that gets emitted from `coords` in all directions to the scene.
           }
       );
   </script>
-- ```json
+- ```jsonc
   {
       "type": "point",
       "color": [1, 1, 0], // yellow
@@ -70,7 +70,7 @@ Add a light that gets emitted from `coords` in all directions to the scene.
                   {
                       type: 'sphere',
                       color: [1, 1, 1],
-                      coords: [[null, [0.5, 0.5, 0.5]]]
+                      coords: [[[0, 0, 0]]]
                   }
               ],
               lighting: [
