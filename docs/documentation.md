@@ -44,7 +44,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
     - `zmax` (type: number)
   - `lighting` (type: [element[]](/mathics-threejs-backend/types/element)) — array of lights, default: `[]`
   - `viewpoint` (type: number[3]) — the normalized camera coordinate (normalized means that the coordinate is going to be scaled, e.g. `[1, 1, 1]` is the upper back right corner of the bounding box independently from its size)
-  - `protocol` (type: string) — protocol version (current is `1.1`), if it isn't compatible a warning is shown instead of the graphics. Only availiable in production version
+  - `protocol` (type: string) — protocol version (current is `1.2`), if it isn't compatible a warning is shown instead of the graphics. Only availiable in production version
 - `maxSize` (type: number) — default: `400`
 - `innerWidthMultiplier` (type: number) — the multiplier of the window inner width, the effective width is `min(maxSize, innerWidthMultiplier * window.innerWidth)`, default: `0.65`
 
@@ -91,7 +91,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
               }
           ],
           viewpoint: [2, -4, 4],
-          protocol: '1.1'
+          protocol: '1.2'
       },
       600, // maxSize
       0.75 // innerWidthMultiplier
@@ -140,7 +140,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
                   }
               ],
               viewpoint: [2, -4, 4],
-              protocol: '1.1'
+              protocol: '1.2'
           },
           600, // maxSize
           0.75 // innerWidthMultiplier
