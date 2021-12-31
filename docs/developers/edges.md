@@ -60,7 +60,7 @@ To draw the edges this way you need to add the property `wireframe: true`
 to the material of the object:
 ```js
 const material = new ShaderMaterial({
-	wireframe: true,
-	...
+    wireframe: true,
+    ...
 });
 ```
