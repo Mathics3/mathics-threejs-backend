@@ -35,7 +35,7 @@
 	},
 	"devDependencies": {
 		"backstopjs": "^6",
-		"minify": "^7",
+		"minify": "^8",
 		"rollup": "^2"
 	}
 }
