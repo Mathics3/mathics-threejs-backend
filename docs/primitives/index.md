@@ -8,7 +8,7 @@ you may convert that to a
 object (this library goal is to fully support it), or create a conversion
 function for every plot function.
 
-An *example* of conversion code for a
+An example of conversion code for a
 [ListPlot3D](https://reference.wolfram.com/language/ref/ListPlot3D.html):
 ```py
 import json
@@ -44,7 +44,7 @@ def list_plot_3d(coordinate_list: list) -> str:
     return json.dumps(json_object)
 ```
 
-The list of primitives is the following:
+The current list of primitives supported:
 - [arrow](arrow)
 - [cone](cone)
 - [cuboid](cuboid)

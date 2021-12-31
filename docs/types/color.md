@@ -1,4 +1,4 @@
-It's an array of 3 floats from 0 to 1 (red, green and blue).
+A color is an array of 3 floats, for the red, green and blue value. A value should be in the range 0 to 1.
 
 To convert a 0-255 number to 0-1 you just need to divide 1 by the number.
 
