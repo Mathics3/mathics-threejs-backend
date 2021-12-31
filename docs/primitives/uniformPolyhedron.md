@@ -24,30 +24,30 @@ Draw polyhedrons.
   ```
   <div class='center' id='graphics-container-1'></div>
   <script>
-  	drawGraphics3d(
-  		document.getElementById('graphics-container-1'),
-  		{
-  			elements: [
-  				{
-  					type: 'uniformPolyhedron',
-  					color: [1, 0.5, 0.5],
-  					coords: [
-  						[[0, 0, 0]]
-  					],
-  					opacity: 0.5, // 50% of opacity
-  					subType: 'tetrahedron'
-  				}
-  			],
-  			lighting: [
-  				{
-  					type: 'directional',
-  					color: [1, 1, 1],
-  					coords: [[1, 1, 1]]
-  				}
-  			],
-  			viewpoint: [2, 4, 3]
-  		}
-  	);
+      drawGraphics3d(
+          document.getElementById('graphics-container-1'),
+          {
+              elements: [
+                  {
+                      type: 'uniformPolyhedron',
+                      color: [1, 0.5, 0.5],
+                      coords: [
+                          [[0, 0, 0]]
+                      ],
+                      opacity: 0.5, // 50% of opacity
+                      subType: 'tetrahedron'
+                  }
+              ],
+              lighting: [
+                  {
+                      type: 'directional',
+                      color: [1, 1, 1],
+                      coords: [[1, 1, 1]]
+                  }
+              ],
+              viewpoint: [2, 4, 3]
+          }
+      );
   </script>
 - ```json
   {
@@ -62,30 +62,30 @@ Draw polyhedrons.
   ```
   <div class='center' id='graphics-container-2'></div>
   <script>
-  	drawGraphics3d(
-  		document.getElementById('graphics-container-2'),
-  		{
-  			elements: [
-  				{
-  					type: 'uniformPolyhedron',
-  					color: [1, 0.5, 1],
-  					coords: [
-  						[[0, 0, 0]]
-  					],
-  					edgeForm: { showEdges: false },
-  					subType: 'octahedron'
-  				}
-  			],
-  			lighting: [
-  				{
-  					type: 'directional',
-  					color: [1, 1, 1],
-  					coords: [[1, 1, 1]]
-  				}
-  			],
-  			viewpoint: [2, -4, 4]
-  		}
-  	);
+      drawGraphics3d(
+          document.getElementById('graphics-container-2'),
+          {
+              elements: [
+                  {
+                      type: 'uniformPolyhedron',
+                      color: [1, 0.5, 1],
+                      coords: [
+                          [[0, 0, 0]]
+                      ],
+                      edgeForm: { showEdges: false },
+                      subType: 'octahedron'
+                  }
+              ],
+              lighting: [
+                  {
+                      type: 'directional',
+                      color: [1, 1, 1],
+                      coords: [[1, 1, 1]]
+                  }
+              ],
+              viewpoint: [2, -4, 4]
+          }
+      );
   </script>
 - ```jsonc
   {
@@ -102,32 +102,32 @@ Draw polyhedrons.
   ```
   <div class='center' id='graphics-container-3'></div>
   <script>
-  	drawGraphics3d(
-  		document.getElementById('graphics-container-3'),
-  		{
-  			elements: [
-  				{
-  					type: 'uniformPolyhedron',
-  					color: [0.5, 0.5, 1],
-  					coords: [
-  						[[0, 0, 0]],
-  						[[2, 2, 2]],
-  					],
-  					edgeForm: { showEdges: false },
-  					opacity: 0.7, // 70% of opacity
-  					subType: 'dodecahedron'
-  				}
-  			],
-  			lighting: [
-  				{
-  					type: 'directional',
-  					color: [1, 1, 1],
-  					coords: [[1, 1, 1]]
-  				}
-  			],
-  			viewpoint: [2, -4, 4]
-  		}
-  	);
+      drawGraphics3d(
+          document.getElementById('graphics-container-3'),
+          {
+              elements: [
+                  {
+                      type: 'uniformPolyhedron',
+                      color: [0.5, 0.5, 1],
+                      coords: [
+                          [[0, 0, 0]],
+                          [[2, 2, 2]],
+                      ],
+                      edgeForm: { showEdges: false },
+                      opacity: 0.7, // 70% of opacity
+                      subType: 'dodecahedron'
+                  }
+              ],
+              lighting: [
+                  {
+                      type: 'directional',
+                      color: [1, 1, 1],
+                      coords: [[1, 1, 1]]
+                  }
+              ],
+              viewpoint: [2, -4, 4]
+          }
+      );
   </script>
 - ```json
   {
@@ -142,30 +142,30 @@ Draw polyhedrons.
   ```
   <div class='center' id='graphics-container-4'></div>
   <script>
-  	drawGraphics3d(
-  		document.getElementById('graphics-container-4'),
-  		{
-  			elements: [
-  				{
-  					type: 'uniformPolyhedron',
-  					color: [0, 1, 0.4],
-  					coords: [
-  						[[0, 0, 0]]
-  					],
-  					edgeForm: { showEdges: false },
-  					subType: 'icosahedron'
-  				}
-  			],
-  			lighting: [
-  				{
-  					type: 'directional',
-  					color: [1, 1, 1],
-  					coords: [[1, 1, 1]]
-  				}
-  			],
-  			viewpoint: [2, -4, 4]
-  		}
-  	);
+      drawGraphics3d(
+          document.getElementById('graphics-container-4'),
+          {
+              elements: [
+                  {
+                      type: 'uniformPolyhedron',
+                      color: [0, 1, 0.4],
+                      coords: [
+                          [[0, 0, 0]]
+                      ],
+                      edgeForm: { showEdges: false },
+                      subType: 'icosahedron'
+                  }
+              ],
+              lighting: [
+                  {
+                      type: 'directional',
+                      color: [1, 1, 1],
+                      coords: [[1, 1, 1]]
+                  }
+              ],
+              viewpoint: [2, -4, 4]
+          }
+      );
   </script>
 - ```jsonc
   {
