@@ -70,4 +70,4 @@ Draw a line from the first coordinate to the last one.
   </script>
 
 ## Notes
--  Differently from WL's Line, our lines aren't affected by lightning and therefore don't have VertexNormals.
+-  Our behavor is different from Wolframs Language's Line; our lines aren't affected by the lighting and therefore don't have VertexNormals.
