@@ -12,10 +12,10 @@ Add a light that gets emitted from `coords` in all directions to the scene.
       "coords": [[1.5, 1.5, 0]]
   }
   ```
-  <div class='center' id='graphics-container'></div>
+  <div class='center' id='graphics-container-1'></div>
   <script>
       drawGraphics3d(
-          document.getElementById('graphics-container'),
+          document.getElementById('graphics-container-1'),
           {
               elements: [
                   {
@@ -47,7 +47,37 @@ Add a light that gets emitted from `coords` in all directions to the scene.
                   {
                       type: 'point',
                       color: [0, 1, 0],
-                      coords: [[2, 2, 2]]
+                      coords: [[1.5, 1.5, 0]]
+                  }
+              ],
+              viewpoint: [2, -4, 4]
+          }
+      );
+  </script>
+- ```json
+  {
+      "type": "point",
+      "color": [1, 1, 0], // yellow
+      "coords": [null, [1, 1, 1]]
+  }
+  ```
+  <div class='center' id='graphics-container-2'></div>
+  <script>
+      drawGraphics3d(
+          document.getElementById('graphics-container-2'),
+          {
+              elements: [
+                  {
+                      type: 'sphere',
+                      color: [1, 1, 1],
+                      coords: [[null, [0.5, 0.5, 0.5]]]
+                  }
+              ],
+              lighting: [
+                  {
+                      type: 'point',
+                      color: [1, 1, 0],
+                      coords: [null, [1, 1, 1]]
                   }
               ],
               viewpoint: [2, -4, 4]
