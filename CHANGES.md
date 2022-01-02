@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+dev
+---
+
+Documentation:
+- Add more examples (#59)
+
+Internals:
+- Update minify to version 8
+
 1.1.0
 -----
 
