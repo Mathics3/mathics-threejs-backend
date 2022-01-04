@@ -45,7 +45,7 @@ export default function ({ color, coords, opacity = 1, pointSize }, extent, canv
 				out lowp vec4 pc_fragColor;
 
 				void main() {
-					if (length(gl_PointCoord - vec2(0.5)) > 0.5) discard;
+					if (length(gl_PointCoord - 0.5) > 0.5) discard;
 
 					pc_fragColor = color;
 				}
