@@ -19,6 +19,9 @@ Documentation:
 - Move the documentation to this repository and make it more interative
 - Add more examples (#59)
 
+Bug fixes:
+- Correctly calculate the bounding box for primitives with scaled coordinates and radius bigger than the bounding box (#60)
+
 1.0.3
 -----
 
