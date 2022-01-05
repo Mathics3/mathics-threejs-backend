@@ -4,6 +4,9 @@ CHANGES
 dev
 ---
 
+Improvements:
+- Add default viewpoint (#61)
+
 Documentation:
 - Add more examples (#59)
 
