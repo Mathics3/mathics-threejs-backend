@@ -22,7 +22,7 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 
 	switch (subType) {
 		case 'tetrahedron': {
-			const vertexPosition = 0.61237243569 * edgeLength;
+			const vertexPosition = 0.6123 * edgeLength;
 
 			polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 				'position',
@@ -88,9 +88,9 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 			break;
 		}
 		case 'dodecahedron': {
-			const vertexPosition0 = 0.61237243569 * edgeLength,
-				vertexPosition1 = 0.37846700013 * edgeLength,
-				vertexPosition2 = 0.99083940421 * edgeLength;
+			const vertexPosition0 = 0.6123 * edgeLength,
+				vertexPosition1 = 0.3784 * edgeLength,
+				vertexPosition2 = 0.9908 * edgeLength;
 
 			polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 				'position',
@@ -244,8 +244,8 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 			break;
 		}
 		case 'icosahedron': {
-			const vertexPosition0 = 0.55762203476 * edgeLength,
-				vertexPosition1 = 0.90225142642 * edgeLength;
+			const vertexPosition0 = 0.5576 * edgeLength,
+				vertexPosition1 = 0.9022 * edgeLength;
 
 			polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
 				'position',
