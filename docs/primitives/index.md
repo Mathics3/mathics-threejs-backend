@@ -26,7 +26,7 @@ def list_plot_3d(coordinate_list: list) -> str:
             polygons.append([
                 [i, j, coordinate_list[i][j]],
                 [i + 1, j + 1, coordinate_list[i + 1][j + 1]],
-                [i, j + 1, coordinate_list[i + 1][j]],
+                [i + 1, j, coordinate_list[i + 1][j]],
             ])
 
     json_object: dict = {
