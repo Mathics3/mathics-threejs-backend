@@ -22,7 +22,7 @@ export default function (
 		extent,
 		elements = [],
 		lighting = [],
-		viewpoint
+		viewpoint = [1.3, -2.4, 2]
 	},
 	maxSize = 400,
 	innerWidthMultiplier = 0.65
