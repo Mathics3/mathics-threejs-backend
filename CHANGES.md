@@ -6,6 +6,7 @@ dev
 
 Improvements:
 - Add default viewpoint (#61)
+- Improve performance of `uniformPolyhedron`s' edges (#62)
 
 Documentation:
 - Add more examples (#59)

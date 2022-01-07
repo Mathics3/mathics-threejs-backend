@@ -33,12 +33,12 @@ To get the magic numbers, you print the automatically generated edges and Ctrl+C
 We don't use the automatically generated edges because it's slow.  
 You can use the following script template to generate the edges:
 ```js
-import { EdgesGeometry, yourObjectGeometryHere } from 'path_to_threejs';
+import { EdgesGeometry, YourGeometryHere } from 'path_to_threejs';
 
 // Generate the geometry.
 // Each geometry is generated in a different way.
 // See the three.js documentation for more details: https://threejs.org/docs/
-const geometry = yourObjectGeometryHere();
+const geometry = new YourGeometryHere();
 
 console.log(EdgesGeometry(geometry).attributes.position.array);
 ```
