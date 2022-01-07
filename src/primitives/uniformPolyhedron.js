@@ -1,6 +1,5 @@
 import {
 	BufferAttribute,
-	EdgesGeometry,
 	Group,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
@@ -16,15 +15,20 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 // See https://reference.wolfram.com/language/ref/UniformPolyhedron
 // for the high-level description of what is being rendered.
 export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) {
-	let polyhedronGeometry;
+	const polyhedronGeometry = new InstancedBufferGeometry();
 
-	// The magic numbers in the code bellow were captured multipling √(3/8) (see https://en.wikipedia.org/wiki/Tetrahedron#Coordinates_for_a_regular_tetrahedron) by each number of the respective three.js geometry's position and divided by 0.5773502588272095 (the unique number in three.js TetrahedronGeometry's position).
+	// The magic numbers below are modified from the position attribute of,
+	// respectively, TetrahedronBufferGeometry, OctahedronBufferGeometry,
+	// DodecahedronBufferGeometry and IcosahedronBufferGeometry.
+	// Each number is multiplied by 1.06066019082 (otherwise the radius of the
+	// polyhedrons won't be "the same" of a sphere with edgeLength radius).
+	// To get them: console.log(new GeometryName().attributes.position.array)
 
 	switch (subType) {
 		case 'tetrahedron': {
 			const vertexPosition = 0.6123 * edgeLength;
 
-			polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
+			polyhedronGeometry.setAttribute(
 				'position',
 				new BufferAttribute(new Float32Array([
 					-vertexPosition, -vertexPosition, vertexPosition,
@@ -48,7 +52,7 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 			break;
 		}
 		case 'octahedron': {
-			polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
+			polyhedronGeometry.setAttribute(
 				'position',
 				new BufferAttribute(new Float32Array([
 					0, edgeLength, 0,
@@ -88,156 +92,156 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 			break;
 		}
 		case 'dodecahedron': {
-			const vertexPosition0 = 0.6123 * edgeLength,
-				vertexPosition1 = 0.3784 * edgeLength,
+			const vertexPosition0 = 0.3784 * edgeLength,
+				vertexPosition1 = 0.6123 * edgeLength,
 				vertexPosition2 = 0.9908 * edgeLength;
 
-			polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
+			polyhedronGeometry.setAttribute(
 				'position',
 				new BufferAttribute(new Float32Array([
-					0, vertexPosition1, vertexPosition2,
-					vertexPosition0, vertexPosition0, vertexPosition0,
-					-vertexPosition0, vertexPosition0, vertexPosition0,
+					0, vertexPosition0, vertexPosition2,
+					vertexPosition1, vertexPosition1, vertexPosition1,
+					-vertexPosition1, vertexPosition1, vertexPosition1,
 
-					vertexPosition0, vertexPosition0, vertexPosition0,
-					vertexPosition1, vertexPosition2, 0,
-					-vertexPosition0, vertexPosition0, vertexPosition0,
+					vertexPosition1, vertexPosition1, vertexPosition1,
+					vertexPosition0, vertexPosition2, 0,
+					-vertexPosition1, vertexPosition1, vertexPosition1,
 
-					vertexPosition1, vertexPosition2, 0,
-					-vertexPosition1, vertexPosition2, 0,
-					-vertexPosition0, vertexPosition0, vertexPosition0,
+					vertexPosition0, vertexPosition2, 0,
+					-vertexPosition0, vertexPosition2, 0,
+					-vertexPosition1, vertexPosition1, vertexPosition1,
 
-					vertexPosition2, 0, vertexPosition1,
-					vertexPosition2, 0, -vertexPosition1,
-					vertexPosition0, vertexPosition0, vertexPosition0,
+					vertexPosition2, 0, vertexPosition0,
+					vertexPosition2, 0, -vertexPosition0,
+					vertexPosition1, vertexPosition1, vertexPosition1,
 
-					vertexPosition2, 0, -vertexPosition1,
-					vertexPosition0, vertexPosition0, -vertexPosition0,
-					vertexPosition0, vertexPosition0, vertexPosition0,
+					vertexPosition2, 0, -vertexPosition0,
+					vertexPosition1, vertexPosition1, -vertexPosition1,
+					vertexPosition1, vertexPosition1, vertexPosition1,
 
-					vertexPosition0, vertexPosition0, -vertexPosition0,
-					vertexPosition1, vertexPosition2, 0,
-					vertexPosition0, vertexPosition0, vertexPosition0,
+					vertexPosition1, vertexPosition1, -vertexPosition1,
+					vertexPosition0, vertexPosition2, 0,
+					vertexPosition1, vertexPosition1, vertexPosition1,
 
-					vertexPosition0, -vertexPosition0, -vertexPosition0,
-					0, -vertexPosition1, -vertexPosition2,
-					vertexPosition2, 0, -vertexPosition1,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
+					0, -vertexPosition0, -vertexPosition2,
+					vertexPosition2, 0, -vertexPosition0,
 
-					0, -vertexPosition1, -vertexPosition2,
-					0, vertexPosition1, -vertexPosition2,
-					vertexPosition2, 0, -vertexPosition1,
+					0, -vertexPosition0, -vertexPosition2,
+					0, vertexPosition0, -vertexPosition2,
+					vertexPosition2, 0, -vertexPosition0,
 
-					0, vertexPosition1, -vertexPosition2,
-					vertexPosition0, vertexPosition0, -vertexPosition0,
-					vertexPosition2, 0, -vertexPosition1,
+					0, vertexPosition0, -vertexPosition2,
+					vertexPosition1, vertexPosition1, -vertexPosition1,
+					vertexPosition2, 0, -vertexPosition0,
 
-					-vertexPosition0, -vertexPosition0, -vertexPosition0,
-					-vertexPosition2, 0, -vertexPosition1,
-					0, -vertexPosition1, -vertexPosition2,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
+					-vertexPosition2, 0, -vertexPosition0,
+					0, -vertexPosition0, -vertexPosition2,
 
-					-vertexPosition2, 0, -vertexPosition1,
-					-vertexPosition0, vertexPosition0, -vertexPosition0,
-					0, -vertexPosition1, -vertexPosition2,
+					-vertexPosition2, 0, -vertexPosition0,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
+					0, -vertexPosition0, -vertexPosition2,
 
-					-vertexPosition0, vertexPosition0, -vertexPosition0,
-					0, vertexPosition1, -vertexPosition2,
-					0, -vertexPosition1, -vertexPosition2,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
+					0, vertexPosition0, -vertexPosition2,
+					0, -vertexPosition0, -vertexPosition2,
 
-					-vertexPosition1, -vertexPosition2, 0,
-					-vertexPosition0, -vertexPosition0, vertexPosition0,
-					-vertexPosition0, -vertexPosition0, -vertexPosition0,
+					-vertexPosition0, -vertexPosition2, 0,
+					-vertexPosition1, -vertexPosition1, vertexPosition1,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
 
-					-vertexPosition0, -vertexPosition0, vertexPosition0,
-					-vertexPosition2, 0, vertexPosition1,
-					-vertexPosition0, -vertexPosition0, -vertexPosition0,
+					-vertexPosition1, -vertexPosition1, vertexPosition1,
+					-vertexPosition2, 0, vertexPosition0,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
 
-					-vertexPosition2, 0, vertexPosition1,
-					-vertexPosition2, 0, -vertexPosition1,
-					-vertexPosition0, -vertexPosition0, -vertexPosition0,
+					-vertexPosition2, 0, vertexPosition0,
+					-vertexPosition2, 0, -vertexPosition0,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
 
-					0, vertexPosition1, -vertexPosition2,
-					-vertexPosition0, vertexPosition0, -vertexPosition0,
-					vertexPosition0, vertexPosition0, -vertexPosition0,
+					0, vertexPosition0, -vertexPosition2,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
+					vertexPosition1, vertexPosition1, -vertexPosition1,
 
-					-vertexPosition0, vertexPosition0, -vertexPosition0,
-					-vertexPosition1, vertexPosition2, 0,
-					vertexPosition0, vertexPosition0, -vertexPosition0,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
+					-vertexPosition0, vertexPosition2, 0,
+					vertexPosition1, vertexPosition1, -vertexPosition1,
 
-					-vertexPosition1, vertexPosition2, 0,
-					vertexPosition1, vertexPosition2, 0,
-					vertexPosition0, vertexPosition0, -vertexPosition0,
+					-vertexPosition0, vertexPosition2, 0,
+					vertexPosition0, vertexPosition2, 0,
+					vertexPosition1, vertexPosition1, -vertexPosition1,
 
-					-vertexPosition2, 0, -vertexPosition1,
-					-vertexPosition2, 0, vertexPosition1,
-					-vertexPosition0, vertexPosition0, -vertexPosition0,
+					-vertexPosition2, 0, -vertexPosition0,
+					-vertexPosition2, 0, vertexPosition0,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
 
-					-vertexPosition2, 0, vertexPosition1,
-					-vertexPosition0, vertexPosition0, vertexPosition0,
-					-vertexPosition0, vertexPosition0, -vertexPosition0,
+					-vertexPosition2, 0, vertexPosition0,
+					-vertexPosition1, vertexPosition1, vertexPosition1,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
 
-					-vertexPosition0, vertexPosition0, vertexPosition0,
-					-vertexPosition1, vertexPosition2, 0,
-					-vertexPosition0, vertexPosition0, -vertexPosition0,
+					-vertexPosition1, vertexPosition1, vertexPosition1,
+					-vertexPosition0, vertexPosition2, 0,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
 
-					-vertexPosition0, -vertexPosition0, vertexPosition0,
-					0, -vertexPosition1, vertexPosition2,
-					-vertexPosition2, 0, vertexPosition1,
+					-vertexPosition1, -vertexPosition1, vertexPosition1,
+					0, -vertexPosition0, vertexPosition2,
+					-vertexPosition2, 0, vertexPosition0,
 
-					0, -vertexPosition1, vertexPosition2,
-					0, vertexPosition1, vertexPosition2,
-					-vertexPosition2, 0, vertexPosition1,
+					0, -vertexPosition0, vertexPosition2,
+					0, vertexPosition0, vertexPosition2,
+					-vertexPosition2, 0, vertexPosition0,
 
-					0, vertexPosition1, vertexPosition2,
-					-vertexPosition0, vertexPosition0, vertexPosition0,
-					-vertexPosition2, 0, vertexPosition1,
+					0, vertexPosition0, vertexPosition2,
+					-vertexPosition1, vertexPosition1, vertexPosition1,
+					-vertexPosition2, 0, vertexPosition0,
 
-					vertexPosition1, -vertexPosition2, 0,
-					-vertexPosition1, -vertexPosition2, 0,
-					vertexPosition0, -vertexPosition0, -vertexPosition0,
+					vertexPosition0, -vertexPosition2, 0,
+					-vertexPosition0, -vertexPosition2, 0,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
 
-					-vertexPosition1, -vertexPosition2, 0,
-					-vertexPosition0, -vertexPosition0, -vertexPosition0,
-					vertexPosition0, -vertexPosition0, -vertexPosition0,
+					-vertexPosition0, -vertexPosition2, 0,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
 
-					-vertexPosition0, -vertexPosition0, -vertexPosition0,
-					0, -vertexPosition1, -vertexPosition2,
-					vertexPosition0, -vertexPosition0, -vertexPosition0,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
+					0, -vertexPosition0, -vertexPosition2,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
 
-					0, -vertexPosition1, vertexPosition2,
-					vertexPosition0, -vertexPosition0, vertexPosition0,
-					0, vertexPosition1, vertexPosition2,
+					0, -vertexPosition0, vertexPosition2,
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+					0, vertexPosition0, vertexPosition2,
 
-					vertexPosition0, -vertexPosition0, vertexPosition0,
-					vertexPosition2, 0, vertexPosition1,
-					0, vertexPosition1, vertexPosition2,
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+					vertexPosition2, 0, vertexPosition0,
+					0, vertexPosition0, vertexPosition2,
 
-					vertexPosition2, 0, vertexPosition1,
-					vertexPosition0, vertexPosition0, vertexPosition0,
-					0, vertexPosition1, vertexPosition2,
+					vertexPosition2, 0, vertexPosition0,
+					vertexPosition1, vertexPosition1, vertexPosition1,
+					0, vertexPosition0, vertexPosition2,
 
-					vertexPosition0, -vertexPosition0, vertexPosition0,
-					vertexPosition1, -vertexPosition2, 0,
-					vertexPosition2, 0, vertexPosition1,
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+					vertexPosition0, -vertexPosition2, 0,
+					vertexPosition2, 0, vertexPosition0,
 
-					vertexPosition1, -vertexPosition2, 0,
-					vertexPosition0, -vertexPosition0, -vertexPosition0,
-					vertexPosition2, 0, vertexPosition1,
+					vertexPosition0, -vertexPosition2, 0,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
+					vertexPosition2, 0, vertexPosition0,
 
-					vertexPosition0, -vertexPosition0, -vertexPosition0,
-					vertexPosition2, 0, -vertexPosition1,
-					vertexPosition2, 0, vertexPosition1,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
+					vertexPosition2, 0, -vertexPosition0,
+					vertexPosition2, 0, vertexPosition0,
 
-					-vertexPosition1, -vertexPosition2, 0,
-					vertexPosition1, -vertexPosition2, 0,
-					-vertexPosition0, -vertexPosition0, vertexPosition0,
+					-vertexPosition0, -vertexPosition2, 0,
+					vertexPosition0, -vertexPosition2, 0,
+					-vertexPosition1, -vertexPosition1, vertexPosition1,
 
-					vertexPosition1, -vertexPosition2, 0,
-					vertexPosition0, -vertexPosition0, vertexPosition0,
-					-vertexPosition0, -vertexPosition0, vertexPosition0,
+					vertexPosition0, -vertexPosition2, 0,
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+					-vertexPosition1, -vertexPosition1, vertexPosition1,
 
-					vertexPosition0, -vertexPosition0, vertexPosition0,
-					0, -vertexPosition1, vertexPosition2,
-					-vertexPosition0, -vertexPosition0, vertexPosition0
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+					0, -vertexPosition0, vertexPosition2,
+					-vertexPosition1, -vertexPosition1, vertexPosition1
 				]), 3)
 			);
 
@@ -247,7 +251,7 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 			const vertexPosition0 = 0.5576 * edgeLength,
 				vertexPosition1 = 0.9022 * edgeLength;
 
-			polyhedronGeometry = new InstancedBufferGeometry().setAttribute(
+			polyhedronGeometry.setAttribute(
 				'position',
 				new BufferAttribute(new Float32Array([
 					-vertexPosition1, 0, vertexPosition0,
@@ -513,9 +517,292 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 
 	// The polyhedrons' edges are basicaly the same as the cylinders' ones.
 
-	const edgesGeometry = new InstancedBufferGeometry().copy(
-		new EdgesGeometry(polyhedronGeometry) // "calculate" the edges of the desired polyhedron
-	);
+	const edgesGeometry = new InstancedBufferGeometry();
+
+	// The magic numbers below are modified from the position attribute of a
+	// three.js EdgesGeometry of the polyhedron.
+	// Each number is multiplied by 1.06066019082 (the same multiplier is
+	// used in polyhedronGeometry).
+	// To get them: console.log(new EdgesGeometry(polyhedronGeometry).attributes.position.array)
+
+	switch (subType) {
+		case 'tetrahedron': {
+			const vertexPosition = 0.6123 * edgeLength;
+
+			edgesGeometry.setAttribute('position', new BufferAttribute(
+				new Float32Array([
+					-vertexPosition, vertexPosition, -vertexPosition,
+					vertexPosition, vertexPosition, vertexPosition,
+
+					vertexPosition, -vertexPosition, -vertexPosition,
+					vertexPosition, vertexPosition, vertexPosition,
+
+					vertexPosition, vertexPosition, vertexPosition,
+					-vertexPosition, -vertexPosition, vertexPosition,
+
+					vertexPosition, -vertexPosition, -vertexPosition,
+					-vertexPosition, -vertexPosition, vertexPosition,
+
+					-vertexPosition, -vertexPosition, vertexPosition,
+					-vertexPosition, vertexPosition, -vertexPosition,
+
+					-vertexPosition, vertexPosition, -vertexPosition,
+					vertexPosition, -vertexPosition, -vertexPosition
+				]),
+				3
+			));
+
+			break;
+		}
+		case 'octahedron': {
+			edgesGeometry.setAttribute('position', new BufferAttribute(
+				new Float32Array([
+					edgeLength, 0, 0,
+					0, 0, edgeLength,
+
+					edgeLength, 0, 0,
+					0, -edgeLength, 0,
+
+					0, edgeLength, 0,
+					edgeLength, 0, 0,
+
+					edgeLength, 0, 0,
+					0, 0, -edgeLength,
+
+					0, edgeLength, 0,
+					0, 0, -edgeLength,
+
+					0, 0, -edgeLength,
+					0, -edgeLength, 0,
+
+					-edgeLength, 0, 0,
+					0, 0, -edgeLength,
+
+					0, -edgeLength, 0,
+					0, 0, edgeLength,
+
+					-edgeLength, 0, 0,
+					0, -edgeLength, 0,
+
+					0, 0, edgeLength,
+					0, edgeLength, 0,
+
+					0, edgeLength, 0,
+					-edgeLength, 0, 0,
+
+					-edgeLength, 0, 0,
+					0, 0, edgeLength
+				]),
+				3
+			));
+
+			break;
+		}
+		case 'dodecahedron': {
+			const vertexPosition0 = 0.3784 * edgeLength,
+				vertexPosition1 = 0.6123 * edgeLength,
+				vertexPosition2 = 0.9908 * edgeLength;
+
+			edgesGeometry.setAttribute('position', new BufferAttribute(
+				new Float32Array([
+					vertexPosition0, vertexPosition2, 0,
+					vertexPosition1, vertexPosition1, vertexPosition1,
+
+					vertexPosition1, vertexPosition1, -vertexPosition1,
+					vertexPosition2, 0, -vertexPosition0,
+
+					0, vertexPosition0, -vertexPosition2,
+					0, -vertexPosition0, -vertexPosition2,
+
+					-vertexPosition2, 0, -vertexPosition0,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
+
+					0, vertexPosition0, -vertexPosition2,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
+
+					vertexPosition1, vertexPosition1, -vertexPosition1,
+					0, vertexPosition0, -vertexPosition2,
+
+					-vertexPosition0, vertexPosition2, 0,
+					vertexPosition0, vertexPosition2, 0,
+
+					vertexPosition0, vertexPosition2, 0,
+					vertexPosition1, vertexPosition1, -vertexPosition1,
+
+					-vertexPosition2, 0, -vertexPosition0,
+					-vertexPosition2, 0, vertexPosition0,
+
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
+					-vertexPosition2, 0, -vertexPosition0,
+
+					-vertexPosition1, vertexPosition1, vertexPosition1,
+					-vertexPosition0, vertexPosition2, 0,
+
+					-vertexPosition0, vertexPosition2, 0,
+					-vertexPosition1, vertexPosition1, -vertexPosition1,
+
+					-vertexPosition2, 0, vertexPosition0,
+					-vertexPosition1, -vertexPosition1, vertexPosition1,
+
+					0, vertexPosition0, vertexPosition2,
+					-vertexPosition1, vertexPosition1, vertexPosition1,
+
+					-vertexPosition1, vertexPosition1, vertexPosition1,
+					-vertexPosition2, 0, vertexPosition0,
+
+					-vertexPosition0, -vertexPosition2, 0,
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
+
+					-vertexPosition1, -vertexPosition1, -vertexPosition1,
+					0, -vertexPosition0, -vertexPosition2,
+
+					0, -vertexPosition0, -vertexPosition2,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
+
+					0, vertexPosition0, vertexPosition2,
+					0, -vertexPosition0, vertexPosition2,
+
+					vertexPosition2, 0, vertexPosition0,
+					vertexPosition1, vertexPosition1, vertexPosition1,
+
+					vertexPosition1, vertexPosition1, vertexPosition1,
+					0, vertexPosition0, vertexPosition2,
+
+					vertexPosition2, 0, vertexPosition0,
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+
+					vertexPosition0, -vertexPosition2, 0,
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
+
+					vertexPosition1, -vertexPosition1, -vertexPosition1,
+					vertexPosition2, 0, -vertexPosition0,
+
+					vertexPosition2, 0, -vertexPosition0,
+					vertexPosition2, 0, vertexPosition0,
+
+					-vertexPosition0, -vertexPosition2, 0,
+					vertexPosition0, -vertexPosition2, 0,
+
+					-vertexPosition1, -vertexPosition1, vertexPosition1,
+					-vertexPosition0, -vertexPosition2, 0,
+
+					vertexPosition0, -vertexPosition2, 0,
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+
+					vertexPosition1, -vertexPosition1, vertexPosition1,
+					0, -vertexPosition0, vertexPosition2,
+
+					0, -vertexPosition0, vertexPosition2,
+					-vertexPosition1, -vertexPosition1, vertexPosition1
+				]),
+				3
+			));
+
+			break;
+		}
+		case 'icosahedron': {
+			const vertexPosition0 = 0.5576 * edgeLength,
+				vertexPosition1 = 0.9022 * edgeLength;
+
+			edgesGeometry.setAttribute('position', new BufferAttribute(
+				new Float32Array([
+					-vertexPosition0, vertexPosition1, 0,
+					0, vertexPosition0, vertexPosition1,
+
+					-vertexPosition0, vertexPosition1, 0,
+					vertexPosition0, vertexPosition1, 0,
+
+					-vertexPosition0, vertexPosition1, 0,
+					0, vertexPosition0, -vertexPosition1,
+
+					-vertexPosition1, 0, vertexPosition0,
+					-vertexPosition0, vertexPosition1, 0,
+
+					-vertexPosition0, vertexPosition1, 0,
+					-vertexPosition1, 0, -vertexPosition0,
+
+					vertexPosition0, vertexPosition1, 0,
+					0, vertexPosition0, vertexPosition1,
+
+					0, vertexPosition0, vertexPosition1,
+					-vertexPosition1, 0, vertexPosition0,
+
+					-vertexPosition1, 0, vertexPosition0,
+					-vertexPosition1, 0, -vertexPosition0,
+
+					-vertexPosition1, 0, -vertexPosition0,
+					0, vertexPosition0, -vertexPosition1,
+
+					0, vertexPosition0, -vertexPosition1,
+					vertexPosition0, vertexPosition1, 0,
+
+					vertexPosition0, -vertexPosition1, 0,
+					0, -vertexPosition0, vertexPosition1,
+
+					vertexPosition0, -vertexPosition1, 0,
+					-vertexPosition0, -vertexPosition1, 0,
+
+					vertexPosition0, -vertexPosition1, 0,
+					0, -vertexPosition0, -vertexPosition1,
+
+					vertexPosition1, 0, vertexPosition0,
+					vertexPosition0, -vertexPosition1, 0,
+
+					vertexPosition0, -vertexPosition1, 0,
+					vertexPosition1, 0, -vertexPosition0,
+
+					vertexPosition1, 0, vertexPosition0,
+					0, vertexPosition0, vertexPosition1,
+
+					0, vertexPosition0, vertexPosition1,
+					0, -vertexPosition0, vertexPosition1,
+
+					0, -vertexPosition0, vertexPosition1,
+					vertexPosition1, 0, vertexPosition0,
+
+					0, -vertexPosition0, vertexPosition1,
+					-vertexPosition1, 0, vertexPosition0,
+
+					-vertexPosition1, 0, vertexPosition0,
+					-vertexPosition0, -vertexPosition1, 0,
+
+					-vertexPosition0, -vertexPosition1, 0,
+					0, -vertexPosition0, vertexPosition1,
+
+					-vertexPosition0, -vertexPosition1, 0,
+					-vertexPosition1, 0, -vertexPosition0,
+
+					-vertexPosition1, 0, -vertexPosition0,
+					0, -vertexPosition0, -vertexPosition1,
+
+					0, -vertexPosition0, -vertexPosition1,
+					-vertexPosition0, -vertexPosition1, 0,
+
+					0, -vertexPosition0, -vertexPosition1,
+					0, vertexPosition0, -vertexPosition1,
+
+					0, vertexPosition0, -vertexPosition1,
+					vertexPosition1, 0, -vertexPosition0,
+
+					vertexPosition1, 0, -vertexPosition0,
+					0, -vertexPosition0, -vertexPosition1,
+
+					vertexPosition1, 0, -vertexPosition0,
+					vertexPosition0, vertexPosition1, 0,
+
+					vertexPosition0, vertexPosition1, 0,
+					vertexPosition1, 0, vertexPosition0,
+
+					vertexPosition1, 0, vertexPosition0,
+					vertexPosition1, 0, -vertexPosition0
+
+				]),
+				3
+			));
+
+			break;
+		}
+	}
 
 	edgesGeometry.instanceCount = coords.length;
 
