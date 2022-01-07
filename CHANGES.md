@@ -9,6 +9,7 @@ Improvements:
 - Allow setting a custom extent (#52)
 - Update three.js to r136
 - Add default viewpoint (#61)
+- Improve performance of `uniformPolyhedron`s' edges (#62)
 
 Internals:
 - Convert all materials to ShaderMaterial/RawShaderMaterial (#53)
