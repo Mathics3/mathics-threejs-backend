@@ -43,31 +43,20 @@ coordinate.applyQuaternion(
 
 The code above converts the 3d coordinates into a 2d position in the plane.
 
-**Note**: in 2d the z values are ignored.
-
-three.js `ShapeGeometry` then calls [earcut](https://github.com/mapbox/earcut).  
-
-Then we need to convert the buffer of floats in `Vector3`s (almost all three.js geometries use buffers):
-
+Then we create a 2d Float32Array with the method above:
 ```js
+const coordinates2d = new Float32Array(coords.length * 2);
+
 for (let i = 0; i < coords.length; i++) {
-    const coordinateVector = new Vector3(
-        geometry.attributes.position.array[i * 3],
-        geometry.attributes.position.array[i * 3 + 1],
-        0
-    )
-}
-```
+    const vector = new Vector3(
+        coords[i * 3],
+        coords[i * 3 + 1],
+        coords[i * 3 + 2]
+    ).applyQuaternion(quaternion);
 
-Then we need to convert the 2d coordinate into 3d:
-```js
-coordinateVector.applyQuaternion(
-    new Quaternion().setFromUnitVectors(
-        // See that the order of the vectors is inversed here.
-        normalZVector,
-        normalVector
-    )
-)
+    coordinates2d[i * 2] = vector.x;
+    coordinates2d[i * 2 + 1] = vector.y;
+}
 ```
 
 To test the coplanarity of the polygon we create a
