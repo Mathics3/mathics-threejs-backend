@@ -1,1 +1,337 @@
-export default function(b){var c,d,e,f,g,h,j,k=b.length,m=ll(b,0,k,!0),l=[];if(!m||m.next===m.prev)return l;if(240<b.length){c=e=b[0],d=f=b[1];for(let a=3;a<k;a+=3)(g=b[a])<c&&(c=g),(h=b[a+1])<d&&(d=h),g>e&&(e=g),h>f&&(f=h);j=0===(j=Math.max(e-c,f-d))?0:1/j}return el(m,l,c,d,j),l}function ll(a,c,d,e){var f,g;if(e===0<s(a,c,d))for(f=c;f<d;f+=3)g=id(f,a[f],a[f+1],g);else for(f=d-3;f>=c;f-=3)g=id(f,a[f],a[f+1],g);return g&&eq(g,g.next)&&(b(g),g=g.next),g}function fp(a,c){if(!a)return a;c||(c=a);var d,e=a;do if(d=!1,e.steiner||!eq(e,e.next)&&0!==aa(e.prev,e,e.next))e=e.next;else{if(b(e),(e=c=e.prev)===e.next)break;d=!0}while(d||e!==c);return c}function el(f,j,l,m,n,i){if(f){!i&&n&&c(f,l,m,n);for(var p,q,r=f;f.prev!==f.next;)if(p=f.prev,q=f.next,n?d(f,l,m,n):g(f))j.push(p.i/3),j.push(f.i/3),j.push(q.i/3),b(f),f=q.next,r=q.next;else if((f=q)===r){i?1===i?el(f=k(fp(f),j),j,l,m,n,2):2==i&&h(f,j,l,m,n):el(fp(f),j,l,m,n,1);break}}}function g(a){var b=a.prev,c=a,d=a.next;if(0<=aa(b,c,d))return!1;for(var e=a.next.next;e!==a.prev;){if(j(b.x,b.y,c.x,c.y,d.x,d.y,e.x,e.y)&&0<=aa(e.prev,e,e.next))return!1;e=e.next}return!0}function d(b,c,d,e){var g=b.prev,h=b,i=b.next;if(0<=aa(g,h,i))return!1;for(var a=g.x<h.x?g.x<i.x?g.x:i.x:h.x<i.x?h.x:i.x,k=g.y<h.y?g.y<i.y?g.y:i.y:h.y<i.y?h.y:i.y,n=g.x>h.x?g.x>i.x?g.x:i.x:h.x>i.x?h.x:i.x,l=g.y>h.y?g.y>i.y?g.y:i.y:h.y>i.y?h.y:i.y,o=m(a,k,c,d,e),q=m(n,l,c,d,e),r=b.prevZ,s=b.nextZ;r&&r.z>=o&&s&&s.z<=q;){if(r!==b.prev&&r!==b.next&&j(g.x,g.y,h.x,h.y,i.x,i.y,r.x,r.y)&&0<=aa(r.prev,r,r.next))return!1;if(r=r.prevZ,s!==b.prev&&s!==b.next&&j(g.x,g.y,h.x,h.y,i.x,i.y,s.x,s.y)&&0<=aa(s.prev,s,s.next))return!1;s=s.nextZ}for(;r&&r.z>=o;){if(r!==b.prev&&r!==b.next&&j(g.x,g.y,h.x,h.y,i.x,i.y,r.x,r.y)&&0<=aa(r.prev,r,r.next))return!1;r=r.prevZ}for(;s&&s.z<=q;){if(s!==b.prev&&s!==b.next&&j(g.x,g.y,h.x,h.y,i.x,i.y,s.x,s.y)&&0<=aa(s.prev,s,s.next))return!1;s=s.nextZ}return!0}function k(a,c){var d=a;do{var f=d.prev,g=d.next.next;!eq(f,g)&&ab(f,d,d.next,g)&&ad(f,g)&&ad(g,f)&&(c.push(f.i/3),c.push(d.i/3),c.push(g.i/3),b(d),b(d.next),d=a=g),d=d.next}while(d!==a);return fp(d)}function h(b,c,d,e,f){var g=b;do{for(var h=g.next.next;h!==g.prev;){if(g.i!==h.i&&ac(g,h)){var i=w(g,h);return g=fp(g,g.next),i=fp(i,i.next),el(g,c,d,e,f),void el(i,c,d,e,f)}h=h.next}g=g.next}while(g!==b)}function c(a,b,c,d){var e=a;do null===e.z&&(e.z=m(e.x,e.y,b,c,d)),e.prevZ=e.prev,e.nextZ=e.next,e=e.next;while(e!==a);e.prevZ.nextZ=null,e.prevZ=null,q(e)}function q(b){var c,d,f,g,h,j,k,m,p=1;do{for(d=b,b=null,h=null,j=0;d;){for(j++,f=d,k=0,c=0;c<p&&(k++,f=f.nextZ);c++);for(m=p;0<k||0<m&&f;)0!==k&&(0===m||!f||d.z<=f.z)?(g=d,d=d.nextZ,k--):(g=f,f=f.nextZ,m--),h?h.nextZ=g:b=g,g.prevZ=h,h=g;d=f}h.nextZ=null,p*=2}while(1<j);return b}function m(a,b,c,d,f){return(a=1431655765&((a=858993459&((a=252645135&((a=16711935&((a=32767*(a-c)*f)|a<<8))|a<<4))|a<<2))|a<<1))|(b=1431655765&((b=858993459&((b=252645135&((b=16711935&((b=32767*(b-d)*f)|b<<8))|b<<4))|b<<2))|b<<1))<<1}function j(b,c,d,e,f,g,h,a){return 0<=(f-h)*(c-a)-(b-h)*(g-a)&&0<=(b-h)*(e-a)-(d-h)*(c-a)&&0<=(d-h)*(g-a)-(f-h)*(e-a)}function ac(a,b){return a.next.i!==b.i&&a.prev.i!==b.i&&!ap(a,b)&&(ad(a,b)&&ad(b,a)&&ae(a,b)&&(aa(a.prev,a,b.prev)||aa(a,b.prev,b))||eq(a,b)&&0<aa(a.prev,a,a.next)&&0<aa(b.prev,b,b.next))}function aa(a,b,c){return(b.y-a.y)*(c.x-b.x)-(b.x-a.x)*(c.y-b.y)}function eq(a,b){return a.x===b.x&&a.y===b.y}function ab(b,c,d,e){var f=sn(aa(b,c,d)),g=sn(aa(b,c,e)),h=sn(aa(d,e,b)),a=sn(aa(d,e,c));return f!==g&&h!==a||0===f&&os(b,d,c)||0===g&&os(b,e,c)||0===h&&os(d,b,e)||0===a&&os(d,c,e)}function os(a,b,c){return b.x<=Math.max(a.x,c.x)&&b.x>=Math.min(a.x,c.x)&&b.y<=Math.max(a.y,c.y)&&b.y>=Math.min(a.y,c.y)}function sn(a){return 0<a?1:0>a?-1:0}function ap(a,b){var c=a;do{if(c.i!==a.i&&c.next.i!==a.i&&c.i!==b.i&&c.next.i!==b.i&&ab(c,c.next,a,b))return!0;c=c.next}while(c!==a);return!1}function ad(a,b){return 0>aa(a.prev,a,a.next)?0<=aa(a,b,a.next)&&0<=aa(a,a.prev,b):0>aa(a,b,a.prev)||0>aa(a,a.next,b)}function ae(a,b){var c=a,d=!1,e=(a.x+b.x)/2,f=(a.y+b.y)/2;do c.y>f!=c.next.y>f&&c.next.y!==c.y&&e<(c.next.x-c.x)*(f-c.y)/(c.next.y-c.y)+c.x&&(d=!d),c=c.next;while(c!==a);return d}function w(a,b){var c=new nd(a.i,a.x,a.y),d=new nd(b.i,b.x,b.y),e=a.next,f=b.prev;return a.next=b,b.prev=a,c.next=e,e.prev=c,d.next=c,c.prev=d,f.next=d,d.prev=f,d}function id(a,b,c,d){var e=new nd(a,b,c);return d?(e.next=d.next,e.prev=d,d.next.prev=e,d.next=e):(e.prev=e,e.next=e),e}function b(a){a.next.prev=a.prev,a.prev.next=a.next,a.prevZ&&(a.prevZ.nextZ=a.nextZ),a.nextZ&&(a.nextZ.prevZ=a.prevZ)}function nd(a,b,c){this.i=a,this.x=b,this.y=c,this.prev=null,this.next=null,this.z=null,this.prevZ=null,this.nextZ=null,this.steiner=!1}function s(a,b,c){for(var d=0,e=b,f=c-3;e<c;e+=3)d+=(a[f]-a[e])*(a[e+1]+a[f+1]),f=e;return d}
+export default function (data, dim = 3) {
+	let outerNode = linkedList(data, 0, data.length, dim, true), triangles = [];
+
+	earcutLinked(outerNode, triangles, dim);
+
+	return triangles;
+}
+
+// create a circular doubly linked list from polygon points in the specified winding order
+function linkedList(data, start, end, dim) {
+	let i, last;
+
+	if (signedArea(data, start, end, dim) > 0) {
+		for (i = start; i < end; i += dim) last = insertNode(i, data[i], data[i + 1], last);
+	} else {
+		for (i = end - dim; i >= start; i -= dim) last = insertNode(i, data[i], data[i + 1], last);
+	}
+
+	if (last && equals(last, last.next)) {
+		removeNode(last);
+		last = last.next;
+	}
+
+	return last;
+}
+
+// eliminate colinear or duplicate points
+function filterPoints(start, end) {
+	if (!start) return start;
+	if (!end) end = start;
+
+	let p = start, again;
+
+	do {
+		again = false;
+
+		if (!p.steiner && (equals(p, p.next) || area(p.prev, p, p.next) === 0)) {
+			removeNode(p);
+			p = end = p.prev;
+			if (p === p.next) break;
+			again = true;
+
+		} else {
+			p = p.next;
+		}
+	} while (again || p !== end);
+
+	return end;
+}
+
+// main ear slicing loop which triangulates a polygon (given as a linked list)
+function earcutLinked(ear, triangles, dim, minX, minY, pass) {
+	if (!ear) return;
+
+	let stop = ear, prev, next;
+
+	// iterate through ears, slicing them one by one
+	while (ear.prev !== ear.next) {
+		prev = ear.prev;
+		next = ear.next;
+
+		if (isEar(ear)) {
+			// cut off the triangle
+			triangles.push(prev.i / dim);
+			triangles.push(ear.i / dim);
+			triangles.push(next.i / dim);
+
+			removeNode(ear);
+
+			// skipping the next vertex leads to less sliver triangles
+			ear = next.next;
+			stop = next.next;
+
+			continue;
+		}
+
+		ear = next;
+
+		// if we looped through the whole remaining polygon and can't find any more ears
+		if (ear === stop) {
+			// try filtering points and slicing again
+			if (!pass) {
+				earcutLinked(filterPoints(ear), triangles, dim, minX, minY, 1);
+
+				// if this didn't work, try curing all small self-intersections locally
+			} else if (pass === 1) {
+				ear = cureLocalIntersections(filterPoints(ear), triangles, dim);
+				earcutLinked(ear, triangles, dim, minX, minY, 2);
+
+				// as a last resort, try splitting the remaining polygon into two
+			} else if (pass === 2) {
+				splitEarcut(ear, triangles, dim, minX, minY);
+			}
+
+			break;
+		}
+	}
+}
+
+// check whether a polygon node forms a valid ear with adjacent nodes
+function isEar(ear) {
+	let a = ear.prev, b = ear, c = ear.next;
+
+	if (area(a, b, c) >= 0) return false; // reflex, can't be an ear
+
+	// now make sure we don't have other points inside the potential ear
+	let p = ear.next.next;
+
+	while (p !== ear.prev) {
+		if (pointInTriangle(a.x, a.y, b.x, b.y, c.x, c.y, p.x, p.y) &&
+			area(p.prev, p, p.next) >= 0) return false;
+		p = p.next;
+	}
+
+	return true;
+}
+
+// go through all polygon nodes and cure small local self-intersections
+function cureLocalIntersections(start, triangles, dim) {
+	let p = start;
+	do {
+		let a = p.prev,
+			b = p.next.next;
+
+		if (!equals(a, b) && intersects(a, p, p.next, b) && locallyInside(a, b) && locallyInside(b, a)) {
+
+			triangles.push(a.i / dim);
+			triangles.push(p.i / dim);
+			triangles.push(b.i / dim);
+
+			// remove two nodes involved
+			removeNode(p);
+			removeNode(p.next);
+
+			p = start = b;
+		}
+		p = p.next;
+	} while (p !== start);
+
+	return filterPoints(p);
+}
+
+// try splitting polygon into two and triangulate them independently
+function splitEarcut(start, triangles, dim, minX, minY) {
+	// look for a valid diagonal that divides the polygon into two
+	let a = start;
+	do {
+		let b = a.next.next;
+		while (b !== a.prev) {
+			if (a.i !== b.i && isValidDiagonal(a, b)) {
+				// split the polygon in two by the diagonal
+				let c = splitPolygon(a, b);
+
+				// filter colinear points around the cuts
+				a = filterPoints(a, a.next);
+				c = filterPoints(c, c.next);
+
+				// run earcut on each half
+				earcutLinked(a, triangles, dim, minX, minY);
+				earcutLinked(c, triangles, dim, minX, minY);
+				return;
+			}
+			b = b.next;
+		}
+		a = a.next;
+	} while (a !== start);
+}
+
+// check if a point lies within a convex triangle
+function pointInTriangle(ax, ay, bx, by, cx, cy, px, py) {
+	return (cx - px) * (ay - py) - (ax - px) * (cy - py) >= 0 &&
+		(ax - px) * (by - py) - (bx - px) * (ay - py) >= 0 &&
+		(bx - px) * (cy - py) - (cx - px) * (by - py) >= 0;
+}
+
+// check if a diagonal between two polygon nodes is valid (lies in polygon interior)
+function isValidDiagonal(a, b) {
+	return a.next.i !== b.i && a.prev.i !== b.i && !intersectsPolygon(a, b) && // dones't intersect other edges
+		(locallyInside(a, b) && locallyInside(b, a) && middleInside(a, b) && // locally visible
+			(area(a.prev, a, b.prev) || area(a, b.prev, b)) || // does not create opposite-facing sectors
+			equals(a, b) && area(a.prev, a, a.next) > 0 && area(b.prev, b, b.next) > 0); // special zero-length case
+}
+
+// signed area of a triangle
+function area(p, q, r) {
+	return (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+}
+
+// check if two points are equal
+function equals(p1, p2) {
+	return p1.x === p2.x && p1.y === p2.y;
+}
+
+// check if two segments intersect
+function intersects(p1, q1, p2, q2) {
+	const o1 = sign(area(p1, q1, p2));
+	const o2 = sign(area(p1, q1, q2));
+	const o3 = sign(area(p2, q2, p1));
+	const o4 = sign(area(p2, q2, q1));
+
+	if (o1 !== o2 && o3 !== o4) return true; // general case
+
+	if (o1 === 0 && onSegment(p1, p2, q1)) return true; // p1, q1 and p2 are collinear and p2 lies on p1q1
+	if (o2 === 0 && onSegment(p1, q2, q1)) return true; // p1, q1 and q2 are collinear and q2 lies on p1q1
+	if (o3 === 0 && onSegment(p2, p1, q2)) return true; // p2, q2 and p1 are collinear and p1 lies on p2q2
+	if (o4 === 0 && onSegment(p2, q1, q2)) return true; // p2, q2 and q1 are collinear and q1 lies on p2q2
+
+	return false;
+}
+
+// for collinear points p, q, r, check if point q lies on segment pr
+function onSegment(p, q, r) {
+	return q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) && q.y <= Math.max(p.y, r.y) && q.y >= Math.min(p.y, r.y);
+}
+
+function sign(num) {
+	return num > 0 ? 1 : num < 0 ? -1 : 0;
+}
+
+// check if a polygon diagonal intersects any polygon segments
+function intersectsPolygon(a, b) {
+	let p = a;
+
+	do {
+		if (p.i !== a.i && p.next.i !== a.i && p.i !== b.i && p.next.i !== b.i &&
+			intersects(p, p.next, a, b)) return true;
+		p = p.next;
+	} while (p !== a);
+
+	return false;
+}
+
+// check if a polygon diagonal is locally inside the polygon
+function locallyInside(a, b) {
+	return area(a.prev, a, a.next) < 0 ?
+		area(a, b, a.next) >= 0 && area(a, a.prev, b) >= 0 :
+		area(a, b, a.prev) < 0 || area(a, a.next, b) < 0;
+}
+
+// check if the middle point of a polygon diagonal is inside the polygon
+function middleInside(a, b) {
+	let p = a,
+		inside = false,
+		px = (a.x + b.x) / 2,
+		py = (a.y + b.y) / 2;
+
+	do {
+		if (((p.y > py) !== (p.next.y > py)) && p.next.y !== p.y &&
+			(px < (p.next.x - p.x) * (py - p.y) / (p.next.y - p.y) + p.x))
+			inside = !inside;
+		p = p.next;
+	} while (p !== a);
+
+	return inside;
+}
+
+// link two polygon vertices with a bridge; if the vertices belong to the same ring, it splits polygon into two;
+// if one belongs to the outer ring and another to a hole, it merges it into a single ring
+function splitPolygon(a, b) {
+	let a2 = new Node(a.i, a.x, a.y),
+		b2 = new Node(b.i, b.x, b.y),
+		an = a.next,
+		bp = b.prev;
+
+	a.next = b;
+	b.prev = a;
+
+	a2.next = an;
+	an.prev = a2;
+
+	b2.next = a2;
+	a2.prev = b2;
+
+	bp.next = b2;
+	b2.prev = bp;
+
+	return b2;
+}
+
+// create a node and optionally link it with previous one (in a circular doubly linked list)
+function insertNode(i, x, y, last) {
+	let p = new Node(i, x, y);
+
+	if (!last) {
+		p.prev = p;
+		p.next = p;
+
+	} else {
+		p.next = last.next;
+		p.prev = last;
+		last.next.prev = p;
+		last.next = p;
+	}
+	return p;
+}
+
+function removeNode(p) {
+	p.next.prev = p.prev;
+	p.prev.next = p.next;
+
+	if (p.prevZ) p.prevZ.nextZ = p.nextZ;
+	if (p.nextZ) p.nextZ.prevZ = p.prevZ;
+}
+
+function Node(i, x, y) {
+	// vertex index in coordinates array
+	this.i = i;
+
+	// vertex coordinates
+	this.x = x;
+	this.y = y;
+
+	// previous and next vertex nodes in a polygon ring
+	this.prev = null;
+	this.next = null;
+
+	// z-order curve value
+	this.z = null;
+
+	// previous and next nodes in z-order
+	this.prevZ = null;
+	this.nextZ = null;
+
+	// indicates whether this is a steiner point
+	this.steiner = false;
+}
+
+function signedArea(data, start, end, dim) {
+	let sum = 0;
+
+	for (let i = start, j = end - dim; i < end; i += dim) {
+		sum += (data[j] - data[i]) * (data[i + 1] + data[j + 1]);
+		j = i;
+	}
+
+	return sum;
+}
