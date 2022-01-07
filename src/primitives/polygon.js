@@ -7,15 +7,12 @@ import {
 	Quaternion,
 	RawShaderMaterial,
 	ShaderMaterial,
-	Shape,
-	ShapeGeometry,
 	UniformsLib,
 	Vector3
 } from '../../vendors/three.js';
 
 import {
 	copyArray3IntoBuffer,
-	copyVector3IntoBuffer,
 	getPopulatedCoordinateBuffer
 } from '../bufferUtils.js';
 
@@ -101,41 +98,40 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, vertexNorm
 		const [isCoplanar, normalVector] = getCoplanarityAndNormal(coords, extent);
 
 		if (isCoplanar) {
-			const normalZVector = new Vector3(0, 0, 1);
+			// We use earcut to "break" the polygon into multiple triangles.
+			// We can't draw if we don't do it.
+			// The problem is that earcut doesn't deals well with
+			// coplanar polygons.
+			// The good news is that it has a 2d mode, so we convert our 3d
+			// coordinates into 2d by appling a quaternion.
 
-			// apply the quaternion "zero" all z values, we can't draw a shape with non-zero z values
-			geometry = new ShapeGeometry(new Shape(
-				coords.map((coordinate) =>
-					new Vector3(
-						...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
-					).applyQuaternion(
-						new Quaternion().setFromUnitVectors(
-							normalVector,
-							normalZVector
-						)
-					)
-				)
-			));
+			const quaternion = new Quaternion().setFromUnitVectors(
+				normalVector,
+				new Vector3(0, 0, 1) // z normal
+			);
+
+			const coordinates2d = new Float32Array(coords.length * 2);
 
 			for (let i = 0; i < coords.length; i++) {
-				// apply the "revert" quaternion so we respect original z values
-				const temporaryVector = new Vector3(
-					geometry.attributes.position.array[i * 3],
-					geometry.attributes.position.array[i * 3 + 1],
-					0
-				).applyQuaternion(
-					new Quaternion().setFromUnitVectors(
-						normalZVector,
-						normalVector
-					)
-				);
+				const vector = new Vector3(
+					coords[i * 3],
+					coords[i * 3 + 1],
+					coords[i * 3 + 2]
+				).applyQuaternion(quaternion);
 
-				copyVector3IntoBuffer(
-					geometry.attributes.position.array,
-					temporaryVector,
-					i
-				);
+				coordinates2d[i * 2] = vector.x;
+				coordinates2d[i * 2 + 1] = vector.y;
 			}
+
+			geometry = new BufferGeometry()
+				.setAttribute(
+					'position',
+					new BufferAttribute(
+						getPopulatedCoordinateBuffer(coords, extent),
+						3
+					)
+				)
+				.setIndex(earcut(coordinates2d, 2));
 		} else {
 			// We use earcut to "break" the polygon into multiple triangles. We can't draw if we don't do it.
 
