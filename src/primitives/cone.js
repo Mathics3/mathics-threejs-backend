@@ -17,23 +17,108 @@ import { get2CoordinatesMaterial } from '../shader.js';
 export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1 }, extent) {
 	const [coneBases, coneTips] = get2PopulatedCoordinateBuffers(coords, extent);
 
-	const coneGeometry = new InstancedBufferGeometry().copy(
-		new CylinderGeometry(radius, 0, 1, 24)
-			.translate(0, -0.5, 0) // translate the geometry so we don't need to calculate the middle of each coordinates-pair
-			.rotateX(Math.PI / 2) // rotate the cone 90 degrees to lookAt work
-	);
+	const vertexPosition0 = 0.2588 * radius,
+		vertexPosition1 = 0.5 * radius,
+		vertexPosition2 = 0.7071 * radius,
+		vertexPosition3 = 0.866 * radius,
+		vertexPosition4 = 0.9659 * radius;
+
+	const coneGeometry = new InstancedBufferGeometry()
+		.setAttribute(
+			'position',
+			new BufferAttribute(new Float32Array([
+				// cone tip
+				0, 0, -1,
+
+				// base
+				0, -radius, 0,
+				vertexPosition0, -vertexPosition4, 0,
+				vertexPosition1, -vertexPosition3, 0,
+				vertexPosition2, -vertexPosition2, 0,
+				vertexPosition3, -vertexPosition1, 0,
+				vertexPosition4, -vertexPosition0, 0,
+				radius, 0, 0,
+				vertexPosition4, vertexPosition0, 0,
+				vertexPosition3, vertexPosition1, 0,
+				vertexPosition2, vertexPosition2, 0,
+				vertexPosition1, vertexPosition3, 0,
+				vertexPosition0, vertexPosition4, 0,
+				0, radius, 0,
+				-vertexPosition0, vertexPosition4, 0,
+				-vertexPosition1, vertexPosition3, 0,
+				-vertexPosition2, vertexPosition2, 0,
+				-vertexPosition3, vertexPosition1, 0,
+				-vertexPosition4, vertexPosition0, 0,
+				-radius, 0, 0,
+				-vertexPosition4, -vertexPosition0, 0,
+				-vertexPosition3, -vertexPosition1, 0,
+				-vertexPosition2, -vertexPosition2, 0,
+				-vertexPosition1, -vertexPosition3, 0,
+				-vertexPosition0, -vertexPosition4, 0,
+				0, -radius, 0
+			]), 3)
+		)
+		.setAttribute(
+			'objectBegin',
+			new InstancedBufferAttribute(coneBases, 3)
+		)
+		.setAttribute(
+			'objectEnd',
+			new InstancedBufferAttribute(coneTips, 3)
+		)
+		.setIndex([
+			// cone base
+			2, 3, 4,
+			4, 5, 6,
+			4, 6, 8,
+			6, 7, 8,
+			8, 9, 10,
+			8, 10, 12,
+			8, 12, 16,
+			10, 11, 12,
+			12, 13, 14,
+			12, 14, 16,
+			14, 15, 16,
+			16, 17, 18,
+			16, 18, 20,
+			16, 20, 24,
+			18, 19, 20,
+			20, 21, 22,
+			20, 22, 24,
+			22, 23, 24,
+			24, 1, 2,
+			24, 2, 4,
+			24, 4, 8,
+			24, 8, 16,
+
+			// cone body
+			0, 2, 1,
+			0, 3, 2,
+			0, 4, 3,
+			0, 5, 4,
+			0, 6, 5,
+			0, 7, 6,
+			0, 8, 7,
+			0, 9, 8,
+			0, 10, 9,
+			0, 11, 10,
+			0, 12, 11,
+			0, 13, 12,
+			0, 14, 13,
+			0, 15, 14,
+			0, 16, 15,
+			0, 17, 16,
+			0, 18, 17,
+			0, 19, 18,
+			0, 20, 19,
+			0, 21, 20,
+			0, 22, 21,
+			0, 23, 22,
+			0, 24, 23,
+			0, 25, 24,
+		]);
 
 	coneGeometry.instanceCount = coords.length / 2;
-
-	coneGeometry.setAttribute(
-		'objectBegin',
-		new InstancedBufferAttribute(coneBases, 3)
-	);
-
-	coneGeometry.setAttribute(
-		'objectEnd',
-		new InstancedBufferAttribute(coneTips, 3)
-	);
 
 	const cones = new Mesh(
 		coneGeometry,
@@ -63,37 +148,35 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 			'position',
 			new BufferAttribute(
 				new Float32Array([
-					0, -1, 0,
-					0.2588, -0.9659, 0,
-					0.5, -0.8660, 0,
-					0.7071, -0.7071, 0,
-					0.8660, -0.5, 0,
-					0.9659, -0.2588, 0,
-					1, 0, 0,
-					0.9659, 0.2588, 0,
-					0.8660, 0.5, 0,
-					0.7071, 0.7071, 0,
-					0.5, 0.8660, 0,
-					0.2588, 0.9659, 0,
-					0, 1, 0,
-					-0.2588, 0.9659, 0,
-					-0.5, 0.8660, 0,
-					-0.7071, 0.7071, 0,
-					-0.8660, 0.5, 0,
-					-0.9659, 0.2588, 0,
-					-1, 0, 0,
-					-0.9659, -0.2588, 0,
-					-0.8660, -0.5, 0,
-					-0.7071, -0.7071, 0,
-					-0.5, -0.8660, 0,
-					-0.2588, -0.9659, 0,
-					0, -1, 0
+					0, -radius, 0,
+					vertexPosition0, -vertexPosition4, 0,
+					vertexPosition1, -vertexPosition3, 0,
+					vertexPosition2, -vertexPosition2, 0,
+					vertexPosition3, -vertexPosition1, 0,
+					vertexPosition4, -vertexPosition0, 0,
+					radius, 0, 0,
+					vertexPosition4, vertexPosition0, 0,
+					vertexPosition3, vertexPosition1, 0,
+					vertexPosition2, vertexPosition2, 0,
+					vertexPosition1, vertexPosition3, 0,
+					vertexPosition0, vertexPosition4, 0,
+					0, radius, 0,
+					-vertexPosition0, vertexPosition4, 0,
+					-vertexPosition1, vertexPosition3, 0,
+					-vertexPosition2, vertexPosition2, 0,
+					-vertexPosition3, vertexPosition1, 0,
+					-vertexPosition4, vertexPosition0, 0,
+					-radius, 0, 0,
+					-vertexPosition4, -vertexPosition0, 0,
+					-vertexPosition3, -vertexPosition1, 0,
+					-vertexPosition2, -vertexPosition2, 0,
+					-vertexPosition1, -vertexPosition3, 0,
+					-vertexPosition0, -vertexPosition4, 0,
+					0, -radius, 0
 				]),
 				3
 			)
-		)
-		// If we don't scale x and y the edge is smaller than the cone, scaling z changes the position of the edges.
-		.scale(radius, radius, 1);
+		);
 
 	edgesGeometry.instanceCount = coords.length / 2;
 
