@@ -14,6 +14,9 @@ Internals:
 - Move some shaders to shader.js (#54)
 - Replace BoxGeometry by lower-level BufferGeometry (#56)
 
+Documentation:
+- Move the documentation to this repository and make it more interative
+
 1.0.3
 ---
 

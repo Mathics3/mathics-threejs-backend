@@ -4,7 +4,6 @@ import {
 	DoubleSide,
 	Mesh,
 	Quaternion,
-	RawShaderMaterial,
 	ShaderMaterial,
 	Shape,
 	ShapeGeometry,
@@ -13,7 +12,6 @@ import {
 } from '../../vendors/three.js';
 
 import {
-	copyArray3IntoBuffer,
 	copyVector3IntoBuffer,
 	getPopulatedCoordinateBuffer
 } from '../bufferUtils.js';
@@ -225,7 +223,7 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 
 					uniform PointLight pointLights[NUM_POINT_LIGHTS];
 
-					void getPointLightInfo(const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight light) {
+					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
 						vec3 lVector = pointLight.position - geometry.position;
 						light.direction = normalize(lVector);
 						float lightDistance = length(lVector);
@@ -245,7 +243,7 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 
 					uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
 
-					void getSpotLightInfo(const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light) {
+					void getSpotLightInfo(const in SpotLight spotLight, out IncidentLight light) {
 						vec3 lVector = spotLight.position - geometry.position;
 						light.direction = normalize(lVector);
 						float angleCos = dot(light.direction, spotLight.direction);
@@ -266,14 +264,9 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 				}
 
 				void main() {
-					// If x is NaN, then y and z are also NaN.
-					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
-
 					vec3 reflectedLight = vec3(0.0);
 
 					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
-
-					GeometricContext geometry = GeometricContext(-vViewPosition, normal);
 
 					IncidentLight directLight;
 
