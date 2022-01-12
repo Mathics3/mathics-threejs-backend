@@ -53,7 +53,7 @@ Otherwise, start the HTTP server that was just installed:
 $ npm run start-server  # Do this once per session
 ...
 Server running at http://localhost:8080/
-See our gallery in http://localhost:8080/docs/
+See our gallery in http://localhost:8080/examples/
 
 Hit CTRL-C to stop the server
 ```

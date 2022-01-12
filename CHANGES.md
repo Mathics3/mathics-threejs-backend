@@ -18,7 +18,7 @@ Documentation:
 - Move the documentation to this repository and make it more interative
 
 1.0.3
----
+-----
 
 Improvements:
 - Allow non-axis-parallel coplanar polygons. Before mathics-threejs-backend could only handle coplanar polygons with all x, y, or z coordinates the same. Now it can handle all coplanar polygons without holes
