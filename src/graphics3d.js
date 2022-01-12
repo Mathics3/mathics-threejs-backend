@@ -2,9 +2,9 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	Color,
-	LineBasicMaterial,
 	LineSegments,
 	PerspectiveCamera,
+	RawShaderMaterial,
 	Scene,
 	Vector3,
 	WebGLRenderer
@@ -146,7 +146,25 @@ export default function (
 				extent.xmin, extent.ymax, extent.zmin,
 			]), 3)
 		),
-		new LineBasicMaterial({ color: 0x666666 })
+		new RawShaderMaterial({
+			vertexShader: `#version 300 es
+				in vec3 position;
+
+				uniform mat4 projectionMatrix;
+				uniform mat4 modelViewMatrix;
+
+				void main() {
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+				}
+			`,
+			fragmentShader: `#version 300 es
+				out lowp vec4 pc_fragColor;
+
+				void main() {
+					pc_fragColor = vec4(0.4, 0.4, 0.4, 1.0);
+				}
+			`
+		})
 	);
 
 	scene.add(boundingBox);
@@ -160,6 +178,30 @@ export default function (
 
 	const axesGeometry = [],
 		axesVertices = new Float32Array(6);
+
+	// axes ticks
+	const
+		tickMaterial = new RawShaderMaterial({
+			vertexShader: `#version 300 es
+				in vec3 position;
+
+				uniform mat4 projectionMatrix;
+				uniform mat4 modelViewMatrix;
+
+				void main() {
+					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+				}
+			`,
+			fragmentShader: `#version 300 es
+				out lowp vec4 pc_fragColor;
+
+				void main() {
+					pc_fragColor = vec4(0.0, 0.0, 0.0, 1.0);
+				}
+			`
+		}),
+		ticks = new Array(3),
+		ticksSmall = new Array(3);
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
@@ -182,22 +224,10 @@ export default function (
 
 			scene.add(new LineSegments(
 				axesGeometry[i],
-				new LineBasicMaterial({
-					color: 0x000000,
-					linewidth: 1.5
-				})
+				tickMaterial
 			));
 		}
 	}
-
-	// axes ticks
-	const
-		tickMaterial = new LineBasicMaterial({
-			color: 0x000000,
-			linewidth: 1.2
-		}),
-		ticks = new Array(3),
-		ticksSmall = new Array(3);
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
