@@ -1,6 +1,5 @@
 import {
 	BufferAttribute,
-	CylinderGeometry,
 	Group,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
