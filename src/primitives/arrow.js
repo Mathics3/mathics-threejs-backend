@@ -33,18 +33,29 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 
 	const arrowHeadHeight = 0.2 * startCoordinate.distanceTo(endCoordinate);
 
+	const vertexPosition0 = 0.2 * arrowHeadHeight,
+		vertexPosition1 = 0.1414 * arrowHeadHeight;
+
 	// arrow head
 	group.add(new Mesh(
-		new CylinderGeometry(
-			0, // radius top, as it is a cone we let it be 0
-			0.2 * arrowHeadHeight, // radius bottom
-			arrowHeadHeight, // height
-			8 // radial segments
-		)
-			// move to the left so setPosition works
-			.translate(0, -arrowHeadHeight / 2, 0)
-			// rotate the cylinder 90 degrees to lookAt works
-			.rotateX(Math.PI / 2)
+		new BufferGeometry()
+			.setAttribute(
+				'position',
+				new BufferAttribute(new Float32Array([
+					// arrow tip
+					0, 0, 0,
+
+					// arrow tip base
+					vertexPosition0, 0, -arrowHeadHeight,
+					vertexPosition1, vertexPosition1, -arrowHeadHeight,
+					0, vertexPosition0, -arrowHeadHeight,
+					-vertexPosition1, vertexPosition1, -arrowHeadHeight,
+					-vertexPosition0, 0, -arrowHeadHeight,
+					-vertexPosition1, -vertexPosition1, -arrowHeadHeight,
+					0, -vertexPosition0, -arrowHeadHeight,
+					vertexPosition1, -vertexPosition1, -arrowHeadHeight
+				]), 3)
+			)
 			.applyMatrix4(
 				new Matrix4()
 					.setPosition(endCoordinate)
@@ -53,7 +64,26 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 						startCoordinate,
 						new Vector3(0, 1, 0)
 					)
-			),
+			)
+			.setIndex([
+				// arrow tip base
+				2, 1, 8,
+				4, 3, 2,
+				6, 5, 4,
+				8, 7, 6,
+				4, 2, 8,
+				8, 6, 4,
+
+				// arrow tip body
+				0, 1, 2,
+				0, 2, 3,
+				0, 3, 4,
+				0, 4, 5,
+				0, 5, 6,
+				0, 6, 7,
+				0, 7, 8,
+				0, 8, 1
+			]),
 		material
 	));
 
