@@ -9,6 +9,7 @@ Improvements:
 - Improve performance of `uniformPolyhedron`s' edges (#62)
 - Improve performance of coplanar polygons (#63)
 - Improve performance of cones by ~6x (#64)
+- Improve performance of arrows (#66)
 
 Documentation:
 - Add more examples (#59)
