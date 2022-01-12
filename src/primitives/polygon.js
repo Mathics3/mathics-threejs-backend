@@ -11,7 +11,11 @@ import {
 	Vector3
 } from '../../vendors/three.js';
 
-import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
+import {
+	copyArray3IntoBuffer,
+	copyVector3IntoBuffer,
+	getPopulatedCoordinateBuffer
+} from '../bufferUtils.js';
 
 import earcut from '../../vendors/earcut.js';
 import scaleCoordinate from '../scaleCoordinate.js';
@@ -124,10 +128,11 @@ export default function ({ color, coords, opacity = 1 }, extent) {
 					)
 				);
 
-				// copy the temporary vector to the "position" buffer
-				geometry.attributes.position.array[i * 3] = temporaryVector.x;
-				geometry.attributes.position.array[i * 3 + 1] = temporaryVector.y;
-				geometry.attributes.position.array[i * 3 + 2] = temporaryVector.z;
+				copyVector3IntoBuffer(
+					geometry.attributes.position.array,
+					temporaryVector,
+					i
+				);
 			}
 		} else {
 			// We use earcut to "break" the polygon into multiple triangles. We can't draw if we don't do it.
