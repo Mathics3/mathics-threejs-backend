@@ -1,4 +1,4 @@
-The edges can be drawn in 2 ways:
+Edges can be drawn in 2 ways:
 - [inside the primitive's shader](#shader-method)
 - [in their own object](#object-method)
 

@@ -1,12 +1,12 @@
 Welcome to the mathics-threejs-backend documentation!
 
-mathics-threejs-backend have 2 versions:
-- **production** — to use this version you can:
-  - use the CDN:
+You can use mathics-threejs-backend in 2 ways:
+- **production** — a stable release. To use either use the content-development network (CDN) or host the files in your own webserver:
+  - to use the CDN:
     ```html
     <script src="https://cdn.jsdelivr.net/npm/@mathicsorg/mathics-threejs-backend"></script>
     ```
-  - host the files yourself:
+  - to host the files yourself:
     1. clone this repository:
        ```sh
        git clone https://github.com/Mathics3/mathics-threejs-backend
@@ -16,7 +16,7 @@ mathics-threejs-backend have 2 versions:
        ```html
        <script src="path-to-index.js"></script>
        ```
-- **development** — to use this version you need to:
+- **development** — the latest changes in GitHub. To use this version you need to:
   1. clone this repository:
      ```sh
      git clone https://github.com/Mathics3/mathics-threejs-backend
@@ -27,7 +27,7 @@ mathics-threejs-backend have 2 versions:
   import drawGraphics3d from './path-to-index.js'
   ```
 
-The main function of mathics-threejs-backend is `drawGraphics3d`, it receives the following arguments:
+The main function of mathics-threejs-backend is `drawGraphics3d`, takes the following arguments:
 - `container` (type: HTMLElement)
 - `elements` (type: object) — object with the following properties:
   - `axes` (type: object) — default: `{}`, object with the following properties:
@@ -35,7 +35,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, it receives th
     - `ticks` (type: [number[], number[], string[]][3]) — array containing the ticks' information for, respectively, x, y and z axes. The ticks' information is an array of three elements: big ticks' coordinates, small ticks' coordinates, big ticks' labels. Default: `[]`
     - `ticks_style` (type: [color[3]](/mathics-threejs-backend/types/color)) — array containing the ticks' colors for, respectively, x, y and z axes. Default: `[[0, 0, 0], [0, 0, 0], [0, 0, 0]]` (all ticks are black)
   - `elements` (type: [element[]](/mathics-threejs-backend/types/color) — array of primitives, default: `[]`
-  - `extent` (type: object) — the size of the bounding box. This is optional, only use this if you don't want the deault behaviour. This is an object with the following properties:
+  - `extent` (type: object) — the size of the bounding box. This is optional, only use this if you don't want the default behaviour. This is an object with the following properties:
     - `xmin` (type: number)
     - `ymin` (type: number)
     - `zmin` (type: number)

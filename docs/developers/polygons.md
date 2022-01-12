@@ -17,8 +17,9 @@ const geometry = new BufferGeometry().setAttribute(
 ```
 
 # Coplanar
-Coplanar means that all the points of the polygon are in the same plane.  
-That *doesn't* implies that all x/y/z values are going to be the same, e.g.: the points (0, 0, 0), (1, 0, 1), (1, 1, 1), (0, 1, 0) are in the same plane.  
+Coplanar means that all the points of the polygon are in the same plane.
+That *doesn't* imply that all x/y/z values are going to be the same, e.g.:
+the points (0, 0, 0), (1, 0, 1), (1, 1, 1), (0, 1, 0) are in the same plane.  
 The good news is that [earcut](https://github.com/mapbox/earcut) deals well with this type of coplanar polygons.
 
 The current implementation also can't draw coplanar polygons with holes. We still need to implement the [even-odd rule](https://en.wikipedia.org/wiki/Even%E2%80%93odd_rule).
