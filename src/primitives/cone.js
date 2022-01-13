@@ -54,7 +54,6 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 				-vertexPosition2, -vertexPosition2, 0,
 				-vertexPosition1, -vertexPosition3, 0,
 				-vertexPosition0, -vertexPosition4, 0,
-				0, -radius, 0
 			]), 3)
 		)
 		.setAttribute(
@@ -172,7 +171,7 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 			0, 22, 21,
 			0, 23, 22,
 			0, 24, 23,
-			0, 25, 24,
+			0, 1, 24,
 		]);
 
 	coneGeometry.instanceCount = coords.length / 2;
@@ -233,19 +232,17 @@ export default function ({ color, coords, edgeForm = {}, opacity = 1, radius = 1
 				]),
 				3
 			)
+		)
+		.setAttribute(
+			'coneBase',
+			new InstancedBufferAttribute(coneBases, 3)
+		)
+		.setAttribute(
+			'coneTip',
+			new InstancedBufferAttribute(coneTips, 3)
 		);
 
 	edgesGeometry.instanceCount = coords.length / 2;
-
-	edgesGeometry.setAttribute(
-		'coneBase',
-		new InstancedBufferAttribute(coneBases, 3)
-	);
-
-	edgesGeometry.setAttribute(
-		'coneTip',
-		new InstancedBufferAttribute(coneTips, 3)
-	);
 
 	const edges = new Line(
 		edgesGeometry,
