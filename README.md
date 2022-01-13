@@ -6,7 +6,7 @@ This can be used in Mathics front ends like [Mathics-Django](https://pypi.org/pr
 
 ## Example:
 ```js
-import drawGraphics3D from 'mathics-threejs-backend/src/index.js';
+import drawGraphics3D from './mathics-threejs-backend/src/index.js';
 
 drawGraphics3D(
     document.getElementById('main'),
@@ -58,7 +58,7 @@ See our gallery in http://localhost:8080/examples/
 Hit CTRL-C to stop the server
 ```
 
-Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/docs/objects-in-directional-light.html
+Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/examples/test/cone.html
 
 ## Documentation and examples
 You can see the documentation and more live examples [here](https://mathics3.github.io/mathics-threejs-backend).
