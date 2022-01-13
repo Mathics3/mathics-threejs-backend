@@ -10,7 +10,7 @@ import {
 } from '../vendors/three.js';
 
 import calculateExtent from './extent.js';
-import { axesIndices, positionTickNumbers, updateAxes } from './axes.js';
+import { positionTickNumbers, setTicksInitialPosition } from './axes.js';
 import lightFunctions, { getInitialLightPosition, positionLights } from './lights.js';
 import primitiveFunctions from './primitives/index.js';
 import { getBasicMaterial } from './shader.js';
@@ -221,7 +221,7 @@ export default function (
 		}
 	}
 
-	updateAxes(hasAxes, axes, ticks, ticksSmall, axesGeometry, boundingBox, radius, theta, phi);
+	setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGeometry, boundingBox, radius, extent);
 
 	// axes numbering using divs
 	const tickNumbers = new Array(3);
