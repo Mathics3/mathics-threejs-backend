@@ -27,8 +27,6 @@ export default function (
 	maxSize = 400,
 	innerWidthMultiplier = 0.65
 ) {
-	// TODO: shading, handling of VertexNormals
-
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
 
