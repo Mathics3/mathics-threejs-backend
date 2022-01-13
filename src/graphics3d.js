@@ -10,7 +10,7 @@ import {
 } from '../vendors/three.js';
 
 import calculateExtent from './extent.js';
-import { axesIndices, positionAxes, positionTickNumbers, updateAxes } from './axes.js';
+import { axesIndices, positionTickNumbers, updateAxes } from './axes.js';
 import lightFunctions, { getInitialLightPosition, positionLights } from './lights.js';
 import primitiveFunctions from './primitives/index.js';
 import { getBasicMaterial } from './shader.js';
@@ -406,7 +406,6 @@ export default function (
 			scaleInView();
 		}
 
-		positionAxes(hasAxes, radius, axesGeometry, boundingBox, camera);
 		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
 		render();
 	}
@@ -431,7 +430,6 @@ export default function (
 	const onMouseDownPosition = new Int16Array(2);
 
 	updateCameraPosition();
-	positionAxes(hasAxes, radius, axesGeometry, boundingBox, camera);
 	scaleInView();
 	render();
 	positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
