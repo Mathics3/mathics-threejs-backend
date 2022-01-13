@@ -1,7 +1,6 @@
 import {
 	BufferAttribute,
 	BufferGeometry,
-	CylinderGeometry,
 	Group,
 	Line,
 	Matrix4,
