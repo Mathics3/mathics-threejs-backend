@@ -105,13 +105,13 @@ export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasS
 	}
 }
 
-export function updateAxes(hasAxes, axes, ticks, ticksSmall, axesGeometry, boundingBox, radius, theta, phi) {
+export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGeometry, boundingBox, radius, extent) {
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
 			const tickDirection = getTickDirection(i, radius, theta, phi, axesGeometry, boundingBox);
 
 			axes.ticks[i][0].forEach((value, j) => {
-				// set the "position" buffer to its initial values
+				// set the "position" buffer
 				ticks[i].geometry.attributes.position.array[j * 6] = axesGeometry[i].attributes.position.array[0];
 
 				ticks[i].geometry.attributes.position.array[j * 6 + 1] = axesGeometry[i].attributes.position.array[1];
