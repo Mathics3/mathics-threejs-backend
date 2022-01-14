@@ -103,6 +103,8 @@ export default function (
 		scene.add(light);
 	});
 
+	const grayBasicMaterial = getBasicMaterial([0.4, 0.4, 0.4], 1);
+
 	const boundingBox = new LineSegments(
 		new BufferGeometry().setAttribute(
 			'position',
@@ -144,7 +146,7 @@ export default function (
 				extent.xmin, extent.ymax, extent.zmin,
 			]), 3)
 		),
-		getBasicMaterial([0.4, 0.4, 0.4], 1)
+		grayBasicMaterial
 	);
 
 	scene.add(boundingBox);
@@ -167,10 +169,7 @@ export default function (
 		]), 3);
 
 	// axes ticks
-	const
-		tickMaterial = getBasicMaterial([0, 0, 0], 1),
-		ticks = new Array(3),
-		ticksSmall = new Array(3);
+	const ticks = new Array(3), ticksSmall = new Array(3);
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
@@ -178,11 +177,6 @@ export default function (
 				'position',
 				axesVerticesPosition
 			);
-
-			scene.add(new LineSegments(
-				axesGeometry[i],
-				tickMaterial
-			));
 		}
 	}
 
@@ -196,7 +190,7 @@ export default function (
 						3
 					)
 				),
-				tickMaterial
+				grayBasicMaterial
 			);
 
 			scene.add(ticks[i]);
@@ -209,7 +203,7 @@ export default function (
 						3
 					)
 				),
-				tickMaterial
+				grayBasicMaterial
 			);
 
 			scene.add(ticksSmall[i]);
