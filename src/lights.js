@@ -14,7 +14,7 @@ import {
 	Vector3
 } from '../vendors/three.js';
 
-import scaleCoordinate from './scaleCoordinate.js';
+import { scaleCoordinate } from './coordinateUtils.js';
 
 export function getInitialLightPosition(coordinate, radius, extent) {
 	// initial light position in spherical polar coordinates
