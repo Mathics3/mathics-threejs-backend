@@ -157,7 +157,14 @@ export default function (
 	}
 
 	const axesGeometry = [],
-		axesVertices = new Float32Array(6);
+		axesVerticesPosition = new BufferAttribute(new Float32Array([
+			boundingBox.geometry.attributes.position.array[0],
+			boundingBox.geometry.attributes.position.array[1],
+			boundingBox.geometry.attributes.position.array[2],
+			boundingBox.geometry.attributes.position.array[3],
+			boundingBox.geometry.attributes.position.array[4],
+			boundingBox.geometry.attributes.position.array[5]
+		]), 3);
 
 	// axes ticks
 	const
@@ -167,21 +174,9 @@ export default function (
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			axesVertices[0] = boundingBox.geometry.attributes.position.array[0] + boundingBox.position.x;
-
-			axesVertices[1] = boundingBox.geometry.attributes.position.array[1] + boundingBox.position.y;
-
-			axesVertices[2] = boundingBox.geometry.attributes.position.array[2] + boundingBox.position.z;
-
-			axesVertices[3] = boundingBox.geometry.attributes.position.array[3] + boundingBox.position.x;
-
-			axesVertices[4] = boundingBox.geometry.attributes.position.array[4] + boundingBox.position.y;
-
-			axesVertices[5] = boundingBox.geometry.attributes.position.array[5] + boundingBox.position.z;
-
 			axesGeometry[i] = new BufferGeometry().setAttribute(
 				'position',
-				new BufferAttribute(axesVertices, 3)
+				axesVerticesPosition
 			);
 
 			scene.add(new LineSegments(
