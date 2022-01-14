@@ -32,7 +32,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
 - `elements` (type: object) — object with the following properties:
   - `axes` (type: object) — default: `{}`, object with the following properties:
     - `hasaxes` (type: bool\|bool[3]) — default: `false`
-    - `ticks` (type: [number[], number[], string[]][3]) — array containing the ticks' information for, respectively, x, y and z axes. The ticks' information is an array of three elements: big ticks' coordinates, small ticks' coordinates, big ticks' labels. Default: `[]`
+    - `ticks` (type: [number[], number[], string[]][3]) — array containing the ticks' information for, respectively, x, y and z axes. The ticks' information is an array of three elements: big ticks' 0-1 coordinates, small ticks' 0-1 coordinates, big ticks' labels. Default: `[]`
     - `ticks_style` (type: [color[3]](/mathics-threejs-backend/types/color)) — array containing the ticks' colors for, respectively, x, y and z axes. Default: `[[0, 0, 0], [0, 0, 0], [0, 0, 0]]` (all ticks are black)
   - `elements` (type: [element[]](/mathics-threejs-backend/types/color) — array of primitives, default: `[]`
   - `extent` (type: object) — the size of the bounding box. This is optional, only use this if you don't want the default behaviour. This is an object with the following properties:
