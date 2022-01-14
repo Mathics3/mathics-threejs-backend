@@ -167,17 +167,17 @@ export default function (
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			axesVertices[0] = boundingBox.geometry.attributes.position.array[axesIndices[i][0][0] * 3] + boundingBox.position.x;
+			axesVertices[0] = boundingBox.geometry.attributes.position.array[0] + boundingBox.position.x;
 
-			axesVertices[1] = boundingBox.geometry.attributes.position.array[axesIndices[i][0][0] * 3 + 1] + boundingBox.position.y;
+			axesVertices[1] = boundingBox.geometry.attributes.position.array[1] + boundingBox.position.y;
 
-			axesVertices[2] = boundingBox.geometry.attributes.position.array[axesIndices[i][0][0] * 3 + 2] + boundingBox.position.z;
+			axesVertices[2] = boundingBox.geometry.attributes.position.array[2] + boundingBox.position.z;
 
-			axesVertices[3] = boundingBox.geometry.attributes.position.array[axesIndices[i][0][1] * 3] + boundingBox.position.x;
+			axesVertices[3] = boundingBox.geometry.attributes.position.array[3] + boundingBox.position.x;
 
-			axesVertices[4] = boundingBox.geometry.attributes.position.array[axesIndices[i][0][1] * 3 + 1] + boundingBox.position.y;
+			axesVertices[4] = boundingBox.geometry.attributes.position.array[4] + boundingBox.position.y;
 
-			axesVertices[5] = boundingBox.geometry.attributes.position.array[axesIndices[i][0][1] * 3 + 2] + boundingBox.position.z;
+			axesVertices[5] = boundingBox.geometry.attributes.position.array[5] + boundingBox.position.z;
 
 			axesGeometry[i] = new BufferGeometry().setAttribute(
 				'position',
