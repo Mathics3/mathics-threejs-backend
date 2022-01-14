@@ -10,7 +10,7 @@ import {
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
-import scaleCoordinate from '../scaleCoordinate.js';
+import { scaleCoordinate } from '../coordinateUtils.js';
 import { getBasicMaterial } from '../shader.js';
 
 // See https://reference.wolfram.com/language/ref/Arrow

@@ -1,4 +1,4 @@
-import scaleCoordinate from './scaleCoordinate.js';
+import { scaleCoordinate } from './coordinateUtils.js';
 
 // This is usually used to copy a coordinate into a coordinate buffer.
 // The coordinates buffers are preallocated for efficiency on GPUs.

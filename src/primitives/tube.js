@@ -11,7 +11,7 @@ import {
 	Vector3
 } from '../../vendors/three.js';
 
-import scaleCoordinate from '../scaleCoordinate.js';
+import { scaleCoordinate } from '../coordinateUtils.js';
 
 // Modified from three.js' BufferGeometryUtils.
 function mergeBufferAttributes(attributes) {
