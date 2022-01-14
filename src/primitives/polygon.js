@@ -17,7 +17,7 @@ import {
 } from '../bufferUtils.js';
 
 import earcut from '../../vendors/earcut.js';
-import scaleCoordinate from '../scaleCoordinate.js';
+import { scaleCoordinate } from '../coordinateUtils.js';
 
 // Get the unit normal vector from the 1st, 2nd and last coordinate
 // (these numbers were choosen because the vectors 1st->2nd and last->2nd

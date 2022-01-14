@@ -1,4 +1,4 @@
-import scaleCoordinate from './scaleCoordinate.js';
+import { scaleCoordinate } from './coordinateUtils.js';
 
 export default function (elements) {
 	const extent = {
