@@ -2,12 +2,13 @@ import {
 	Matrix4,
 	Vector3
 } from '../vendors/three.js';
+import { scalePartialCoordinate } from './coordinateUtils.js';
 
 export const axesIndices = [
 	[[0, 5], [1, 4], [2, 7], [3, 6]],
 	[[0, 2], [1, 3], [4, 6], [5, 7]],
 	[[0, 1], [2, 3], [4, 5], [6, 7]]
-]
+];
 
 function toCanvasCoords(position, camera) {
 	const temporaryPosition = position.clone().applyMatrix4(
@@ -111,6 +112,8 @@ export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGe
 			const tickDirection = getTickDirection(i, radius, theta, phi, axesGeometry, boundingBox);
 
 			axes.ticks[i][0].forEach((value, j) => {
+				const partialCoordinate = scalePartialCoordinate(value, i, extent);
+
 				// set the "position" buffer
 				ticks[i].geometry.attributes.position.array[j * 6] = axesGeometry[i].attributes.position.array[0];
 
@@ -125,19 +128,21 @@ export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGe
 				ticks[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z;
 
 				if (i === 0) {
-					ticks[i].geometry.attributes.position.array[j * 6] = value;
-					ticks[i].geometry.attributes.position.array[j * 6 + 3] = value;
+					ticks[i].geometry.attributes.position.array[j * 6] = partialCoordinate;
+					ticks[i].geometry.attributes.position.array[j * 6 + 3] = partialCoordinate;
 				} else if (i === 1) {
-					ticks[i].geometry.attributes.position.array[j * 6 + 1] = value;
-					ticks[i].geometry.attributes.position.array[j * 6 + 4] = value;
+					ticks[i].geometry.attributes.position.array[j * 6 + 1] = partialCoordinate;
+					ticks[i].geometry.attributes.position.array[j * 6 + 4] = partialCoordinate;
 				} else {
-					ticks[i].geometry.attributes.position.array[j * 6 + 2] = value;
-					ticks[i].geometry.attributes.position.array[j * 6 + 5] = value;
+					ticks[i].geometry.attributes.position.array[j * 6 + 2] = partialCoordinate;
+					ticks[i].geometry.attributes.position.array[j * 6 + 5] = partialCoordinate;
 				}
 			});
 
 			axes.ticks[i][1].forEach((value, j) => {
-				// set the "position" buffer to its initial values
+				const partialCoordinate = scalePartialCoordinate(value, i, extent);
+
+				// set the "position" buffer
 				ticksSmall[i].geometry.attributes.position.array[j * 6] = axesGeometry[i].attributes.position.array[0];
 
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = axesGeometry[i].attributes.position.array[1];
@@ -151,14 +156,14 @@ export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGe
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z / 2;
 
 				if (i === 0) {
-					ticksSmall[i].geometry.attributes.position.array[j * 6 + 0] = value;
-					ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = value;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 0] = partialCoordinate;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = partialCoordinate;
 				} else if (i === 1) {
-					ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = value;
-					ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = value;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = partialCoordinate;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = partialCoordinate;
 				} else {
-					ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = value;
-					ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = value;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = partialCoordinate;
+					ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = partialCoordinate;
 				}
 			});
 		}
