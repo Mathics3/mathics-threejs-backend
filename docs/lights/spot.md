@@ -1,6 +1,6 @@
 Properties:
 - `angle` (type: number) —  the maximum angle in radians of light dispersion (upper bound is pi/2), default: pi/2
-- `color` (type: [color](/mathics-threejs-backend/types/color))
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
 - `coords` (type: [coord](/mathics-threejs-backend/types/coord))
 - `target` (type: [coord](/mathics-threejs-backend/types/coord))
 

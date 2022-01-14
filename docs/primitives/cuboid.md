@@ -1,8 +1,8 @@
 Properties:
-- `color` (type: [color](documentation/types/color))
+- `color` (type: [color](documentation/types/color)) — default: white
 - `coords` (type: [coord[]](documentation/types/coord)) — array of the cuboids' begins and ends
 - `edgeForm` (type: object) — default: `{}`, object with the following properties:
-  - `color` (type: [color](documentation/types/color)) — edges' color, default: `[0, 0, 0]` (black edges)
+  - `color` (type: [color](documentation/types/color)) — edges' color, default: black
   - `showEdges` (type: bool) — default: `true`
 - `opacity` (type: number) — default: `1`
 

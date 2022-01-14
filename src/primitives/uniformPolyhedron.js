@@ -14,7 +14,7 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
 // See https://reference.wolfram.com/language/ref/UniformPolyhedron
 // for the high-level description of what is being rendered.
-export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) {
+export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) {
 	const polyhedronGeometry = new InstancedBufferGeometry();
 
 	// The magic numbers below are modified from the position attribute of,

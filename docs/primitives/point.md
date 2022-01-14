@@ -1,5 +1,5 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: black
 - `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of each point location
 - `opacity` (type: number) — default: `1`
 - `pointSize` (type: number)

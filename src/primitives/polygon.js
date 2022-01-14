@@ -77,7 +77,7 @@ function getCoplanarityAndNormal(coordinates, extent) {
 
 // See https://reference.wolfram.com/language/ref/Polygon
 // for the high-level description of what is being rendered.
-export default function ({ color, coords, opacity = 1 }, extent) {
+export default function ({ color = [1, 1, 1], coords, opacity = 1 }, extent) {
 	let geometry;
 
 	if (coords.length === 3) { // triangle

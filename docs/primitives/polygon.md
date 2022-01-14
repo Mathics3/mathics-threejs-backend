@@ -1,9 +1,9 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
-- `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of ordered points tracing the boundary of the polygon
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
+- `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of ordered points tracing the boundary of the polygon, aka. the polygon vertices
 - `opacity` (type: number) — default: `1`
 
-Draw a polygon with no holes in it, its vertices are `coords`, it can be non-coplanar and non-triangular.
+Draw a polygon with no holes in it, it can be non-coplanar and non-triangular.
 
 ## Examples
 - ```jsonc

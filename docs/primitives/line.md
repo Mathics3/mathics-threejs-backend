@@ -1,5 +1,5 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: black
 - `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of line-segment coordinates
 - `opacity` (type: number) — default: `1`
 
