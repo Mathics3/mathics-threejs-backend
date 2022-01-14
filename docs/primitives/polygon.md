@@ -1,13 +1,13 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
-- `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of ordered points tracing the boundary of the polygon
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
+- `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of ordered points tracing the boundary of the polygon, aka. the polygon vertices
 - `edgeForm` (type: object) — default: `{}`, object with the following properties:
-  - `color` (type: [color](/mathics-threejs-backend/types/color)) — edges' color, default: `[0, 0, 0]` (black edges)
+  - `color` (type: [color](/mathics-threejs-backend/types/color)) — edges' color, default: black
   - `showEdges` (type: bool) — default: `true`
 - `opacity` (type: number) — default: `1`
 - `vertexNormals` (type: number[3][]) — this is not commonly used. This changes the way the polygon reflects the light. If this is smaller than the number of total vertexNormals of the polygon, the other vertexNormals are going to be calculated in the shader. See [vertex normal in Wikipedia](https://en.wikipedia.org/wiki/Vertex_normal). Default: `[]`
 
-Draw a polygon with no holes in it, its vertices are `coords`, it can be non-coplanar and non-triangular.
+Draw a polygon with no holes in it, it can be non-coplanar and non-triangular.
 
 ## Examples
 - ```jsonc

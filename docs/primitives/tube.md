@@ -1,5 +1,5 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
 - `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — draw a tube passing through these coordinates
 - `opacity` (type: number) — default: `1`
 - `radius` (type: number) — default: `1`

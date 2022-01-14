@@ -11,6 +11,7 @@ Improvements:
 - Improve performance of cones by ~6x (#64)
 - Improve performance of arrows (#66)
 - Improve performance of cylinders (#67)
+- Add default colors to primitives and lights (#75)
 
 Documentation:
 - Add more examples (#59)

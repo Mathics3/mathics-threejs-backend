@@ -1,5 +1,5 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
 - `coords` (type: [coord](/mathics-threejs-backend/types/coord)) — point coordinates
 
 Add a light that gets emitted from `coords` in all directions to the scene.

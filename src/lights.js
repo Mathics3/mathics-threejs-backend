@@ -48,13 +48,13 @@ export function positionLights(lights, theta, phi, focus) {
 }
 
 export default {
-	ambient: ({ color }) => {
+	ambient: ({ color = [1, 1, 1] }) => {
 		return new AmbientLight(new Color(...color).getHex());
 	},
-	directional: ({ color }) => {
+	directional: ({ color = [1, 1, 1] }) => {
 		return new DirectionalLight(new Color(...color).getHex());
 	},
-	spot: ({ angle = 1.57079632679, color, coords, target }, extent) => {
+	spot: ({ angle = 1.57079632679, color = [1, 1, 1], coords, target }, extent) => {
 		const light = new SpotLight(new Color(...color).getHex());
 
 		light.position.set(
@@ -75,7 +75,7 @@ export default {
 
 		return group;
 	},
-	point: ({ color, coords }, extent) => {
+	point: ({ color = [1, 1, 1], coords }, extent) => {
 		const light = new PointLight(new Color(...color).getHex());
 
 		light.position.set(

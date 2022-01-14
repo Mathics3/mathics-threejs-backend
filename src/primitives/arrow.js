@@ -15,7 +15,7 @@ import { getBasicMaterial } from '../shader.js';
 
 // See https://reference.wolfram.com/language/ref/Arrow
 // for the high-level description of what is being rendered.
-export default function ({ color, coords, opacity = 1 }, extent) {
+export default function ({ color = [0, 0, 0], coords, opacity = 1 }, extent) {
 	const material = getBasicMaterial(color, opacity);
 
 	const group = new Group();

@@ -11,7 +11,7 @@ import { get2PopulatedCoordinateBuffers } from '../bufferUtils.js';
 
 // See https://reference.wolfram.com/language/ref/Cuboid
 // for the high-level description of what is being rendered.
-export default function ({ color, coords, edgeForm = {}, opacity = 1 }, extent) {
+export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1 }, extent) {
 	// The edges of the cuboids are drawn in the fragment shader; doing this is faster than putting the edges in a different object.
 
 	const [cuboidsBegin, cuboidsEnd] = get2PopulatedCoordinateBuffers(coords, extent);
