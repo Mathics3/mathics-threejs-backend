@@ -21,31 +21,14 @@ function toCanvasCoords(position, camera) {
 }
 
 // i is 0, 1 or 2.
-function getTickDirection(i, radius, axesGeometry, boundingBox) {
-	const tickDirection = new Vector3();
+function getTickDirection(i, radius) {
 	const tickLength = 0.005 * radius;
 
 	if (i === 0) {
-		if (axesGeometry[0].attributes.position.array[1] > boundingBox.position.y) {
-			tickDirection.setY(-tickLength);
-		} else {
-			tickDirection.setY(tickLength);
-		}
-	} else if (i === 1) {
-		if (axesGeometry[1].attributes.position.array[0] > boundingBox.position.x) {
-			tickDirection.setX(-tickLength);
-		} else {
-			tickDirection.setX(tickLength);
-		}
-	} else {
-		if (axesGeometry[2].attributes.position.array[0] > boundingBox.position.x) {
-			tickDirection.setX(-tickLength);
-		} else {
-			tickDirection.setX(tickLength);
-		}
+		return new Vector3(0, -tickLength, 0);
+	} else { // i === 1 || i === 2
+		return new Vector3(tickLength, 0, 0);
 	}
-
-	return tickDirection;
 }
 
 export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize) {
@@ -77,10 +60,10 @@ export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasS
 	}
 }
 
-export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGeometry, boundingBox, radius, extent) {
+export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGeometry, radius, extent) {
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			const tickDirection = getTickDirection(i, radius, axesGeometry, boundingBox);
+			const tickDirection = getTickDirection(i, radius);
 
 			axes.ticks[i][0].forEach((value, j) => {
 				const partialCoordinate = scalePartialCoordinate(value, i, extent);
