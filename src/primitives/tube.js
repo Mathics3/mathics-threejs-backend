@@ -66,7 +66,7 @@ function mergeBufferGeometries(geometries) {
 
 // See https://reference.wolfram.com/language/ref/Tube.html
 // for the high-level description of what is being rendered.
-export default function ({ color, coords, opacity = 1, radius = 1 }, extent) {
+export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, extent) {
 	// TubeGeometry receives a Curve, but Mathics' Tube recives an array of coordinates, so we use CatmullRomCurve3 to convert the coordinates into a Curve.
 	// Curve.getPoint receives a flot between 0 and 1, where 0 is the 1st coordinate and 1 is the last.
 	const curve = new CatmullRomCurve3(

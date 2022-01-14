@@ -1,8 +1,8 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
 - `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of polyhedrons' center
 - `edgeForm` (type: object) — default: `{}`, object with the following properties:
-  - `color` (type: [color](/mathics-threejs-backend/types/color)) — edges' color, default: `[0, 0, 0]` (black edges)
+  - `color` (type: [color](/mathics-threejs-backend/types/color)) — edges' color, default: black
   - `showEdges` (type: bool) — default: `true`
 - `edgeLength` (type: number) — default: `1`
 - `opacity` (type: number) — default: `1`

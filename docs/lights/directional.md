@@ -1,5 +1,5 @@
 Properties:
-- `color` (type: [color](/mathics-threejs-backend/types/color))
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
 - `coords` (type: [coord](/mathics-threejs-backend/types/coord)) — initial light position in [spherical polar coordinates](https://en.wikipedia.org/wiki/Spherical_coordinate_system)
 
 Add an infinitely far camera-follower light to the scene.
