@@ -216,7 +216,7 @@ export default function (
 		}
 	}
 
-	setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGeometry, boundingBox, radius, extent);
+	setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGeometry, radius, extent);
 
 	// axes numbering using divs
 	const tickNumbers = new Array(3);
