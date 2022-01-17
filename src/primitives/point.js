@@ -11,7 +11,7 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 // for the high-level description of what is being rendered.
 // Differently from WL's Point, our points aren't affected by
 // lightning and therefore don't have VertexNormals.
-export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, extent, canvasSize) {
+export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, uniforms, extent, canvasSize) {
 	return new Points(
 		new BufferGeometry().setAttribute(
 			'position',

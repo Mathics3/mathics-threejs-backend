@@ -10,9 +10,10 @@ import {
 
 import calculateExtent from './extent.js';
 import { positionTickNumbers, setTicksInitialPosition } from './axes.js';
-import lightFunctions, { getInitialLightPosition, positionLights } from './lights.js';
+import lightFunctions from './lights.js';
 import primitiveFunctions from './primitives/index.js';
 import { getBasicMaterial } from './shader.js';
+import { getUniformsBuffer } from './uniforms.js';
 
 export default function (
 	container,
@@ -96,21 +97,11 @@ export default function (
 
 	scene.add(camera);
 
-	const lights = [];
+	const uniforms = getUniformsBuffer();
 
-	lighting.forEach((element) => {
-		const light = lightFunctions[element.type](element, extent);
-
-		if (element.type === 'directional') {
-			const position = getInitialLightPosition(element.coords, radius, extent);
-			light.radius = position.radius;
-			light.theta = position.theta;
-			light.phi = position.phi;
-			lights.push(light);
-		}
-
-		scene.add(light);
-	});
+	lighting.forEach(
+		(element) => lightFunctions[element.type](element, uniforms, extent)
+	);
 
 	const grayBasicMaterial = getBasicMaterial([0.4, 0.4, 0.4], 1);
 
@@ -256,9 +247,9 @@ export default function (
 	}
 
 	// plot the primitives
-	elements.forEach((element) => {
-		scene.add(primitiveFunctions[element.type](element, extent, canvasSize));
-	});
+	elements.forEach(
+		(element) => scene.add(primitiveFunctions[element.type](element, uniforms, extent, canvasSize))
+	);
 
 	const renderer = new WebGLRenderer({
 		antialias: true,
@@ -270,7 +261,15 @@ export default function (
 	container.appendChild(renderer.domElement);
 
 	function render() {
-		positionLights(lights, theta, phi, focus);
+		uniforms.pointLights.value.forEach((light) => {
+			light.position = light.basePosition.clone().applyMatrix4(camera.matrixWorldInverse);
+		});
+
+		uniforms.spotLights.value.forEach((light) => {
+			light.direction = light.baseDirection.clone().transformDirection(camera.matrixWorldInverse);
+			light.position = light.basePosition.clone().applyMatrix4(camera.matrixWorldInverse);
+		});
+
 		renderer.render(scene, camera);
 	}
 

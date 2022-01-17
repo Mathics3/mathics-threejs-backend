@@ -7,6 +7,8 @@ dev
 Improvements:
 - Improve coplanar polygons performance (#87, #88)
 - Improve cursor behavior (#90)
+- Make directional lights meet Wolfram Language behavior (#69, #77)
+- Improve performance of camera rotation (#77)
 
 Internals:
 - Rename the script start-server to start
@@ -14,6 +16,8 @@ Internals:
 - Install ESLint and add "lint" script (#82)
 - Replace TubeGeometry with custom code (#83)
 - Replace CatmullRomCurve3 with custom code (#83)
+- Convert all materials to RawShaderMaterial (#77)
+- Use a custom uniform system (#77)
 
 1.1.1
 -----

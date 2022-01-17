@@ -4,84 +4,50 @@
 // and the 2nd parameter is the extent, it's used in some lights to calculate
 // the light's position.
 
-import {
-	AmbientLight,
-	Color,
-	DirectionalLight,
-	Group,
-	PointLight,
-	SpotLight,
-	Vector3
-} from '../vendors/three.js';
+import { Vector3 } from '../vendors/three.js';
 
 import { scaleCoordinate } from './coordinateUtils.js';
 
-export function getInitialLightPosition(coordinate, radius, extent) {
-	// initial light position in spherical polar coordinates
-	const temporaryPosition = new Vector3(
-		...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
-	);
-
-	const result = {
-		radius: radius * temporaryPosition.length(),
-		phi: 0,
-		theta: 0
-	};
-
-	if (temporaryPosition.length() !== 0) {
-		// This code is here to avoid 0/0 division.
-		result.phi = Math.atan2(temporaryPosition.y, temporaryPosition.x) % (2 * Math.PI);
-		result.theta = Math.asin(temporaryPosition.z / result.radius);
-	}
-
-	return result;
-}
-
-export function positionLights(lights, theta, phi, focus) {
-	lights.forEach((light) =>
-		light.position.set(
-			light.radius * Math.sin(theta + light.theta) * Math.cos(phi + light.phi) + focus.x,
-			light.radius * Math.sin(theta + light.theta) * Math.sin(phi + light.phi) + focus.y,
-			light.radius * Math.cos(theta + light.theta) + focus.z
-		)
-	);
-}
-
 export default {
-	ambient: ({ color = [1, 1, 1] }) => {
-		return new AmbientLight(new Color(...color).getHex());
+	ambient: ({ color = [1, 1, 1] }, lights) => {
+		lights.ambientLightColor.value[0] += color[0];
+		lights.ambientLightColor.value[1] += color[1];
+		lights.ambientLightColor.value[2] += color[2];
 	},
-	directional: ({ color = [1, 1, 1] }) => {
-		return new DirectionalLight(new Color(...color).getHex());
-	},
-	spot: ({ angle = 1.57079632679, color = [1, 1, 1], coords, target }, extent) => {
-		const light = new SpotLight(new Color(...color).getHex());
+	directional: ({ color = [1, 1, 1], coords }, lights, extent) => {
+		const direction = new Vector3(
+			...(coords[0] ?? scaleCoordinate(coords[1], extent))
+		).sub(new Vector3(
+			(extent.xmax + extent.xmin) / 2,
+			(extent.ymax + extent.ymin) / 2,
+			(extent.zmax + extent.zmin) / 2
+		)).normalize();
 
-		light.position.set(
+		lights.directionalLights.value.push({
+			color,
+			direction
+		});
+	},
+	point: ({ color = [1, 1, 1], coords }, lights, extent) => {
+		lights.pointLights.value.push({
+			color,
+			basePosition: new Vector3(...coords[0] ?? scaleCoordinate(coords[1], extent))
+		});
+	},
+	spot: ({ angle = 1.57079632679, color = [1, 1, 1], coords, target }, lights, extent) => {
+		const basePosition = new Vector3(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
 		);
 
-		light.angle = angle;
-
-		light.target.position.set(
+		const baseDirection = basePosition.clone().sub(new Vector3(
 			...(target[0] ?? scaleCoordinate(target[1], extent))
-		);
+		)).normalize();
 
-		const group = new Group();
-
-		group.add(light);
-		// We need to add the target to the scene so the its matrixWorld is updated in every camera move.
-		group.add(light.target);
-
-		return group;
-	},
-	point: ({ color = [1, 1, 1], coords }, extent) => {
-		const light = new PointLight(new Color(...color).getHex());
-
-		light.position.set(
-			...(coords[0] ?? scaleCoordinate(coords[1], extent))
-		);
-
-		return light;
+		lights.spotLights.value.push({
+			color,
+			baseDirection,
+			basePosition,
+			coneCos: Math.cos(angle)
+		});
 	}
 };
