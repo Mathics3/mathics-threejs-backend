@@ -20,6 +20,7 @@ Internals:
 - Move some shaders to shader.js (#54)
 - Replace BoxGeometry by lower-level BufferGeometry (#56)
 - Update minify to version 8
+- Simplify lighting structs in shaders (#76)
 
 Documentation:
 - Move the documentation to this repository and make it more interative
