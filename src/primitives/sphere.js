@@ -88,7 +88,7 @@ export default function ({ color, coords, opacity = 1, radius = 1 }, extent) {
 
 					void getSpotLightInfo(const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light) {
 						light.direction = normalize(spotLight.position - geometry.position);
-						light.color = spotLight.color * max(dot(light.direction, spotLight.direction), 0.0);
+						light.color = spotLight.color * max(smoothstep(spotLight.coneCos, spotLight.coneCos, dot(light.direction, spotLight.direction)), 0.0);
 					}
 				#endif
 

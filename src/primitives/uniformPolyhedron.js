@@ -416,7 +416,7 @@ export default function ({ color, coords, edgeForm = {}, edgeLength = 1, opacity
 
 					void getSpotLightInfo(const in SpotLight spotLight, out IncidentLight light) {
 						light.direction = normalize(spotLight.position + vViewPosition);
-						light.color = spotLight.color * max(dot(light.direction, spotLight.direction), 0.0);
+						light.color = spotLight.color * max(smoothstep(spotLight.coneCos, spotLight.coneCos, dot(light.direction, spotLight.direction)), 0.0);
 					}
 				#endif
 
