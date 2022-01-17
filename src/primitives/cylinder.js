@@ -13,7 +13,7 @@ import { get2CoordinatesMaterial } from '../shader.js';
 
 // See https://reference.wolfram.com/language/ref/Cylinder
 // for the high-level description of what is being rendered.
-export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1, radius = 1 }, extent) {
+export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1, radius = 1 }, uniforms, extent) {
 	const [cylindersBegin, cylindersEnd] = get2PopulatedCoordinateBuffers(coords, extent);
 
 	const vertexPosition0 = 0.2588 * radius,
@@ -374,7 +374,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	const cylinders = new Mesh(
 		cylinderGeometry,
-		get2CoordinatesMaterial(color, opacity)
+		get2CoordinatesMaterial(color, opacity, uniforms)
 	);
 
 	cylinders.frustumCulled = false;

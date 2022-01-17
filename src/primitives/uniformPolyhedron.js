@@ -5,16 +5,14 @@ import {
 	InstancedBufferGeometry,
 	LineSegments,
 	Mesh,
-	ShaderMaterial,
-	RawShaderMaterial,
-	UniformsLib
+	RawShaderMaterial
 } from '../../vendors/three.js';
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
 // See https://reference.wolfram.com/language/ref/UniformPolyhedron
 // for the high-level description of what is being rendered.
-export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, extent) {
+export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, uniforms, extent) {
 	const polyhedronGeometry = new InstancedBufferGeometry();
 
 	// The magic numbers below are modified from the position attribute of,
@@ -351,13 +349,16 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 	const polyhedrons = new Mesh(
 		polyhedronGeometry,
-		new ShaderMaterial({
+		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
-			lights: true,
-			uniforms: UniformsLib.lights,
-			vertexShader: `
+			uniforms,
+			vertexShader: `#version 300 es
+				in vec3 position;
 				in vec3 polyhedronCenter;
+
+				uniform mat4 modelViewMatrix;
+				uniform mat4 projectionMatrix;
 
 				out vec3 vViewPosition;
 
@@ -369,12 +370,15 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 					gl_Position = projectionMatrix * mvPosition;
 				}
 			`,
-			fragmentShader: `
+			fragmentShader: `#version 300 es
+				precision mediump float;
+
 				in vec3 vViewPosition;
 
 				uniform vec3 ambientLightColor;
 
-				#define RECIPROCAL_PI 0.3183098861837907
+				out vec4 pc_fragColor;
+
 				#define saturate(a) clamp(a, 0.0, 1.0)
 
 				struct IncidentLight {
@@ -382,23 +386,25 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 					vec3 direction;
 				};
 
-				#if NUM_DIR_LIGHTS > 0
-					uniform IncidentLight directionalLights[NUM_DIR_LIGHTS];
-				#endif
-				#if NUM_POINT_LIGHTS > 0
+				${uniforms.directionalLights.value.length > 0 ? `
+					uniform IncidentLight directionalLights[${uniforms.directionalLights.value.length}];
+				` : ''}
+
+				${uniforms.pointLights.value.length > 0 ? `
 					struct PointLight {
 						vec3 color;
 						vec3 position;
 					};
 
-					uniform PointLight pointLights[NUM_POINT_LIGHTS];
+					uniform PointLight pointLights[${uniforms.pointLights.value.length}];
 
 					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
-						light.direction = normalize(pointLight.position + vViewPosition);
+						light.direction = normalize(spotLight.position + vViewPosition);
 						light.color = pointLight.color;
 					}
-				#endif
-				#if NUM_SPOT_LIGHTS > 0
+				` : ''}
+
+				${uniforms.spotLights.value.length > 0 ? `
 					struct SpotLight {
 						vec3 color;
 						float coneCos;
@@ -406,13 +412,14 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 						vec3 position;
 					};
 
-					uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
+					uniform SpotLight spotLights[${uniforms.spotLights.value.length}];
 
-					void getSpotLightInfo(const in SpotLight spotLight, out IncidentLight light) {
+					void getSpotLightInfo(const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light) {
 						light.direction = normalize(spotLight.position + vViewPosition);
+
 						light.color = spotLight.color * max(smoothstep(spotLight.coneCos, spotLight.coneCos, dot(light.direction, spotLight.direction)), 0.0);
 					}
-				#endif
+				` : ''}
 
 				void main() {
 					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
@@ -421,26 +428,29 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 					IncidentLight directLight;
 
-					#if NUM_DIR_LIGHTS > 0
-						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
+					${uniforms.directionalLights.value.length > 0 ? `
+						for (int i = 0; i < ${uniforms.directionalLights.value.length}; i++) {
 							reflectedLight += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
 						}
-					#endif
-					#if NUM_POINT_LIGHTS > 0
-						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
+					` : ''}
+
+					${uniforms.pointLights.value.length > 0 ? `
+						for (int i = 0; i < ${uniforms.pointLights.value.length}; i++) {
 							getPointLightInfo(pointLights[i], directLight);
 							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
-					#endif
-					#if NUM_SPOT_LIGHTS > 0
-						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
+					` : ''}
+
+					${uniforms.spotLights.value.length > 0 ? `
+						SpotLight spotLight;
+						for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
 							getSpotLightInfo(spotLights[i], directLight);
 							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
-					#endif
+					` : ''}
 
 					pc_fragColor = vec4(
-						reflectedLight * vec3(${color[0]}, ${color[1]}, ${color[2]}) * RECIPROCAL_PI,
+						reflectedLight * vec3(${color[0]}, ${color[1]}, ${color[2]}),
 						${opacity}
 					);
 				}
