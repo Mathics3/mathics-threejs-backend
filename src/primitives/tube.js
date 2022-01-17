@@ -178,7 +178,7 @@ export default function ({ color, coords, opacity = 1, radius = 1 }, extent) {
 						float angleCos = dot(light.direction, spotLight.direction);
 
 						if (angleCos > 0.0) {
-							light.color = spotLight.color * max(dot(light.direction, spotLight.direction), 0.0);
+							light.color = spotLight.color * max(smoothstep(spotLight.coneCos, spotLight.coneCos, dot(light.direction, spotLight.direction)), 0.0);
 						} else {
 							light.color = vec3(0.0);
 						}
