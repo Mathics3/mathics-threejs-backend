@@ -17,6 +17,7 @@ Documentation:
 
 Internals:
 - Update minify to version 8
+- Simplify lighting structs in shaders (#76)
 
 Bug fixes:
 - Correctly calculate the bounding box for primitives with scaled coordinates and radius bigger than the bounding box (#60)
