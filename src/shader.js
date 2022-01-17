@@ -40,74 +40,35 @@ export function get2CoordinatesMaterial(color, opacity) {
 				vec3 normal;
 			};
 
-			float getDistanceAttenuation(const in float lightDistance, const in float cutoffDistance, const in float decayExponent) {
-				if (cutoffDistance > 0.0 && decayExponent > 0.0) {
-					return pow(saturate(- lightDistance / cutoffDistance + 1.0), decayExponent);
-				}
-				return 1.0;
-			}
-
 			#if NUM_DIR_LIGHTS > 0
-				struct DirectionalLight {
-					vec3 direction;
-					vec3 color;
-				};
-
-				uniform DirectionalLight directionalLights[NUM_DIR_LIGHTS];
-
-				void getDirectionalLightInfo(const in DirectionalLight directionalLight, out IncidentLight light) {
-					light.color = directionalLight.color;
-					light.direction = directionalLight.direction;
-				}
+				uniform IncidentLight directionalLights[NUM_DIR_LIGHTS];
 			#endif
 			#if NUM_POINT_LIGHTS > 0
 				struct PointLight {
-					vec3 position;
 					vec3 color;
-					float distance;
-					float decay;
+					vec3 position;
 				};
 
 				uniform PointLight pointLights[NUM_POINT_LIGHTS];
 
 				void getPointLightInfo(const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight light) {
-					vec3 lVector = pointLight.position - geometry.position;
-
-					light.direction = normalize(lVector);
-					light.color = pointLight.color * getDistanceAttenuation(length(lVector), pointLight.distance, pointLight.decay);
+					light.direction = normalize(pointLight.position - geometry.position);
+					light.color = pointLight.color;
 				}
 			#endif
 			#if NUM_SPOT_LIGHTS > 0
 				struct SpotLight {
-					vec3 position;
-					vec3 direction;
 					vec3 color;
-					float distance;
-					float decay;
 					float coneCos;
-					float penumbraCos;
+					vec3 direction;
+					vec3 position;
 				};
 
 				uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
 
-				float getSpotAttenuation(const in float coneCosine, const in float penumbraCosine, const in float angleCosine) {
-					return smoothstep(coneCosine, penumbraCosine, angleCosine);
-				}
-
 				void getSpotLightInfo(const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light) {
-					vec3 lVector = spotLight.position - geometry.position;
-
-					light.direction = normalize(lVector);
-
-					float angleCos = dot(light.direction, spotLight.direction);
-
-					float spotAttenuation = getSpotAttenuation(spotLight.coneCos, spotLight.penumbraCos, angleCos);
-
-					if (spotAttenuation > 0.0) {
-						light.color = spotLight.color * spotAttenuation * getDistanceAttenuation(length(lVector), spotLight.distance, spotLight.decay);
-					} else {
-						light.color = vec3(0.0);
-					}
+					light.direction = normalize(spotLight.position - geometry.position);
+					light.color = spotLight.color * max(dot(light.direction, spotLight.direction), 0.0);
 				}
 			#endif
 
@@ -142,6 +103,11 @@ export function get2CoordinatesMaterial(color, opacity) {
 
 				IncidentLight directLight;
 
+				#if NUM_DIR_LIGHTS > 0
+					for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
+						light += saturate(dot(geometry.normal, directionalLights[i].direction)) * directionalLights[i].color;
+					}
+				#endif
 				#if NUM_POINT_LIGHTS > 0
 					for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 						getPointLightInfo(pointLights[i], geometry, directLight);
@@ -152,13 +118,6 @@ export function get2CoordinatesMaterial(color, opacity) {
 				#if NUM_SPOT_LIGHTS > 0
 					for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
 						getSpotLightInfo(spotLights[i], geometry, directLight);
-
-						light += saturate(dot(geometry.normal, directLight.direction)) * directLight.color;
-					}
-				#endif
-				#if NUM_DIR_LIGHTS > 0
-					for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
-						getDirectionalLightInfo(directionalLights[i], directLight);
 
 						light += saturate(dot(geometry.normal, directLight.direction)) * directLight.color;
 					}
