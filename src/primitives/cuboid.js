@@ -100,19 +100,15 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	cuboidGeometry.instanceCount = coords.length / 2;
 
+	edgeForm.color ??= [0, 0, 0];
+
 	const cuboids = new Mesh(
 		cuboidGeometry,
 		new ShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
 			lights: true,
-			uniforms: {
-				...UniformsLib.lights,
-				diffuse: { value: color },
-				edgeColor: { value: edgeForm.color ?? [0, 0, 0] },
-				opacity: { value: opacity },
-				showEdges: { value: edgeForm.showEdges ?? true }
-			},
+			uniforms: UniformsLib.lights,
 			vertexShader: `
 				in vec3 cuboidBegin;
 				in vec3 cuboidEnd;
@@ -141,10 +137,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 				in vec3 vViewPosition;
 				in vec2 vUv;
 
-				uniform vec3 diffuse;
-				uniform vec3 edgeColor;
-				uniform float opacity;
-				uniform bool showEdges;
 				uniform vec3 ambientLightColor;
 
 				#define RECIPROCAL_PI 0.3183098861837907
@@ -194,53 +186,46 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					}
 				#endif
 
-				vec3 RE_Direct(const in IncidentLight directLight, const in vec3 normal, const in vec3 diffuseColor) {
-					float dotNL = saturate(dot(normal, directLight.direction));
-					return dotNL * directLight.color * diffuseColor * RECIPROCAL_PI;
-				}
-
 				void main() {
-					vec3 diffuseColor;
-
-					if (showEdges) {
+					${(edgeForm.showEdges ?? true) ? `
 						vec2 grid = abs(fract(vUv - 0.5) - 0.5) / fwidth(vUv);
 
 						float factor = min(min(grid.x, grid.y), 1.0);
 
-						diffuseColor = (diffuse - edgeColor) * factor + edgeColor;
-					} else {
-						diffuseColor = diffuse;
-					}
+						vec3 edgeColor = vec3(${edgeForm.color[0]}, ${edgeForm.color[1]}, ${edgeForm.color[2]});
+
+						vec3 diffuseColor = (vec3(${color[0]}, ${color[1]}, ${color[2]}) - edgeColor) * factor + edgeColor;
+					` : `
+						vec3 diffuseColor = vec3(${color[0]}, ${color[1]}, ${color[2]});
+					`}
 
 					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
 
-					vec3 reflectedLight = vec3(0.0);
+					vec3 reflectedLight = ambientLightColor;
 
 					IncidentLight directLight;
 
 					#if NUM_DIR_LIGHTS > 0
 						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
-							reflectedLight += RE_Direct(directionalLights[i], normal, diffuseColor);
+							reflectedLight += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
 						}
 					#endif
 					#if NUM_POINT_LIGHTS > 0
 						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 							getPointLightInfo(pointLights[i], directLight);
-							reflectedLight += RE_Direct(directLight, normal, diffuseColor);
+							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
 					#endif
 					#if NUM_SPOT_LIGHTS > 0
 						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
 							getSpotLightInfo(spotLights[i], directLight);
-							reflectedLight += RE_Direct(directLight, normal, diffuseColor);
+							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
 					#endif
 	
-					reflectedLight += ambientLightColor * diffuseColor * RECIPROCAL_PI;
-
 					pc_fragColor = vec4(
-						reflectedLight,
-						opacity
+						reflectedLight * diffuseColor * RECIPROCAL_PI,
+						${opacity}
 					);
 				}
 			`

@@ -151,11 +151,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1 }, extent) {
 			side: DoubleSide,
 			depthWrite: opacity === 1,
 			transparent: opacity !== 1,
-			uniforms: {
-				...UniformsLib.lights,
-				diffuse: { value: color },
-				opacity: { value: opacity }
-			},
+			uniforms: UniformsLib.lights,
 			vertexShader: `
 				out vec3 vViewPosition;
 
@@ -171,8 +167,6 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1 }, extent) {
 				in vec3 vViewPosition;
 				in vec3 vNormal;
 
-				uniform vec3 diffuse;
-				uniform float opacity;
 				uniform vec3 ambientLightColor;
 
 				#define RECIPROCAL_PI 0.3183098861837907
@@ -215,14 +209,8 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1 }, extent) {
 					}
 				#endif
 
-				vec3 RE_Direct(const in IncidentLight directLight, const in vec3 normal) {
-					float dotNL = saturate(dot(normal, directLight.direction));
-
-					return dotNL * directLight.color * RECIPROCAL_PI * diffuse;
-				}
-
 				void main() {
-					vec3 reflectedLight = vec3(0.0);
+					vec3 reflectedLight = ambientLightColor;
 
 					vec3 normal = normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition)));
 
@@ -230,25 +218,25 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1 }, extent) {
 
 					#if NUM_DIR_LIGHTS > 0
 						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
-							reflectedLight += RE_Direct(directionalLights[i], normal);
+							reflectedLight += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
 						}
 					#endif
 					#if NUM_POINT_LIGHTS > 0
 						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 							getPointLightInfo(pointLights[i], directLight);
-							reflectedLight += RE_Direct(directLight, normal);
+							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
 					#endif
 					#if NUM_SPOT_LIGHTS > 0
 						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
 							getSpotLightInfo(spotLight, spotLights[i]);
-							reflectedLight += RE_Direct(directLight, normal);
+							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
 					#endif
 
 					pc_fragColor = vec4(
-						reflectedLight + ambientLightColor * diffuse * RECIPROCAL_PI,
-						opacity
+						reflectedLight * vec3(${color[0]}, ${color[1]}, ${color[2]}) * RECIPROCAL_PI,
+						${opacity}
 					);
 				}
 			`

@@ -23,31 +23,29 @@ export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, 
 		new RawShaderMaterial({
 			transparent: true,
 			depthWrite: false,
-			uniforms: {
-				size: { value: pointSize * canvasSize },
-				color: { value: [...color, opacity] }
-			},
 			vertexShader: `#version 300 es
 				in vec3 position;
 
 				uniform mat4 projectionMatrix;
 				uniform mat4 modelViewMatrix;
-				uniform float size;
 
 				void main() {
-					gl_PointSize = size;
+					gl_PointSize = ${(pointSize * canvasSize).toFixed(4)};
 					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 				}
 			`,
 			fragmentShader: `#version 300 es
-				uniform lowp vec4 color;
-
 				out lowp vec4 pc_fragColor;
 
 				void main() {
 					if (length(gl_PointCoord - 0.5) > 0.5) discard;
 
-					pc_fragColor = color;
+					pc_fragColor = vec4(
+						${color[0]},
+						${color[1]},
+						${color[2]},
+						${opacity}
+					);
 				}
 			`
 		})
