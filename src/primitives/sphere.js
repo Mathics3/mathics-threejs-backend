@@ -33,17 +33,11 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 			lights: true,
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
-			uniforms: {
-				...UniformsLib.lights,
-				diffuse: { value: color },
-				opacity: { value: opacity }
-			},
+			uniforms: UniformsLib.lights,
 			vertexShader: `
 				in vec3 sphereCenter;
 
 				uniform vec3 ambientLightColor;
-				uniform vec3 diffuse;
-				uniform float opacity;
 
 				out vec4 vColor;
 
@@ -126,7 +120,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 						}
 					#endif
 
-					vColor = vec4(light * diffuse * RECIPROCAL_PI, opacity);
+					vColor = vec4(light * vec3(${color[0]}, ${color[1]}, ${color[2]}) * RECIPROCAL_PI, ${opacity});
 				}
 			`,
 			fragmentShader: `

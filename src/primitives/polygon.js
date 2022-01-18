@@ -173,11 +173,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			side: DoubleSide,
 			depthWrite: opacity === 1,
 			transparent: opacity !== 1,
-			uniforms: {
-				...UniformsLib.lights,
-				diffuse: { value: color },
-				opacity: { value: opacity }
-			},
+			uniforms: UniformsLib.lights,
 			vertexShader: `
 				out vec3 vViewPosition;
 				out vec3 vNormal;
@@ -195,8 +191,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 				in vec3 vViewPosition;
 				in vec3 vNormal;
 
-				uniform vec3 diffuse;
-				uniform float opacity;
 				uniform vec3 ambientLightColor;
 
 				#define RECIPROCAL_PI 0.3183098861837907
@@ -239,41 +233,35 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					}
 				#endif
 
-				vec3 RE_Direct(const in IncidentLight directLight, const in vec3 normal) {
-					float dotNL = saturate(dot(normal, directLight.direction));
-
-					return dotNL * directLight.color * RECIPROCAL_PI * diffuse;
-				}
-
 				void main() {
 					// If x is NaN, then y and z are also NaN.
 					vec3 normal = isnan(vNormal.x) ? normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition))) : vNormal;
 
-					vec3 reflectedLight = vec3(0.0);
+					vec3 reflectedLight = ambientLightColor;
 
 					IncidentLight directLight;
 
 					#if NUM_DIR_LIGHTS > 0
 						for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
-							reflectedLight += RE_Direct(directionalLights[i], normal);
+							reflectedLight += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
 						}
 					#endif
 					#if NUM_POINT_LIGHTS > 0
 						for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
 							getPointLightInfo(pointLights[i], directLight);
-							reflectedLight += RE_Direct(directLight, normal);
+							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
 					#endif
 					#if NUM_SPOT_LIGHTS > 0
 						for (int i = 0; i < NUM_SPOT_LIGHTS; i++) {
 							getSpotLightInfo(spotLight, spotLights[i]);
-							reflectedLight += RE_Direct(directLight, normal);
+							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
 						}
 					#endif
 
 					pc_fragColor = vec4(
-						reflectedLight + ambientLightColor * diffuse * RECIPROCAL_PI,
-						opacity
+						reflectedLight * vec3(${color[0]}, ${color[1]}, ${color[2]}) * RECIPROCAL_PI,
+						${opacity}
 					);
 				}
 			`
@@ -291,6 +279,8 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	group.add(polygon);
 
+	edgeForm.color ??= [0, 0, 0];
+
 	// Differently from polyhedrons, polygons use a Mesh and a material
 	// with "wirefram: true". This is slower than LineSegments, but
 	// creating a new BufferGeometry is also slow and uses more RAM
@@ -299,9 +289,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 		geometry,
 		new RawShaderMaterial({
 			wireframe: true,
-			uniforms: {
-				color: { value: edgeForm.color ?? [0, 0, 0] }
-			},
 			vertexShader: `#version 300 es
 				in vec3 position;
 
@@ -313,12 +300,15 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 				}
 			`,
 			fragmentShader: `#version 300 es
-				uniform lowp vec3 color;
-
 				out lowp vec4 pc_fragColor;
 
 				void main() {
-					pc_fragColor = vec4(color, 1.0);
+					pc_fragColor = vec4(
+						${edgeForm.color[0]},
+						${edgeForm.color[1]},
+						${edgeForm.color[2]},
+						1
+					);
 				}
 			`
 		})
