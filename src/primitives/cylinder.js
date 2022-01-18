@@ -473,12 +473,11 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 		new InstancedBufferAttribute(cylindersEnd, 3)
 	);
 
+	edgeForm.color ??= [0, 0, 0];
+
 	const edges = new Line(
 		edgesGeometry,
 		new RawShaderMaterial({
-			uniforms: {
-				color: { value: edgeForm.color ?? [0, 0, 0] }
-			},
 			vertexShader: `#version 300 es
 				in vec3 position;
 				in vec3 cylinderBegin;
@@ -509,12 +508,15 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 				}
 			`,
 			fragmentShader: `#version 300 es
-				uniform lowp vec3 color;
-
 				out lowp vec4 pc_fragColor;
 
 				void main() {
-					pc_fragColor = vec4(color, 1.0);
+					pc_fragColor = vec4(
+						${edgeForm.color[0]},
+						${edgeForm.color[1]},
+						${edgeForm.color[2]},
+						1
+					);
 				}
 			`
 		})

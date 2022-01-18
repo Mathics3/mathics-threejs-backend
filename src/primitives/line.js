@@ -25,10 +25,6 @@ export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 
 			? new RawShaderMaterial({
 				opacity,
 				transparent: opacity !== 1,
-				uniforms: {
-					resolution: { value: [canvasSize, canvasSize] },
-					quadrupleGapInverse: { value: 1 / (4 * gapSize) }
-				},
 				vertexShader: `#version 300 es
 					in vec3 position;
 
@@ -51,13 +47,12 @@ export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 
 					flat in vec2 startPosition;
 					in vec2 vertexPosition;
 
-					uniform vec2 resolution;
-					uniform float quadrupleGapInverse;
-
 					out vec4 pc_fragColor;
 
 					void main() {
-						float doubleDistance = length((vertexPosition - startPosition) * resolution);
+						float doubleDistance = length((vertexPosition - startPosition) * vec2(${canvasSize}));
+
+						float quadrupleGapInverse = ${(1 / (4 * gapSize)).toFixed(4)};
 
 						if (fract(doubleDistance * quadrupleGapInverse) > 0.5) discard;
 

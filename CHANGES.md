@@ -12,6 +12,7 @@ Improvements:
 - Improve performance of arrows (#66)
 - Improve performance of cylinders (#67)
 - Add default colors to primitives and lights (#75)
+- Improve performance of shaders by inlining some uniforms (#79)
 
 Documentation:
 - Add more examples (#59)
