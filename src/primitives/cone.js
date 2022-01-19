@@ -251,7 +251,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 		new RawShaderMaterial({
 			vertexShader: `#version 300 es
 				in vec3 position;
-				in vec3 polyhedronCenter;
 				in vec3 coneBase;
 				in vec3 coneTip;
 
