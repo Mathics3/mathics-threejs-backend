@@ -1,7 +1,6 @@
 import {
 	BufferAttribute,
 	BufferGeometry,
-	Color,
 	LineSegments,
 	PerspectiveCamera,
 	Scene,
@@ -223,7 +222,7 @@ export default function (
 				let color = 'black';
 
 				if (i < axes.ticks_style?.length) {
-					color = new Color(...axes.ticks_style[i]).getStyle();
+					color = `rgb(${axes.ticks_style[i][0] * 255}, ${axes.ticks_style[i][1] * 255}, ${axes.ticks_style[i][2] * 255})`;
 				}
 
 				tickNumbers[i][j] = document.createElement('div');
