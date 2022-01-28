@@ -13,6 +13,7 @@ Improvements:
 - Improve performance of cylinders (#67)
 - Add default colors to primitives and lights (#75)
 - Improve performance of shaders by inlining some uniforms (#79)
+- Update three.js to r137 (#80)
 
 Documentation:
 - Add more examples (#59)
