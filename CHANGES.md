@@ -1,8 +1,8 @@
 CHANGES
 =======
 
-dev
----
+1.0.4
+-----
 
 Improvements:
 - Allow setting `maxSize` and `innerWidthMultiplier` from the translation layer. This was only possible to use with the "ES6 module" version of the library
@@ -26,7 +26,7 @@ Internals:
 - Simplify lighting structs in shaders (#76)
 
 Documentation:
-- Move the documentation to this repository and make it more interative
+- Move the documentation to this repository and make it more interactive
 - Add more examples (#59)
 
 Bug fixes:
@@ -41,7 +41,7 @@ Improvements:
 - Allow non-axis-parallel coplanar polygons. Before mathics-threejs-backend could only handle coplanar polygons with all x, y, or z coordinates the same. Now it can handle all coplanar polygons without holes
 
 Internals:
-- Replace MeshStandardMaterial by a custom ShaderMaterial in polygons
+- Replace MeshStandardMaterial with a custom ShaderMaterial in polygons
 - Allow setting the port for the server (npm start-server [port])
 
 Bug fixes:
@@ -91,4 +91,4 @@ Bug fixes:
 Internals:
 - More intensive use of custom shader. Custom shaders are faster and more flexible
 - Split primitives.js into multiple files (#28). Thanks to @rocky for the idea
-- Replace `InstancedMesh` by the lower-level `InstancedBufferGeometry`
+- Replace `InstancedMesh` with the lower-level `InstancedBufferGeometry`
