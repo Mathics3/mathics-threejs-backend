@@ -1,8 +1,8 @@
 CHANGES
 =======
 
-dev
----
+1.1.1
+-----
 
 Improvements:
 - Add default viewpoint (#61)

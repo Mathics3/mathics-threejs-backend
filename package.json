@@ -1,6 +1,6 @@
 {
 	"name": "@mathicsorg/mathics-threejs-backend",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"threejs_revision": 137,
 	"description": "Mathics 3D Graphics backend using three.js",
 	"source": "src/index.js",
