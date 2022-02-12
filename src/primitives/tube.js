@@ -5,13 +5,13 @@ import {
 	Matrix4,
 	Mesh,
 	ShaderMaterial,
-	SphereGeometry,
 	TubeGeometry,
 	UniformsLib,
 	Vector3
 } from '../../vendors/three.js';
 
 import { scaleCoordinate } from '../coordinateUtils.js';
+import { getSphereGeometry } from '../geometry.js';
 
 // Modified from three.js' BufferGeometryUtils.
 function mergeBufferAttributes(attributes) {
@@ -76,6 +76,8 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 		))
 	);
 
+	const halfSphereGeometry = getSphereGeometry(radius, false, true);
+
 	const geometries = [
 		new TubeGeometry(
 			curve,
@@ -84,13 +86,8 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 			64 // radial segments
 		),
 		// 1st end cap
-		new SphereGeometry(
-			radius,
-			48,
-			48,
-			0, // phi start
-			Math.PI // phi end. 2π is a whole sphere, π is half sphere.
-		)
+		halfSphereGeometry
+			.clone()
 			.applyMatrix4(
 				new Matrix4()
 					.setPosition(curve.getPoint(0))
@@ -103,7 +100,8 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 					)
 			),
 		// 2nd end cap, almost the same as above
-		new SphereGeometry(radius, 48, 48, 0, Math.PI)
+		halfSphereGeometry
+			// We don't need to clone the geometry here.
 			.applyMatrix4(
 				new Matrix4()
 					.setPosition(curve.getPoint(1))
