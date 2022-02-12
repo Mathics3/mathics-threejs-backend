@@ -50,7 +50,7 @@ The above only needs to be done once to set up an HTTP server to use. If you alr
 Otherwise, start the HTTP server that was just installed:
 
 ```console
-$ npm run start-server  # Do this once per session
+$ npm start  # Do this once per session
 ...
 Server running at http://localhost:8080/
 See our gallery in http://localhost:8080/examples/

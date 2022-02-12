@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+dev
+---
+
+Internals:
+- Rename the script start-server to start
+
 1.0.4
 -----
 
@@ -42,7 +48,7 @@ Improvements:
 
 Internals:
 - Replace MeshStandardMaterial with a custom ShaderMaterial in polygons
-- Allow setting the port for the server (npm start-server [port])
+- Allow setting the port for the server (npm run start-server [port])
 
 Bug fixes:
 - Stop hiding polygons behind other polygons
