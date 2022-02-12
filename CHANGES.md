@@ -6,6 +6,7 @@ dev
 
 Internals:
 - Rename the script start-server to start
+- Replace SphereGeometry with custom code (#81)
 
 1.0.4
 -----

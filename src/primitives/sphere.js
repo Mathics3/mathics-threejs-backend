@@ -1,31 +1,27 @@
 import {
 	InstancedBufferAttribute,
-	InstancedBufferGeometry,
 	Mesh,
 	ShaderMaterial,
-	SphereGeometry,
 	UniformsLib
 } from '../../vendors/three.js';
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
+import { getSphereGeometry } from '../geometry.js';
 
 // See https://reference.wolfram.com/language/ref/Sphere
 // for the high-level description of what is being rendered.
 export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, extent) {
-	const sphereGeometry = new InstancedBufferGeometry().copy(
-		new SphereGeometry(radius, 48, 48)
-	);
+	const sphereGeometry = getSphereGeometry(radius, true)
+		// Set the spheres centers.
+		.setAttribute(
+			'sphereCenter',
+			new InstancedBufferAttribute(
+				getPopulatedCoordinateBuffer(coords, extent),
+				3
+			)
+		);
 
 	sphereGeometry.instanceCount = coords.length;
-
-	// Set the spheres centers.
-	sphereGeometry.setAttribute(
-		'sphereCenter',
-		new InstancedBufferAttribute(
-			getPopulatedCoordinateBuffer(coords, extent),
-			3
-		)
-	);
 
 	const spheres = new Mesh(
 		sphereGeometry,
