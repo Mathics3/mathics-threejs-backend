@@ -5,13 +5,12 @@ import {
 	Matrix4,
 	Mesh,
 	ShaderMaterial,
-	TubeGeometry,
 	UniformsLib,
 	Vector3
 } from '../../vendors/three.js';
 
 import { scaleCoordinate } from '../coordinateUtils.js';
-import { getSphereGeometry } from '../geometry.js';
+import { getSphereGeometry, getTubeGeometry } from '../geometry.js';
 
 // Modified from three.js' BufferGeometryUtils.
 function mergeBufferAttributes(attributes) {
@@ -69,10 +68,14 @@ function mergeBufferGeometries(geometries) {
 // See https://reference.wolfram.com/language/ref/Tube.html
 // for the high-level description of what is being rendered.
 export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, extent) {
-	// TubeGeometry receives a Curve, but Mathics' Tube recives an array of coordinates, so we use CatmullRomCurve3 to convert the coordinates into a Curve.
-	// Curve.getPoint receives a flot between 0 and 1, where 0 is the 1st coordinate and 1 is the last.
+	// the tube geometry receives a Curve, but Mathics' Tube recives
+	// an array of coordinates, so we use CatmullRomCurve3 to convert
+	// the coordinates into a Curve.
+	// Curve.getPoint receives a float between 0 and 1,
+	// where 0 is the 1st coordinate and 1 is the last.
 	const curve = new CatmullRomCurve3(
-		// It isn't using getCoordinatesBuffer because CatmullRomCurve3 receives an array of Vector3s.
+		// It isn't using getCoordinatesBuffer because
+		// CatmullRomCurve3 receives an array of Vector3s.
 		coords.map((coordinate) => new Vector3(
 			...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
 		))
@@ -81,12 +84,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 	const halfSphereGeometry = getSphereGeometry(radius, false, true);
 
 	const geometries = [
-		new TubeGeometry(
-			curve,
-			64, // tubular segments
-			radius,
-			64 // radial segments
-		),
+		getTubeGeometry(radius, curve),
 		// 1st end cap
 		halfSphereGeometry
 			.clone()
