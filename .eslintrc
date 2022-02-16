@@ -1,0 +1,68 @@
+{
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": [
+		"eslint:recommended"
+	],
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"rules": {
+		"indent": [
+			"error",
+			"tab"
+		],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"semi": [
+			"error",
+			"always"
+		],
+		"no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_"
+			}
+		],
+		"no-unused-expressions": "error",
+		"no-duplicate-imports": "error",
+		"array-bracket-spacing": "error",
+		"arrow-parens": "error",
+		"arrow-spacing": "error",
+		"block-scoped-var": "error",
+		"brace-style": "error",
+		"camelcase": "error",
+		"block-spacing": "error",
+		"comma-dangle": [
+			"error",
+			"never"
+		],
+		"comma-spacing": "error",
+		"comma-style": "error",
+		"computed-property-spacing": "error",
+		"curly": "error",
+		"eol-last": "error",
+		"eqeqeq": "error",
+		"key-spacing": "error",
+		"multiline-comment-style": [
+			"error",
+			"separate-lines"
+		],
+		"newline-before-return": "error",
+		"no-trailing-spaces": "error",
+		"prefer-const": "error"
+	},
+	"ignorePatterns": [
+		"**/pkg/*"
+	]
+}
