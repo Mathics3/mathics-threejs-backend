@@ -46,7 +46,7 @@ export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasS
 					camera
 				).multiplyScalar(canvasSize / maxSize);
 
-				tickNumbers[i][j].style.position = `absolute`;
+				tickNumbers[i][j].style.position = 'absolute';
 				tickNumbers[i][j].style.left = `${tickPosition.x}px`;
 				tickNumbers[i][j].style.top = `${tickPosition.y}px`;
 
