@@ -142,7 +142,7 @@ export default function (
 				extent.xmin, extent.ymin, extent.zmin,
 
 				extent.xmin, extent.ymin, extent.zmin,
-				extent.xmin, extent.ymax, extent.zmin,
+				extent.xmin, extent.ymax, extent.zmin
 			]), 3)
 		),
 		grayBasicMaterial

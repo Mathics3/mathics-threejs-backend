@@ -153,5 +153,5 @@ export function getBasicMaterial(color, opacity) {
 				pc_fragColor = vec4(${color[0]}, ${color[1]}, ${color[2]}, ${opacity});
 			}
 		`
-	})
+	});
 }

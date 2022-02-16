@@ -53,7 +53,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 				-vertexPosition3, -vertexPosition1, 0,
 				-vertexPosition2, -vertexPosition2, 0,
 				-vertexPosition1, -vertexPosition3, 0,
-				-vertexPosition0, -vertexPosition4, 0,
+				-vertexPosition0, -vertexPosition4, 0
 			]), 3)
 		)
 		.setAttribute(
@@ -171,7 +171,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			0, 22, 21,
 			0, 23, 22,
 			0, 24, 23,
-			0, 1, 24,
+			0, 1, 24
 		]);
 
 	coneGeometry.instanceCount = coords.length / 2;

@@ -40,7 +40,9 @@ function mergeBufferGeometries(geometries) {
 
 	for (let i = 0, indexOffset = 0; i < geometries.length; ++i) {
 		for (const name in geometries[i].attributes) {
-			if (attributes[name] === undefined) attributes[name] = [];
+			if (attributes[name] === undefined) {
+				attributes[name] = [];
+			}
 
 			attributes[name].push(geometries[i].attributes[name]);
 		}
