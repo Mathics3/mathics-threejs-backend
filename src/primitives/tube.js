@@ -1,6 +1,4 @@
 import {
-	BufferAttribute,
-	BufferGeometry,
 	CatmullRomCurve3,
 	Matrix4,
 	Mesh,
@@ -10,60 +8,11 @@ import {
 } from '../../vendors/three.js';
 
 import { scaleCoordinate } from '../coordinateUtils.js';
-import { getSphereGeometry, getTubeGeometry } from '../geometry.js';
-
-// Modified from three.js' BufferGeometryUtils.
-function mergeBufferAttributes(attributes) {
-	let arrayLength = 0;
-
-	for (let i = 0; i < attributes.length; ++i) {
-		arrayLength += attributes[i].array.length;
-	}
-
-	const array = new attributes[0].array.constructor(arrayLength);
-
-	for (let i = 0, offset = 0; i < attributes.length; ++i) {
-		array.set(attributes[i].array, offset);
-
-		offset += attributes[i].array.length;
-	}
-
-	return new BufferAttribute(array, 3);
-}
-
-// Modified from three.js' BufferGeometryUtils.
-function mergeBufferGeometries(geometries) {
-	const mergedIndex = [];
-	const attributes = {};
-	const mergedGeometry = new BufferGeometry();
-
-	for (let i = 0, indexOffset = 0; i < geometries.length; ++i) {
-		for (const name in geometries[i].attributes) {
-			if (attributes[name] === undefined) {
-				attributes[name] = [];
-			}
-
-			attributes[name].push(geometries[i].attributes[name]);
-		}
-
-		for (let j = 0; j < geometries[i].index.count; ++j) {
-			mergedIndex.push(geometries[i].index.getX(j) + indexOffset);
-		}
-
-		indexOffset += geometries[i].attributes.position.count;
-	}
-
-	mergedGeometry.setIndex(mergedIndex);
-
-	for (const name in attributes) {
-		mergedGeometry.setAttribute(
-			name,
-			mergeBufferAttributes(attributes[name])
-		);
-	}
-
-	return mergedGeometry;
-}
+import {
+	mergeBufferGeometries,
+	getSphereGeometry,
+	getTubeGeometry
+} from '../geometry.js';
 
 // See https://reference.wolfram.com/language/ref/Tube.html
 // for the high-level description of what is being rendered.
