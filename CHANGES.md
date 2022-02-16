@@ -7,6 +7,7 @@ dev
 Internals:
 - Rename the script start-server to start
 - Replace SphereGeometry with custom code (#81)
+- Install ESLint and add "lint" script (#82)
 
 1.0.4
 -----
