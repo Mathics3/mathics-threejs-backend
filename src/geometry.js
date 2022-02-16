@@ -58,7 +58,9 @@ export function getSphereGeometry(radius, instanced = false, halfSphere = false)
 			const d = grid[iy + 1][ix + 1];
 
 			copyArray3IntoBuffer(indices, [b, c, d], index++);
-			if (iy !== 0) copyArray3IntoBuffer(indices, [a, b, d], index++);
+			if (iy !== 0) {
+				copyArray3IntoBuffer(indices, [a, b, d], index++);
+			}
 		}
 	}
 
