@@ -1,5 +1,4 @@
 import {
-	CatmullRomCurve3,
 	Matrix4,
 	Mesh,
 	ShaderMaterial,
@@ -8,6 +7,7 @@ import {
 } from '../../vendors/three.js';
 
 import { scaleCoordinate } from '../coordinateUtils.js';
+import { getCentripetalCurve } from '../curve.js';
 import {
 	mergeBufferGeometries,
 	getSphereGeometry,
@@ -22,13 +22,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 	// the coordinates into a Curve.
 	// Curve.getPoint receives a float between 0 and 1,
 	// where 0 is the 1st coordinate and 1 is the last.
-	const curve = new CatmullRomCurve3(
-		// It isn't using getCoordinatesBuffer because
-		// CatmullRomCurve3 receives an array of Vector3s.
-		coords.map((coordinate) => new Vector3(
-			...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
-		))
-	);
+	const curve = getCentripetalCurve(coords);
 
 	const halfSphereGeometry = getSphereGeometry(radius, false, true);
 
