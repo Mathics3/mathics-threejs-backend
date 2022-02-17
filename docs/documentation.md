@@ -48,8 +48,6 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
   - `protocol` (type: string) — protocol version (current is `1.2`), if it isn't compatible a warning is shown instead of the graphics. Only availiable in production version
 - `maxSize` (type: number) — default: `400`
 - `innerWidthMultiplier` (type: number) — the multiplier of the window inner width, the effective width is `min(maxSize, innerWidthMultiplier * window.innerWidth)`, default: `0.65`
-- `config` (type: object) — object with the following properties:
-  - `autoRescale` (type: bool) — default: `true`
 
 ## Examples
 - ```js
