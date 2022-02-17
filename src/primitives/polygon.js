@@ -3,7 +3,7 @@ import {
 	BufferGeometry,
 	DoubleSide,
 	Mesh,
-	Quaternion,
+	Mesh,
 	ShaderMaterial,
 	UniformsLib,
 	Vector3
@@ -39,14 +39,10 @@ function getNormalVector(coordinates, extent) {
 
 // Test if the coordinates are coplanar by checking if the distance
 // of each coordinate to the plane is less than a threshold.
-// This function also returns the normal because otherwise
-// `getNormalVector` would be called twice.
-// We don't need to do `coordinate = coordinate - Δ` because the
-// converting function (applyQuaternion(...)) is just going to return a bit
-// displaced 2d coordinate (what would also happen if we subtract Δ)
-// (no errors appear if the coordinates are not perfectly coplanar)
-// Note: Δ is the distance between the coordinate and the plane
-function getCoplanarityAndNormal(coordinates, extent) {
+// We don't need to do `coordinate -= distance to the plane`
+// because earcut returns the same indices for small differences.
+// (the indices of different objects are the same if they have the same shape)
+function isCoplanar(coordinates, extent) {
 	// normal = ⟨A, B, C⟩
 	const normalVector = getNormalVector(coordinates, extent);
 
@@ -55,7 +51,7 @@ function getCoplanarityAndNormal(coordinates, extent) {
 		...coordinates[0][0] ?? scaleCoordinate(coordinates[0][1], extent)
 	);
 
-	// D = unit normal ⋅ P
+	// D = unit normal vector ⋅ P
 	const D = normalVector.dot(pointP);
 
 	const threshold = 1e-2;
@@ -63,16 +59,16 @@ function getCoplanarityAndNormal(coordinates, extent) {
 	for (let i = 0; i < coordinates.length; i++) {
 		const [x, y, z] = coordinates[i][0] ?? scaleCoordinate(coordinates[i][1], extent);
 
-		// Given a point P = ⟨x, y, z⟩, the distance between P and the plane is:
-		// (A x + B y + C z - D) / normal vector length
-		// normal vector length is 1 as the normal vector is a unit vector
-		// We take the module because the point can be under and over the plane.
+		// Given a point ⟨x, y, z⟩, the distance between the point
+		// and the plane is: A x + B y + C z - D
+		// We take the absolute value because the point can be under or
+		// over the plane.
 		if (Math.abs(normalVector.x * x + normalVector.y * y + normalVector.z * z - D) > threshold) {
-			return [false, normalVector];
+			return false;
 		}
 	}
 
-	return [true, normalVector];
+	return true;
 }
 
 // See https://reference.wolfram.com/language/ref/Polygon
@@ -90,19 +86,19 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1 }, extent) {
 			]), 3)
 		);
 	} else { // not a triangle
-		const [isCoplanar, normalVector] = getCoplanarityAndNormal(coords, extent);
-
-		if (isCoplanar) {
+		if (isCoplanar(coords, extent)) {
 			// We use earcut to "break" the polygon into multiple triangles.
 			// We can't draw if we don't do it.
 			// The problem is that earcut doesn't deals well with
 			// coplanar polygons.
 			// The good news is that it has a 2d mode, so we convert our 3d
-			// coordinates into 2d by appling a quaternion.
-
-			const quaternion = new Quaternion().setFromUnitVectors(
-				normalVector,
-				new Vector3(0, 0, 1) // z normal
+			// coordinates into 2d by applying the matrix bellow, obtained in
+			// https://stackoverflow.com/questions/49769459/convert-points-on-a-3d-plane-to-2d-coordinates
+			const rotation = new Matrix4().set(
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1,
+				1, 1, 1, 1
 			);
 
 			const coordinates2d = new Float32Array(coords.length * 2);
@@ -112,7 +108,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1 }, extent) {
 					coords[i * 3],
 					coords[i * 3 + 1],
 					coords[i * 3 + 2]
-				).applyQuaternion(quaternion);
+				).applyMatrix4(rotation);
 
 				coordinates2d[i * 2] = vector.x;
 				coordinates2d[i * 2 + 1] = vector.y;
