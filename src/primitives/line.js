@@ -12,7 +12,7 @@ import { getBasicMaterial } from '../shader.js';
 // for the high-level description of what is being rendered.
 // Differently from WL's Line, our lines aren't affected by
 // lightning and therefore don't have VertexNormals.
-export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 10, opacity = 1 }, extent, canvasSize) {
+export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 10, opacity = 1 }, extent, container) {
 	return new Line(
 		new BufferGeometry().setAttribute(
 			'position',
@@ -50,7 +50,12 @@ export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 
 					out vec4 pc_fragColor;
 
 					void main() {
-						float doubleDistance = length((vertexPosition - startPosition) * vec2(${canvasSize}));
+						float doubleDistance = length(
+							(vertexPosition - startPosition) * vec2(
+								${parseInt(getComputedStyle(container).width)},
+								${parseInt(getComputedStyle(container).height)}
+							)
+						);
 
 						float quadrupleGapInverse = ${(1 / (4 * gapSize)).toFixed(4)};
 

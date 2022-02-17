@@ -38,7 +38,14 @@ function translationLayer(container, object, maxSize, innerWidthMultiplier) {
 		light.type = light.type.toLowerCase();
 	});
 
-	return drawGraphics3d(container, object, maxSize, innerWidthMultiplier);
+	container.style.maxWidth = maxSize + 'px';
+	container.style.width = (100 * innerWidthMultiplier) + 'vw';
+	container.style.maxHeight = maxSize + 'px';
+	container.style.width = 100 * innerWidthMultiplier + 'vw';
+
+	console.log(container.style);
+
+	return drawGraphics3d(container, object);
 }
 
 window.drawGraphics3d = translationLayer;

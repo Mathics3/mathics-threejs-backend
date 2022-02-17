@@ -22,22 +22,26 @@ export default function (
 		elements = [],
 		lighting = [],
 		viewpoint = [1.3, -2.4, 2]
-	},
-	maxSize = 400,
-	innerWidthMultiplier = 0.65
+	}
 ) {
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
 
+	container.style.display ||= 'block';
+	container.style.width ||= '65vw';
+	container.style.maxWidth ||= '400px';
+	container.style.height ||= '65vw';
+	container.style.maxHeight ||= '400px';
+	// Avoid overflow when a tick numbers is out of the parent element.
+	container.style.paddingTop ||= '5px';
+	container.style.paddingBottom ||= '5px';
+
+	const onMouseDownPosition = new Uint8Array(2);
+
 	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
 		hasAxes, isMouseDown = false,
 		theta, onMouseDownTheta, phi, onMouseDownPhi,
-		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier),
 		autoRescale = true;
-
-	container.style.width = canvasSize + 'px';
-	// to avoid overflow when a tick numbers is out of the parent element
-	container.style.height = canvasSize + 10 + 'px';
 
 	// where the camera is looking (initialized on center of the scene)
 	const focus = new Vector3(
@@ -246,16 +250,19 @@ export default function (
 	}
 
 	// plot the primitives
-	elements.forEach((element) => {
-		scene.add(primitiveFunctions[element.type](element, extent, canvasSize));
-	});
+	elements.forEach(
+		(element) => scene.add(primitiveFunctions[element.type](element, extent, container))
+	);
 
 	const renderer = new WebGLRenderer({
 		antialias: true,
 		alpha: true
 	});
 
-	renderer.setSize(canvasSize, canvasSize);
+	renderer.setSize(
+		parseInt(getComputedStyle(container).width),
+		parseInt(getComputedStyle(container).height)
+	);
 	renderer.setPixelRatio(window.devicePixelRatio);
 	container.appendChild(renderer.domElement);
 
@@ -310,7 +317,7 @@ export default function (
 		event.preventDefault();
 
 		if (isMouseDown) {
-			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 
 			if (event.shiftKey) { // pan
 				if (!isShiftDown) {
@@ -332,9 +339,11 @@ export default function (
 					.normalize()
 					.cross(cameraX);
 
-				focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - event.clientX) + cameraY.x * (onMouseDownPosition[1] - event.clientY));
-				focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - event.clientX) + cameraY.y * (onMouseDownPosition[1] - event.clientY));
-				focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - event.clientY));
+				const { width } = getComputedStyle(container);
+
+				focus.x = onMouseDownFocus.x + (radius / parseInt(width)) * (cameraX.x * (onMouseDownPosition[0] - event.clientX) + cameraY.x * (onMouseDownPosition[1] - event.clientY));
+				focus.y = onMouseDownFocus.y + (radius / parseInt(width)) * (cameraX.y * (onMouseDownPosition[0] - event.clientX) + cameraY.y * (onMouseDownPosition[1] - event.clientY));
+				focus.z = onMouseDownFocus.z + (radius / parseInt(width)) * (cameraY.z * (onMouseDownPosition[1] - event.clientY));
 
 				updateCameraPosition();
 			} else if (event.ctrlKey) { // zoom
@@ -365,14 +374,16 @@ export default function (
 					container.style.cursor = 'pointer';
 				}
 
-				phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi) % (2 * Math.PI);
-				theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
+				const { width, height } = getComputedStyle(container);
+
+				phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / parseInt(width) + onMouseDownPhi) % (2 * Math.PI);
+				theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / parseInt(height) + onMouseDownTheta;
 
 				// 1e-12 prevents spinnging from getting stuck
 				theta = Math.max(
 					Math.min(
 						Math.PI - 1e-12,
-						2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta
+						2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / parseInt(height) + onMouseDownTheta
 					),
 					1e-12
 				);
@@ -390,12 +401,12 @@ export default function (
 		event.preventDefault();
 
 		isMouseDown = false;
-		container.style.cursor = 'pointer';
+		container.style.cursor = 'default';
 
 		if (autoRescale) {
 			scaleInView();
-			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
 			render();
+			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 		}
 	}
 
@@ -405,21 +416,16 @@ export default function (
 	container.addEventListener('mouseup', onDocumentMouseUp);
 
 	window.addEventListener('resize', () => {
-		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier);
-		container.style.width = canvasSize + 'px';
-		// to avoid overflow when a tick numbers is out of the parent element
-		container.style.height = canvasSize + 10 + 'px';
+		const { width, height } = getComputedStyle(container);
 
-		renderer.setSize(canvasSize, canvasSize);
+		renderer.setSize(parseInt(width), parseInt(height));
 		renderer.setPixelRatio(window.devicePixelRatio);
 
-		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 	});
-
-	const onMouseDownPosition = new Int16Array(2);
 
 	updateCameraPosition();
 	scaleInView();
 	render();
-	positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+	positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 }

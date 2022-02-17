@@ -6,6 +6,7 @@ dev
 
 Improvements:
 - Improve coplanar polygons performance (#87, #88)
+- Replace canvasSize + innerWidthMultiplier by CSS alternative (#73, #86)
 
 Internals:
 - Rename the script start-server to start

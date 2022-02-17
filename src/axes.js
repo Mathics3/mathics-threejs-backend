@@ -5,7 +5,7 @@ import {
 
 import { scalePartialCoordinate } from './coordinateUtils.js';
 
-function toCanvasCoords(position, camera) {
+function getTickInformation(position, camera, container) {
 	const temporaryPosition = position.clone().applyMatrix4(
 		new Matrix4().multiplyMatrices(
 			camera.projectionMatrix,
@@ -13,11 +13,25 @@ function toCanvasCoords(position, camera) {
 		)
 	);
 
-	return new Vector3(
-		(temporaryPosition.x + 1) * 200,
-		(1 - temporaryPosition.y) * 200,
-		0
-	);
+	const { width, height } = getComputedStyle(container);
+
+	const tickPosition = [
+		(temporaryPosition.x + 1) * 0.5
+		// scale by maxWidth / currentWidth
+		* parseInt(width),
+		(1 - temporaryPosition.y) * 0.5
+		// scale by maxHeight / currentHeight
+		* parseInt(height)
+	];
+
+	return {
+		position: tickPosition,
+		insideCanvas:
+			tickPosition[0] < 5
+			|| tickPosition[1] < 5
+			|| tickPosition[0] > parseInt(container.style.maxWidth) - 5
+			|| tickPosition[1] > parseInt(container.style.maxHeight) - 5
+	};
 }
 
 // i is 0, 1 or 2.
@@ -31,13 +45,13 @@ function getTickDirection(i, radius) {
 	}
 }
 
-export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize) {
+export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container) {
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
 			for (let j = 0; j < tickNumbers[i].length; j++) {
-				// The code bellow moves the tick numbers so they aren't
-				// over the tick marks.
-				const tickPosition = toCanvasCoords(
+				const tickInformation = getTickInformation(
+					// The code bellow moves the tick numbers so they aren't
+					// over the tick marks.
 					new Vector3(
 						ticks[i].geometry.attributes.position.array[j * 6] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 3] * 6,
 
@@ -45,14 +59,15 @@ export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasS
 
 						ticks[i].geometry.attributes.position.array[j * 6 + 2] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 5] * 6
 					),
-					camera
-				).multiplyScalar(canvasSize / maxSize);
+					camera,
+					container
+				);
 
-				if (tickPosition.x < 5 || tickPosition.x > 395 || tickPosition.y < 5 || tickPosition.y > 395) {
+				if (tickInformation.insideCanvas) {
 					tickNumbers[i][j].style.display = 'none';
 				} else {
-					tickNumbers[i][j].style.left = `${tickPosition.x}px`;
-					tickNumbers[i][j].style.top = `${tickPosition.y}px`;
+					tickNumbers[i][j].style.left = `${tickInformation.position[0]}px`;
+					tickNumbers[i][j].style.top = `${tickInformation.position[1]}px`;
 					tickNumbers[i][j].style.display = '';
 				}
 			}
