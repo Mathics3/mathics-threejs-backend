@@ -30,6 +30,7 @@ You can use mathics-threejs-backend in 2 ways:
 The main function of mathics-threejs-backend is `drawGraphics3d`, takes the following arguments:
 - `container` (type: HTMLElement)
 - `data` (type: object) — object with the following properties:
+  - `autoRescale` (type: bool) — whether the plot should be rescaled after spin. Default: `true`
   - `axes` (type: object) — default: `{}`, object with the following properties:
     - `hasaxes` (type: bool\|bool[3]) — default: `false`
     - `ticks` (type: [number[], number[], string[]][3]) — array containing the ticks' information for, respectively, x, y and z axes. The ticks' information is an array of three elements: big ticks' 0-1 coordinates, small ticks' 0-1 coordinates, big ticks' labels. Default: `[]`
@@ -47,6 +48,8 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
   - `protocol` (type: string) — protocol version (current is `1.1`), if it isn't compatible a warning is shown instead of the graphics. Only availiable in production version
 - `maxSize` (type: number) — default: `400`
 - `innerWidthMultiplier` (type: number) — the multiplier of the window inner width, the effective width is `min(maxSize, innerWidthMultiplier * window.innerWidth)`, default: `0.65`
+- `config` (type: object) — object with the following properties:
+  - `autoRescale` (type: bool) — default: `true`
 
 ## Examples
 - ```js

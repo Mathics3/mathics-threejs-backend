@@ -1,6 +1,6 @@
 import drawGraphics3d from './graphics3d.js';
 
-function translationLayer(container, object, maxSize, innerWidthMultiplier) {
+function translationLayer(container, object, maxSize, innerWidthMultiplier, config) {
 	if (object.protocol) {
 		// protocol version is X.Y, so it is an array of two elements: major version and minor version
 		const versionArray = object.protocol.match(/\d/g);
@@ -38,7 +38,7 @@ function translationLayer(container, object, maxSize, innerWidthMultiplier) {
 		light.type = light.type.toLowerCase();
 	});
 
-	return drawGraphics3d(container, object, maxSize, innerWidthMultiplier);
+	return drawGraphics3d(container, object, maxSize, innerWidthMultiplier, config);
 }
 
 window.drawGraphics3d = translationLayer;
