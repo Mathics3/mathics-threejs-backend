@@ -18,14 +18,14 @@ export default function (
 	container,
 	{
 		axes = {},
+		autoRescale = true,
 		extent,
 		elements = [],
 		lighting = [],
 		viewpoint = [1.3, -2.4, 2]
 	},
 	maxSize = 400,
-	innerWidthMultiplier = 0.65,
-	{ autoRescale = true } = { autoRescale: true }
+	innerWidthMultiplier = 0.65
 ) {
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
