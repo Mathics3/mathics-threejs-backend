@@ -25,9 +25,9 @@ function getTickDirection(i, radius) {
 	const tickLength = 0.005 * radius;
 
 	if (i === 0) {
-		return new Vector3(0, -tickLength, 0);
+		return [0, -tickLength, 0];
 	} else { // i === 1 || i === 2
-		return new Vector3(tickLength, 0, 0);
+		return [tickLength, 0, 0];
 	}
 }
 
@@ -75,11 +75,11 @@ export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGe
 
 				ticks[i].geometry.attributes.position.array[j * 6 + 2] = axesGeometry[i].attributes.position.array[2];
 
-				ticks[i].geometry.attributes.position.array[j * 6 + 3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x;
+				ticks[i].geometry.attributes.position.array[j * 6 + 3] = axesGeometry[i].attributes.position.array[0] + tickDirection[0];
 
-				ticks[i].geometry.attributes.position.array[j * 6 + 4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y;
+				ticks[i].geometry.attributes.position.array[j * 6 + 4] = axesGeometry[i].attributes.position.array[1] + tickDirection[1];
 
-				ticks[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z;
+				ticks[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection[2];
 
 				if (i === 0) {
 					ticks[i].geometry.attributes.position.array[j * 6] = partialCoordinate;
@@ -103,11 +103,11 @@ export function setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGe
 
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = axesGeometry[i].attributes.position.array[2];
 
-				ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = axesGeometry[i].attributes.position.array[0] + tickDirection.x / 2;
+				ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = axesGeometry[i].attributes.position.array[0] + tickDirection[0] / 2;
 
-				ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = axesGeometry[i].attributes.position.array[1] + tickDirection.y / 2;
+				ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = axesGeometry[i].attributes.position.array[1] + tickDirection[1] / 2;
 
-				ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection.z / 2;
+				ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = axesGeometry[i].attributes.position.array[2] + tickDirection[2] / 2;
 
 				if (i === 0) {
 					ticksSmall[i].geometry.attributes.position.array[j * 6] = partialCoordinate;

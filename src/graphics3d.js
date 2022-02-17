@@ -273,9 +273,9 @@ export default function (
 
 		for (let i = 0; i < 8; i++) {
 			proj2d.set(
-				boundingBox.geometry.attributes.position.array[i * 3] + boundingBox.position.x,
-				boundingBox.geometry.attributes.position.array[i * 3 + 1] + boundingBox.position.y,
-				boundingBox.geometry.attributes.position.array[i * 3 + 2] + boundingBox.position.z
+				boundingBox.geometry.attributes.position.array[i * 3],
+				boundingBox.geometry.attributes.position.array[i * 3 + 1],
+				boundingBox.geometry.attributes.position.array[i * 3 + 2]
 			).applyMatrix4(camera.matrixWorldInverse);
 
 			temporaryFOV = Math.max(
