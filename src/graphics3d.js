@@ -24,7 +24,8 @@ export default function (
 		viewpoint = [1.3, -2.4, 2]
 	},
 	maxSize = 400,
-	innerWidthMultiplier = 0.65
+	innerWidthMultiplier = 0.65,
+	{ autoRescale = true } = { autoRescale: true }
 ) {
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
@@ -32,8 +33,7 @@ export default function (
 	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
 		hasAxes, isMouseDown = false,
 		theta, onMouseDownTheta, phi, onMouseDownPhi,
-		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier),
-		autoRescale = true;
+		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier);
 
 	container.style.width = canvasSize + 'px';
 	// to avoid overflow when a tick numbers is out of the parent element

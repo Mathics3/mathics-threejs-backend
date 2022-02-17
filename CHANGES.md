@@ -6,6 +6,7 @@ dev
 
 Improvements:
 - Improve coplanar polygons performance (#87, #88)
+- Add option to disable `autoRescale` (#89)
 
 Internals:
 - Rename the script start-server to start
