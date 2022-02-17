@@ -3,7 +3,6 @@ import {
 	BufferGeometry,
 	DoubleSide,
 	Group,
-	Matrix4,
 	Mesh,
 	RawShaderMaterial,
 	ShaderMaterial,
@@ -96,27 +95,15 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			// We can't draw if we don't do it.
 			// The problem is that earcut doesn't deals well with
 			// coplanar polygons.
-			// The good news is that it has a 2d mode, so we convert our 3d
-			// coordinates into 2d by applying the matrix bellow, obtained in
-			// https://stackoverflow.com/questions/49769459/convert-points-on-a-3d-plane-to-2d-coordinates
-			const rotation = new Matrix4().set(
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1,
-				1, 1, 1, 1
-			);
+			// The good news is that it has a 2d mode.
+			// The really good news is that if we pass just pass the x and y
+			// values from the coordinates earcut returns the correct indices.
 
 			const coordinates2d = new Float32Array(coords.length * 2);
 
 			for (let i = 0; i < coords.length; i++) {
-				const vector = new Vector3(
-					coords[i * 3],
-					coords[i * 3 + 1],
-					coords[i * 3 + 2]
-				).applyMatrix4(rotation);
-
-				coordinates2d[i * 2] = vector.x;
-				coordinates2d[i * 2 + 1] = vector.y;
+				coordinates2d[i * 2] = coords[i * 3];
+				coordinates2d[i * 2 + 1] = coords[i * 3 + 1];
 			}
 
 			geometry = new BufferGeometry()
