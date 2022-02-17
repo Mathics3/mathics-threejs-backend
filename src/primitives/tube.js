@@ -17,12 +17,11 @@ import {
 // See https://reference.wolfram.com/language/ref/Tube.html
 // for the high-level description of what is being rendered.
 export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, extent) {
-	// the tube geometry receives a Curve, but Mathics' Tube recives
-	// an array of coordinates, so we use CatmullRomCurve3 to convert
-	// the coordinates into a Curve.
-	// Curve.getPoint receives a float between 0 and 1,
+	// We use getCentripetalCurve to convert an list of coordinates
+	// into a continuous curve.
+	// curve.getPoint receives a float between 0 and 1,
 	// where 0 is the 1st coordinate and 1 is the last.
-	const curve = getCentripetalCurve(coords);
+	const curve = getCentripetalCurve(coords, extent);
 
 	const halfSphereGeometry = getSphereGeometry(radius, false, true);
 
