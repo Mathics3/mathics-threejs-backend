@@ -4,6 +4,9 @@ CHANGES
 dev
 ---
 
+Improvements:
+- Improve coplanar polygons performance (#87, #88)
+
 Internals:
 - Rename the script start-server to start
 - Replace SphereGeometry with custom code (#81)
