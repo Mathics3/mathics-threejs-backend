@@ -29,7 +29,7 @@ You can use mathics-threejs-backend in 2 ways:
 
 The main function of mathics-threejs-backend is `drawGraphics3d`, takes the following arguments:
 - `container` (type: HTMLElement)
-- `elements` (type: object) — object with the following properties:
+- `data` (type: object) — object with the following properties:
   - `axes` (type: object) — default: `{}`, object with the following properties:
     - `hasaxes` (type: bool\|bool[3]) — default: `false`
     - `ticks` (type: [number[], number[], string[]][3]) — array containing the ticks' information for, respectively, x, y and z axes. The ticks' information is an array of three elements: big ticks' 0-1 coordinates, small ticks' 0-1 coordinates, big ticks' labels. Default: `[]`
