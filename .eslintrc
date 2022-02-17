@@ -50,7 +50,6 @@
 		"comma-spacing": "error",
 		"comma-style": "error",
 		"computed-property-spacing": "error",
-		"curly": "error",
 		"eol-last": "error",
 		"eqeqeq": "error",
 		"key-spacing": "error",
