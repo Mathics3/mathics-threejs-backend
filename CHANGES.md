@@ -7,6 +7,7 @@ dev
 Improvements:
 - Update three.js to r138 (#96)
 - Add support to smartphones (#97)
+- Add option to disable `autoRescale` (#100)
 
 Internals:
 - Rename branch master to main
