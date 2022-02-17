@@ -25,7 +25,8 @@ export default function (
 		viewpoint = [1.3, -2.4, 2]
 	},
 	maxSize = 400,
-	innerWidthMultiplier = 0.65
+	innerWidthMultiplier = 0.65,
+	{ autoRescale = true } = { autoRescale: true }
 ) {
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
@@ -41,8 +42,7 @@ export default function (
 		phi,
 		onMouseDownPhi,
 		onTouchStartFingersDistance,
-		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier),
-		autoRescale = true;
+		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier);
 
 	const onMouseDownPosition = new Int16Array(2);
 
