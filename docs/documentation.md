@@ -28,7 +28,7 @@ You can use mathics-threejs-backend in 2 ways:
   ```
 
 The main function of mathics-threejs-backend is `drawGraphics3d`, takes the following arguments:
-- `container` (type: HTMLElement)
+- `container` (type: [container](/mathics-threejs-backend/types/container))
 - `data` (type: object) — object with the following properties:
   - `axes` (type: object) — default: `{}`, object with the following properties:
     - `hasaxes` (type: bool\|bool[3]) — default: `false`
@@ -45,8 +45,6 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
   - `lighting` (type: [element[]](/mathics-threejs-backend/types/element)) — array of lights, default: `[]`
   - `viewpoint` (type: number[3]) — the normalized camera coordinate (normalized means that the coordinate is going to be scaled, e.g. `[1, 1, 1]` is the upper back right corner of the bounding box independently from its size). Default: `[1.3, -2.4, 2]`
   - `protocol` (type: string) — protocol version (current is `1.2`), if it isn't compatible a warning is shown instead of the graphics. Only availiable in production version
-- `maxSize` (type: number) — default: `400`
-- `innerWidthMultiplier` (type: number) — the multiplier of the window inner width, the effective width is `min(maxSize, innerWidthMultiplier * window.innerWidth)`, default: `0.65`
 
 ## Examples
 - ```js
@@ -159,9 +157,3 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
           { viewpoint: [2, -4, 4] }
       );
   </script>
-
-## Notes
-- Currently the axes labels are drawn using HTML elements with
-  `position: absolute` so the graphics container must have
-  `position: relative` if you want to draw the axes labels and the
-  container is not the unique element in the page.

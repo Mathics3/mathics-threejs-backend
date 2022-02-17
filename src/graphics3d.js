@@ -264,6 +264,8 @@ export default function (
 		parseInt(getComputedStyle(container).height)
 	);
 	renderer.setPixelRatio(window.devicePixelRatio);
+	renderer.domElement.style.width = '100%';
+	renderer.domElement.style.height = '100%';
 	container.appendChild(renderer.domElement);
 
 	function render() {
