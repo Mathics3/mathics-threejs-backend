@@ -9,7 +9,7 @@ import { clamp, CubicPoly } from './math.js';
 const temporaryVector = new Vector3();
 
 // Modified from three.js CatmullRomCurve3
-export function getCentripetalCurve(coordinates) {
+export function getCentripetalCurve(coordinates, extent) {
 	const points = coordinates.map((coordinate) => new Vector3(
 		...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
 	));
