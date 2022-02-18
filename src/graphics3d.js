@@ -271,6 +271,8 @@ export default function (
 
 		let temporaryFOV = 0;
 
+		// The loop bellow finds the smallest FOV that allows the
+		// bounding box to be fully shown.
 		for (let i = 0; i < 8; i++) {
 			proj2d.set(
 				boundingBox.geometry.attributes.position.array[i * 3],
@@ -392,10 +394,9 @@ export default function (
 
 		if (autoRescale) {
 			scaleInView();
+			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+			render();
 		}
-
-		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
-		render();
 	}
 
 	// bind mouse events
