@@ -35,6 +35,8 @@ export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasS
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
 			for (let j = 0; j < tickNumbers[i].length; j++) {
+				// The code bellow moves the tick numbers so they aren't
+				// over the tick marks.
 				const tickPosition = toCanvasCoords(
 					new Vector3(
 						ticks[i].geometry.attributes.position.array[j * 6] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 3] * 6,
@@ -46,13 +48,11 @@ export function positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasS
 					camera
 				).multiplyScalar(canvasSize / maxSize);
 
-				tickNumbers[i][j].style.position = 'absolute';
-				tickNumbers[i][j].style.left = `${tickPosition.x}px`;
-				tickNumbers[i][j].style.top = `${tickPosition.y}px`;
-
 				if (tickPosition.x < 5 || tickPosition.x > 395 || tickPosition.y < 5 || tickPosition.y > 395) {
 					tickNumbers[i][j].style.display = 'none';
 				} else {
+					tickNumbers[i][j].style.left = `${tickPosition.x}px`;
+					tickNumbers[i][j].style.top = `${tickPosition.y}px`;
 					tickNumbers[i][j].style.display = '';
 				}
 			}
