@@ -29,15 +29,25 @@ export default function (
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
 
-	let isCtrlDown, isShiftDown, onMouseDownFocus, onCtrlDownFov,
-		hasAxes, isMouseDown = false,
-		theta, onMouseDownTheta, phi, onMouseDownPhi,
+	let isCtrlDown,
+		isShiftDown,
+		onMouseDownFocus,
+		onCtrlDownFov,
+		hasAxes,
+		isMouseDown = false,
+		theta,
+		onMouseDownTheta,
+		phi,
+		onMouseDownPhi,
 		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier),
 		autoRescale = true;
 
 	container.style.width = canvasSize + 'px';
 	// to avoid overflow when a tick numbers is out of the parent element
 	container.style.height = canvasSize + 10 + 'px';
+
+	container.style.cursor ||= 'pointer';
+	const defaultCursor = container.style.cursor;
 
 	// where the camera is looking (initialized on center of the scene)
 	const focus = new Vector3(
@@ -309,88 +319,88 @@ export default function (
 	function onDocumentMouseMove(event) {
 		event.preventDefault();
 
-		if (isMouseDown) {
-			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+		if (!isMouseDown) return;
 
-			if (event.shiftKey) { // pan
-				if (!isShiftDown) {
-					isShiftDown = true;
-					onMouseDownPosition[0] = event.clientX;
-					onMouseDownPosition[1] = event.clientY;
-					autoRescale = false;
-					container.style.cursor = 'move';
-				}
+		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
 
-				const cameraX = new Vector3(
-					-radius * Math.cos(theta) * Math.sin(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
-					radius * Math.cos(theta) * Math.cos(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
-					0
-				).normalize();
-
-				const cameraY = new Vector3()
-					.subVectors(focus, camera.position)
-					.normalize()
-					.cross(cameraX);
-
-				focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - event.clientX) + cameraY.x * (onMouseDownPosition[1] - event.clientY));
-				focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - event.clientX) + cameraY.y * (onMouseDownPosition[1] - event.clientY));
-				focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - event.clientY));
-
-				updateCameraPosition();
-			} else if (event.ctrlKey) { // zoom
-				if (!isCtrlDown) {
-					isCtrlDown = true;
-					onCtrlDownFov = camera.fov;
-					onMouseDownPosition[0] = event.clientX;
-					onMouseDownPosition[1] = event.clientY;
-					autoRescale = false;
-					container.style.cursor = 'crosshair';
-				}
-
-				camera.fov = Math.max(
-					1,
-					Math.min(
-						onCtrlDownFov + 20 * Math.atan((event.clientY - onMouseDownPosition[1]) / 50),
-						150
-					)
-				);
-
-				camera.updateProjectionMatrix();
-			} else { // spin
-				if (isCtrlDown || isShiftDown) {
-					onMouseDownPosition[0] = event.clientX;
-					onMouseDownPosition[1] = event.clientY;
-					isShiftDown = false;
-					isCtrlDown = false;
-					container.style.cursor = 'pointer';
-				}
-
-				phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi) % (2 * Math.PI);
-				theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
-
-				// 1e-12 prevents spinnging from getting stuck
-				theta = Math.max(
-					Math.min(
-						Math.PI - 1e-12,
-						2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta
-					),
-					1e-12
-				);
-
-				updateCameraPosition();
+		if (event.shiftKey) { // pan
+			if (!isShiftDown) {
+				isShiftDown = true;
+				onMouseDownPosition[0] = event.clientX;
+				onMouseDownPosition[1] = event.clientY;
+				autoRescale = false;
+				container.style.cursor = 'move';
 			}
 
-			render();
-		} else {
-			container.style.cursor = 'pointer';
+			const cameraX = new Vector3(
+				-radius * Math.cos(theta) * Math.sin(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
+				radius * Math.cos(theta) * Math.cos(phi) * (theta < 0.5 * Math.PI ? 1 : -1),
+				0
+			).normalize();
+
+			const cameraY = new Vector3()
+				.subVectors(focus, camera.position)
+				.normalize()
+				.cross(cameraX);
+
+			focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - event.clientX) + cameraY.x * (onMouseDownPosition[1] - event.clientY));
+			focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - event.clientX) + cameraY.y * (onMouseDownPosition[1] - event.clientY));
+			focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - event.clientY));
+
+			updateCameraPosition();
+		} else if (event.ctrlKey) { // zoom
+			if (!isCtrlDown) {
+				isCtrlDown = true;
+				onCtrlDownFov = camera.fov;
+				onMouseDownPosition[0] = event.clientX;
+				onMouseDownPosition[1] = event.clientY;
+				autoRescale = false;
+				container.style.cursor = 'crosshair';
+			}
+
+			camera.fov = Math.max(
+				1,
+				Math.min(
+					onCtrlDownFov + 20 * Math.atan((event.clientY - onMouseDownPosition[1]) / 50),
+					150
+				)
+			);
+
+			camera.updateProjectionMatrix();
+		} else { // spin
+			if (isCtrlDown || isShiftDown) {
+				onMouseDownPosition[0] = event.clientX;
+				onMouseDownPosition[1] = event.clientY;
+				isShiftDown = false;
+				isCtrlDown = false;
+			}
+
+			container.style.cursor = 'grabbing';
+
+			phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi) % (2 * Math.PI);
+			theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
+
+			// 1e-12 prevents spinnging from getting stuck
+			theta = Math.max(
+				Math.min(
+					Math.PI - 1e-12,
+					2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta
+				),
+				1e-12
+			);
+
+			updateCameraPosition();
 		}
+
+		render();
+
 	}
 
 	function onDocumentMouseUp(event) {
 		event.preventDefault();
 
 		isMouseDown = false;
-		container.style.cursor = 'pointer';
+		container.style.cursor = defaultCursor;
 
 		if (autoRescale) {
 			scaleInView();

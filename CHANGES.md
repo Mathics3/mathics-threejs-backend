@@ -6,6 +6,7 @@ dev
 
 Improvements:
 - Improve coplanar polygons performance (#87, #88)
+- Improve cursor behavior (#90)
 
 Internals:
 - Rename the script start-server to start
