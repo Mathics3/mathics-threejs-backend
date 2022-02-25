@@ -10,7 +10,7 @@
 // The 1st parameter is the primitive object (an element of
 // the elements array).
 
-// The 2nd parameter is the uniforms buffer, read the comment from
+// The 2nd parameter is the uniforms buffer, read the comments from
 // src/uniforms.js for more information.
 
 // The 3rd parameter is the extent, it is used in scaleCoordinate,

@@ -14,7 +14,7 @@ import { scaleCoordinate } from './coordinateUtils.js';
 // The 1st parameter is the light object (an element of
 // the lighting array).
 
-// The 2nd parameter is the uniforms buffer, read the comment from
+// The 2nd parameter is the uniforms buffer, read the comments from
 // src/uniforms.js for more information.
 
 // The 3rd parameter is the extent, it is used in e.g. scaleCoordinate.
