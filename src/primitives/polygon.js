@@ -69,6 +69,8 @@ function isCoplanar(coordinates, extent) {
 	return true;
 }
 
+// See the comments from primitives/index.js for more information about the
+// shape of a primitive function.
 // See https://reference.wolfram.com/language/ref/Polygon
 // for the high-level description of what is being rendered.
 export default function ({ color = [1, 1, 1], coords, opacity = 1 }, uniforms, extent) {

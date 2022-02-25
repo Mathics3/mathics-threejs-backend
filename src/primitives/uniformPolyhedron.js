@@ -10,6 +10,8 @@ import {
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
+// See the comments from primitives/index.js for more information about the
+// shape of a primitive function.
 // See https://reference.wolfram.com/language/ref/UniformPolyhedron
 // for the high-level description of what is being rendered.
 export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, uniforms, extent) {
