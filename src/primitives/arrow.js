@@ -14,7 +14,7 @@ import { getBasicMaterial } from '../shader.js';
 
 // See the comments from primitives/index.js for more information about the
 // shape of a primitive function.
-// See https://reference.wolfram.com/language/ref/Arrow
+// See https://mathics3.github.io/mathics-threejs-backend/primitives/arrow
 // for the high-level description of what is being rendered.
 export default function ({ color = [0, 0, 0], coords, opacity = 1 }, uniforms, extent) {
 	const material = getBasicMaterial(color, opacity);

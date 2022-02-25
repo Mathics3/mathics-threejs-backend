@@ -9,7 +9,7 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
 // See the comments from primitives/index.js for more information about the
 // shape of a primitive function.
-// See https://reference.wolfram.com/language/ref/Point
+// See https://mathics3.github.io/mathics-threejs-backend/primitives/point
 // for the high-level description of what is being rendered.
 // Differently from WL's Point, our points aren't affected by
 // lightning and therefore don't have VertexNormals.
