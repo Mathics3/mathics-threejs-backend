@@ -8,6 +8,17 @@ import { Vector3 } from '../vendors/three.js';
 
 import { scaleCoordinate } from './coordinateUtils.js';
 
+// Each light function takes 3 parameters and returns a three.js
+// object.
+
+// The 1st parameter is the light object (an element of
+// the lighting array).
+
+// The 2nd parameter is the uniforms buffer, read the comment from
+// src/uniforms.js for more information.
+
+// The 3rd parameter is the extent, it is used in e.g. scaleCoordinate.
+
 export default {
 	// See https://mathics3.github.io/mathics-threejs-backend/lights/ambient
 	// for the high-level description of what is being rendered.
