@@ -167,27 +167,8 @@ export default function (
 		hasAxes = [axes.hasaxes, axes.hasaxes, axes.hasaxes];
 	}
 
-	const axesGeometry = [],
-		axesVerticesPosition = new BufferAttribute(new Float32Array([
-			boundingBox.geometry.attributes.position.array[0],
-			boundingBox.geometry.attributes.position.array[1],
-			boundingBox.geometry.attributes.position.array[2],
-			boundingBox.geometry.attributes.position.array[3],
-			boundingBox.geometry.attributes.position.array[4],
-			boundingBox.geometry.attributes.position.array[5]
-		]), 3);
-
 	// axes ticks
 	const ticks = new Array(3), ticksSmall = new Array(3);
-
-	for (let i = 0; i < 3; i++) {
-		if (hasAxes[i]) {
-			axesGeometry[i] = new BufferGeometry().setAttribute(
-				'position',
-				axesVerticesPosition
-			);
-		}
-	}
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
@@ -219,7 +200,15 @@ export default function (
 		}
 	}
 
-	setTicksInitialPosition(hasAxes, axes, ticks, ticksSmall, axesGeometry, radius, extent);
+	setTicksInitialPosition(
+		hasAxes,
+		axes,
+		ticks,
+		ticksSmall,
+		boundingBox.geometry.attributes.position.array,
+		radius,
+		extent
+	);
 
 	// axes numbering using divs
 	const tickNumbers = new Array(3);
