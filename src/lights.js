@@ -34,6 +34,9 @@ export default {
 			basePosition: new Vector3(...coords[0] ?? scaleCoordinate(coords[1], extent))
 		});
 	},
+	// The default angle is π/2.
+	// See https://mathics3.github.io/mathics-threejs-backend/lights/spot
+	// for a more details.
 	spot: ({ angle = 1.57079632679, color = [1, 1, 1], coords, target }, lights, extent) => {
 		const basePosition = new Vector3(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
