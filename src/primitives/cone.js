@@ -11,6 +11,8 @@ import {
 import { get2PopulatedCoordinateBuffers } from '../bufferUtils.js';
 import { get2CoordinatesMaterial } from '../shader.js';
 
+// See the comments from primitives/index.js for more information about the
+// shape of a primitive function.
 // See https://reference.wolfram.com/language/ref/Cone
 // for the high-level description of what is being rendered.
 export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1, radius = 1 }, uniforms, extent) {
