@@ -1,5 +1,6 @@
 Properties:
-- `angle` (type: number) —  the maximum angle in radians of light dispersion (upper bound is pi/2), default: pi/2
+- `angle` (type: number) —  the maximum angle in radians of light dispersion (upper bound is π/2), default: π/2
+  <img style="display: block; margin: 0 auto;" src="https://user-images.githubusercontent.com/62714153/155711978-7e6e0e54-cf53-44e6-a856-d5e8873f7c72.png" alt="spot light with default angle" />
 - `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
 - `coords` (type: [coord](/mathics-threejs-backend/types/coord))
 - `target` (type: [coord](/mathics-threejs-backend/types/coord))
