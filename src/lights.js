@@ -9,11 +9,15 @@ import { Vector3 } from '../vendors/three.js';
 import { scaleCoordinate } from './coordinateUtils.js';
 
 export default {
+	// See https://mathics3.github.io/mathics-threejs-backend/lights/ambient
+	// for the high-level description of what is being rendered.
 	ambient: ({ color = [1, 1, 1] }, lights) => {
 		lights.ambientLightColor.value[0] += color[0];
 		lights.ambientLightColor.value[1] += color[1];
 		lights.ambientLightColor.value[2] += color[2];
 	},
+	// See https://mathics3.github.io/mathics-threejs-backend/lights/directional
+	// for the high-level description of what is being rendered.
 	directional: ({ color = [1, 1, 1], coords }, lights, extent) => {
 		const direction = new Vector3(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
@@ -28,15 +32,17 @@ export default {
 			direction
 		});
 	},
+	// See https://mathics3.github.io/mathics-threejs-backend/lights/point
+	// for the high-level description of what is being rendered.
 	point: ({ color = [1, 1, 1], coords }, lights, extent) => {
 		lights.pointLights.value.push({
 			color,
 			basePosition: new Vector3(...coords[0] ?? scaleCoordinate(coords[1], extent))
 		});
 	},
-	// The default angle is π/2.
 	// See https://mathics3.github.io/mathics-threejs-backend/lights/spot
-	// for a more details.
+	// for the high-level description of what is being rendered.
+	// The default angle is π/2.
 	spot: ({ angle = 1.57079632679, color = [1, 1, 1], coords, target }, lights, extent) => {
 		const basePosition = new Vector3(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
