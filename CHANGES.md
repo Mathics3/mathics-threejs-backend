@@ -15,6 +15,9 @@ Internals:
 - Replace TubeGeometry with custom code (#83)
 - Replace CatmullRomCurve3 with custom code (#83)
 
+Bug fixes:
+- Stop replacing 10.1 by 1.1 in the tick labels (#93)
+
 1.0.4
 -----
 

@@ -225,8 +225,9 @@ export default function (
 				}
 
 				tickNumbers[i][j] = document.createElement('div');
-				tickNumbers[i][j].innerHTML = axes.ticks[i][2][j]
-					.replace('0.', '.');
+				tickNumbers[i][j].innerHTML = axes.ticks[i][2][j].startsWith('0.')
+					? axes.ticks[i][2][j].replace('0.', '.')
+					: axes.ticks[i][2][j];
 
 				// handle minus signs
 				if (axes.ticks[i][0][j] >= 0) {
