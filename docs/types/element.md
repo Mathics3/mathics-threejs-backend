@@ -1,4 +1,5 @@
 It's a 3d element.  
+It may be a [primitive](/mathics-threejs-backend/primitives) or a light.  
 All elements must have a `type` property with its type.
 
 ## Examples
