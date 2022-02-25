@@ -366,15 +366,14 @@ export default function (
 
 			container.style.cursor = 'grabbing';
 
-			phi = (2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi) % (2 * Math.PI);
+			phi = 2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize + onMouseDownPhi;
 			theta = 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta;
 
-			// 1e-12 prevents spinnging from getting stuck
+			// This prevents spinning over the poles by keeping the angle
+			// in the range [1e-12, Pi - 1e-12].
+			// Angles too close to 0 or Pi problems.
 			theta = Math.max(
-				Math.min(
-					Math.PI - 1e-12,
-					2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta
-				),
+				Math.min(theta, Math.PI - 1e-12),
 				1e-12
 			);
 
@@ -382,7 +381,6 @@ export default function (
 		}
 
 		render();
-
 	}
 
 	function onDocumentMouseUp(event) {
