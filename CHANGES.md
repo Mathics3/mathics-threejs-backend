@@ -9,6 +9,7 @@ Improvements:
 - Improve cursor behavior (#90)
 - Make directional lights meet Wolfram Language behavior (#69, #77)
 - Improve performance of camera rotation (#77)
+- Update three.js to r138 (#95)
 
 Internals:
 - Rename the script start-server to start
