@@ -4,10 +4,20 @@
 // A full list of primitives that this might grow to can be found at:
 // https://reference.wolfram.com/language/ref/Graphics3D.html
 
-// Each primitive function takes 2 parameters and returns a three.js
-// object. The 1st parameter is the primitive object (an element of
-// the elements array) and the 2nd parameter is the extent, it is used
-// in some primitives to calculate position, borders size, ...
+// Each primitive function takes 4 parameters and returns a three.js
+// object.
+
+// The 1st parameter is the primitive object (an element of
+// the elements array).
+
+// The 2nd parameter is the uniforms buffer, read the comment from
+// src/uniforms.js for more information.
+
+// The 3rd parameter is the extent, it is used in scaleCoordinate,
+// but it can be used for calculating border size, radius, ...
+
+// The 4th parameter is the canvasSize, it is used for e.g. calculating the
+// points size.
 
 // Note that Graphics3D includes a number of 1D and 2D kinds of
 // objects, like Point, Line, Arrow, or Polygon which are extended

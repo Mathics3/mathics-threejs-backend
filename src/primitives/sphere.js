@@ -7,6 +7,8 @@ import {
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 import { getSphereGeometry } from '../geometry.js';
 
+// See the comments from primitives/index.js for more information about the
+// shape of a primitive function.
 // See https://reference.wolfram.com/language/ref/Sphere
 // for the high-level description of what is being rendered.
 export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, uniforms, extent) {
