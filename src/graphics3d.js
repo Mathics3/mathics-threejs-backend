@@ -289,7 +289,7 @@ export default function (
 		camera.updateProjectionMatrix();
 	}
 
-	function onDocumentMouseDown(event) {
+	function onMouseDown(event, touch) {
 		event.preventDefault();
 
 		isMouseDown = true;
@@ -299,24 +299,27 @@ export default function (
 		onMouseDownTheta = theta;
 		onMouseDownPhi = phi;
 
-		onMouseDownPosition[0] = event.clientX;
-		onMouseDownPosition[1] = event.clientY;
+		onMouseDownPosition[0] = touch ? event.touches[0].clientX : event.clientX;
+		onMouseDownPosition[1] = touch ? event.touches[0].clientY : event.clientY;
 
 		onMouseDownFocus = focus.clone();
 	}
 
-	function onDocumentMouseMove(event) {
+	function onMouseMove(event, touch) {
 		event.preventDefault();
 
 		if (!isMouseDown) return;
+
+		const clientX = touch ? event.touches[0].clientX : event.clientX;
+		const clientY = touch ? event.touches[0].clientY : event.clientY;
 
 		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
 
 		if (event.shiftKey) { // pan
 			if (!isShiftDown) {
 				isShiftDown = true;
-				onMouseDownPosition[0] = event.clientX;
-				onMouseDownPosition[1] = event.clientY;
+				onMouseDownPosition[0] = clientX;
+				onMouseDownPosition[1] = clientY;
 				autoRescale = false;
 				container.style.cursor = 'move';
 			}
@@ -332,17 +335,17 @@ export default function (
 				.normalize()
 				.cross(cameraX);
 
-			focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - event.clientX) + cameraY.x * (onMouseDownPosition[1] - event.clientY));
-			focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - event.clientX) + cameraY.y * (onMouseDownPosition[1] - event.clientY));
-			focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - event.clientY));
+			focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - clientX) + cameraY.x * (onMouseDownPosition[1] - clientY));
+			focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - clientX) + cameraY.y * (onMouseDownPosition[1] - clientY));
+			focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - clientY));
 
 			updateCameraPosition();
 		} else if (event.ctrlKey) { // zoom
 			if (!isCtrlDown) {
 				isCtrlDown = true;
 				onCtrlDownFov = camera.fov;
-				onMouseDownPosition[0] = event.clientX;
-				onMouseDownPosition[1] = event.clientY;
+				onMouseDownPosition[0] = clientX;
+				onMouseDownPosition[1] = clientY;
 				autoRescale = false;
 				container.style.cursor = 'crosshair';
 			}
@@ -358,16 +361,16 @@ export default function (
 			camera.updateProjectionMatrix();
 		} else { // spin
 			if (isCtrlDown || isShiftDown) {
-				onMouseDownPosition[0] = event.clientX;
-				onMouseDownPosition[1] = event.clientY;
+				onMouseDownPosition[0] = clientX;
+				onMouseDownPosition[1] = clientY;
 				isShiftDown = false;
 				isCtrlDown = false;
 			}
 
 			container.style.cursor = 'grabbing';
 
-			phi = onMouseDownPhi + 2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / canvasSize;
-			theta = onMouseDownTheta + 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize;
+			phi = onMouseDownPhi + 2 * Math.PI * (onMouseDownPosition[0] - clientX) / canvasSize;
+			theta = onMouseDownTheta + 2 * Math.PI * (onMouseDownPosition[1] - clientY) / canvasSize;
 
 			// 1e-12 prevents spinnging from getting stuck
 			theta = Math.max(
@@ -385,7 +388,7 @@ export default function (
 
 	}
 
-	function onDocumentMouseUp(event) {
+	function onMouseUp(event) {
 		event.preventDefault();
 
 		isMouseDown = false;
@@ -399,9 +402,14 @@ export default function (
 	}
 
 	// bind mouse events
-	container.addEventListener('mousemove', onDocumentMouseMove);
-	container.addEventListener('mousedown', onDocumentMouseDown);
-	container.addEventListener('mouseup', onDocumentMouseUp);
+	container.addEventListener('mousemove', (event) => onMouseMove(event, false));
+	container.addEventListener('touchmove', (event) => onMouseMove(event, true));
+
+	container.addEventListener('mousedown', (event) => onMouseDown(event, false));
+	container.addEventListener('touchstart', (event) => onMouseDown(event, true));
+
+	container.addEventListener('mouseup', onMouseUp);
+	container.addEventListener('touchend', onMouseUp);
 
 	window.addEventListener('resize', () => {
 		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier);
