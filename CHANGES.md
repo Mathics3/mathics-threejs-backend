@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+dev
+---
+
+Internals:
+- Rename branch master to main
+
 1.0.5
 -----
 
