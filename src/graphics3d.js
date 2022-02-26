@@ -40,8 +40,11 @@ export default function (
 		onMouseDownTheta,
 		phi,
 		onMouseDownPhi,
+		onTouchStartFingersDistance,
 		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier),
 		autoRescale = true;
+	
+	const onMouseDownPosition = new Int16Array(2);
 
 	container.style.width = canvasSize + 'px';
 	// to avoid overflow when a tick numbers is out of the parent element
@@ -315,7 +318,7 @@ export default function (
 
 		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
 
-		if (event.shiftKey) { // pan
+		if (event.shiftKey) { // pan with mouse
 			if (!isShiftDown) {
 				isShiftDown = true;
 				onMouseDownPosition[0] = clientX;
@@ -340,7 +343,7 @@ export default function (
 			focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - clientY));
 
 			updateCameraPosition();
-		} else if (event.ctrlKey) { // zoom
+		} else if (event.ctrlKey || (touch && event.touches.length === 2)) { // zoom
 			if (!isCtrlDown) {
 				isCtrlDown = true;
 				onCtrlDownFov = camera.fov;
@@ -348,15 +351,28 @@ export default function (
 				onMouseDownPosition[1] = clientY;
 				autoRescale = false;
 				container.style.cursor = 'crosshair';
+
+				if (touch) {
+					onTouchStartFingersDistance = Math.hypot(
+						clientX - event.touches[1].clientX,
+						clientY - event.touches[1].clientY
+					);
+				}
 			}
 
-			camera.fov = Math.max(
-				1,
-				Math.min(
-					onCtrlDownFov + 20 * Math.atan((event.clientY - onMouseDownPosition[1]) / 50),
-					150
-				)
-			);
+			let fov = onCtrlDownFov;
+
+			if (touch) {
+				fov -= (Math.hypot(
+					clientX - event.touches[1].clientX,
+					clientY - event.touches[1].clientY
+				) - onTouchStartFingersDistance) / 25;
+			} else {
+				fov += 20 * Math.atan((clientY - onMouseDownPosition[1]) / 50);
+			}
+
+			// Keeps the FOV between 1 and 150.
+			camera.fov = Math.max(1, Math.min(150, fov));
 
 			camera.updateProjectionMatrix();
 		} else { // spin
@@ -421,8 +437,6 @@ export default function (
 
 		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
 	});
-
-	const onMouseDownPosition = new Int16Array(2);
 
 	updateCameraPosition();
 	scaleInView();
