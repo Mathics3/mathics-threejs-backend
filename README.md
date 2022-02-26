@@ -76,7 +76,7 @@ drawGraphics3D(document.getElementById('main'), {
 ```
 <p align="center"><a href="https://mathics3.github.io/mathics-threejs-backend/examples/tube-dodecahedrons-and-spheres"><img alt="demonstration" src="https://user-images.githubusercontent.com/62714153/155851002-13b0200b-7835-40f9-8780-97aefb12bac5.gif" /></a></p>
 
-Lots of other examples can be found in the [examples](https://github.com/Mathics3/mathics-threejs-backend/tree/master/examples) folder of this repository and in the [documentation](https://mathics3.github.io/mathics-threejs-backend/examples).
+Lots of other examples can be found in the [examples](https://github.com/Mathics3/mathics-threejs-backend/tree/main/examples) folder of this repository and in the [documentation](https://mathics3.github.io/mathics-threejs-backend/examples).
 
 ## Displaying Examples
 Install an HTTP server and run it:
