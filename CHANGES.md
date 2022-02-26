@@ -4,6 +4,9 @@ CHANGES
 dev
 ---
 
+Improvements:
+- Update three.js to r138 (#96)
+
 Internals:
 - Rename branch master to main
 
