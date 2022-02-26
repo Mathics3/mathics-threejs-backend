@@ -8,30 +8,75 @@ This can be used in Mathics front ends like [Mathics-Django](https://pypi.org/pr
 ```js
 import drawGraphics3D from '@mathicsorg/mathics-threejs-backend';
 
-drawGraphics3D(
-    document.getElementById('main'),
+drawGraphics3D(document.getElementById('main'), {
+  elements: [
     {
-        elements: [
-            {
-                type: 'sphere',
-                color: [1, 1, 1],
-                coords: [
-                    [[0, 0, 0]]
-                ]
-            }
-        ],
-        lighting: [
-            {
-                type: 'ambient',
-                color: [1, 1, 1]
-            }
-        ],
-        viewpoint: [2.6, -4.8, 4.0]
+      type: 'tube',
+      color: [0.2, 0.2, 0.2],
+      coords: [
+        [null, [0, 0, 0]],
+        [null, [1, 0, 0]],
+        [null, [1, 1, 0]],
+        [null, [1, 1, 1]],
+        [null, [1, 0, 1]],
+        [null, [0, 0, 1]],
+        [null, [0, 1, 1]],
+        [null, [0, 1, 0]]
+      ],
+      radius: 0.1
+    },
+    {
+      type: 'uniformPolyhedron',
+      color: [1, 0.5, 0.5],
+      coords: [
+        [[0, 0, 0]],
+        [[2, 2, 2]]
+      ],
+      edgeForm: { showEdges: false },
+      opacity: 0.5, // 50% of opacity
+      subType: 'dodecahedron'
+    },
+		{
+      type: 'sphere',
+      color: [0.5, 0.5, 1],
+      coords: [
+        [[0, 0, 0]],
+        [[1, 1, 1]],
+        [[2, 2, 2]]
+      ],
+      edgeForm: { showEdges: false },
+      opacity: 0.7, // 70% of opacity
+      radius: 0.5,
+      subType: 'dodecahedron'
     }
-);
+  ],
+  lighting: [
+    {
+      type: 'ambient',
+      color: [0.5, 0.5, 0.5]
+    },
+    {
+      type: 'directional',
+      color: [0.8, 0, 0],
+      coords: [null, [2, 0, 2]]
+    },
+    {
+      type: 'directional',
+      color: [0, 0.8, 0],
+      coords: [null, [2, 2, 2]]
+    },
+    {
+      type: 'directional',
+      color: [0, 0, 0.8],
+      coords: [null, [0, 2, 2]]
+    }
+  ],
+  viewpoint: [2, -4, 4]
+});
 ```
+<p align="center"><a href="https://mathics3.github.io/mathics-threejs-backend/examples/tube-dodecahedrons-and-spheres"><img alt="demonstration" src="https://user-images.githubusercontent.com/62714153/155851002-13b0200b-7835-40f9-8780-97aefb12bac5.gif" /></a></p>
 
-Lots of other examples can be found in the [examples](https://github.com/Mathics3/mathics-threejs-backend/tree/master/examples) directory of this repository.
+Lots of other examples can be found in the [examples](https://github.com/Mathics3/mathics-threejs-backend/tree/master/examples) folder of this repository and in the [documentation](https://mathics3.github.io/mathics-threejs-backend/examples).
 
 ## Displaying Examples
 Install an HTTP server and run it:
