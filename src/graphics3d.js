@@ -410,7 +410,6 @@ export default function (
 		container.style.height = canvasSize + 10 + 'px';
 
 		renderer.setSize(canvasSize, canvasSize);
-		renderer.setPixelRatio(window.devicePixelRatio);
 
 		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
 	});
