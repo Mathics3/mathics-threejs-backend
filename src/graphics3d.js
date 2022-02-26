@@ -43,7 +43,7 @@ export default function (
 		onTouchStartFingersDistance,
 		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier),
 		autoRescale = true;
-	
+
 	const onMouseDownPosition = new Int16Array(2);
 
 	container.style.width = canvasSize + 'px';
