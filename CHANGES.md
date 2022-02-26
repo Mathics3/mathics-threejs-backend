@@ -1,8 +1,8 @@
 CHANGES
 =======
 
-dev
----
+1.1.2
+-----
 
 Improvements:
 - Improve coplanar polygons performance (#87, #88)
