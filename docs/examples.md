@@ -32,6 +32,7 @@ folder of the documentation (/docs)".
 - [Spheres with center pointlight](examples/spheres-with-center-pointlight)
 - [Tetrahedron](examples/tetrahedron)
 - [Triangle with edges](examples/triangle-with-edges)
+- [Tube, dodecahedrons and spheres](examples/tube-dodecahedrons-and-spheres)
 - [Yellow line](examples/yellow-line)
 - [Sphere with yellow spotlight](examples/yellow-spotlight)
 - [Yellow triangle](examples/yellow-triangle)
