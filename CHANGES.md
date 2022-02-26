@@ -6,6 +6,7 @@ dev
 
 Improvements:
 - Update three.js to r138 (#96)
+- Add support to smartphones (#97)
 
 Internals:
 - Rename branch master to main
