@@ -21,13 +21,15 @@ function toCanvasCoords(position, camera, canvasSize, maxSize) {
 }
 
 // i is 0, 1 or 2.
+// This is a 3d coordinate, but as the z value of this function is
+// always 0, we can return just the 2 first values.
 function getTickDirection(i, radius) {
 	const tickLength = 0.005 * radius;
 
 	if (i === 0) {
-		return [0, -tickLength, 0];
+		return [0, -tickLength];
 	} else { // i === 1 || i === 2
-		return [tickLength, 0, 0];
+		return [tickLength, 0];
 	}
 }
 
@@ -50,7 +52,11 @@ export function positionTickNumbers(
 
 						ticks[i].geometry.attributes.position.array[j * 6 + 1] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 4] * 6,
 
-						ticks[i].geometry.attributes.position.array[j * 6 + 2] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 5] * 6
+						// tickDirection.z is always 0, so
+						// position.array[j * 6] is the same as
+						// position.array[j * 6 + 5].
+						// x * 7 - x * 6 = x
+						ticks[i].geometry.attributes.position.array[j * 6 + 2]
 					),
 					camera,
 					canvasSize,
@@ -96,7 +102,8 @@ export function setTicksInitialPosition(
 
 				ticks[i].geometry.attributes.position.array[j * 6 + 4] = axesVerticesPosition[1] + tickDirection[1];
 
-				ticks[i].geometry.attributes.position.array[j * 6 + 5] = axesVerticesPosition[2] + tickDirection[2];
+				// tickDirection.z is always 0.
+				ticks[i].geometry.attributes.position.array[j * 6 + 5] = axesVerticesPosition[2];
 
 				if (i === 0) {
 					ticks[i].geometry.attributes.position.array[j * 6] = partialCoordinate;
@@ -124,7 +131,8 @@ export function setTicksInitialPosition(
 
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = axesVerticesPosition[1] + tickDirection[1] / 2;
 
-				ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = axesVerticesPosition[2] + tickDirection[2] / 2;
+				// tickDirection.z is always 0.
+				ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = axesVerticesPosition[2];
 
 				if (i === 0) {
 					ticksSmall[i].geometry.attributes.position.array[j * 6] = partialCoordinate;
