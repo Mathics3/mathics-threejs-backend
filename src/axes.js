@@ -5,19 +5,19 @@ import {
 
 import { scalePartialCoordinate } from './coordinateUtils.js';
 
-function toCanvasCoords(position, camera) {
-	const temporaryPosition = position.clone().applyMatrix4(
+// This changes the value of position.
+function toCanvasCoords(position, camera, canvasSize, maxSize) {
+	position.applyMatrix4(
 		new Matrix4().multiplyMatrices(
 			camera.projectionMatrix,
 			camera.matrixWorldInverse
 		)
 	);
 
-	return new Vector3(
-		(temporaryPosition.x + 1) * 200,
-		(1 - temporaryPosition.y) * 200,
-		0
-	);
+	return [
+		(position.x + 1) * 200 * canvasSize / maxSize,
+		(1 - position.y) * 200 * canvasSize / maxSize
+	];
 }
 
 // i is 0, 1 or 2.
@@ -52,14 +52,16 @@ export function positionTickNumbers(
 
 						ticks[i].geometry.attributes.position.array[j * 6 + 2] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 5] * 6
 					),
-					camera
-				).multiplyScalar(canvasSize / maxSize);
+					camera,
+					canvasSize,
+					maxSize
+				);
 
-				if (tickPosition.x < 5 || tickPosition.x > 395 || tickPosition.y < 5 || tickPosition.y > 395) {
+				if (tickPosition[0] < 5 || tickPosition[0] > 395 || tickPosition[1] < 5 || tickPosition[1] > 395) {
 					tickNumbers[i][j].style.display = 'none';
 				} else {
-					tickNumbers[i][j].style.left = `${tickPosition.x}px`;
-					tickNumbers[i][j].style.top = `${tickPosition.y}px`;
+					tickNumbers[i][j].style.left = `${tickPosition[0]}px`;
+					tickNumbers[i][j].style.top = `${tickPosition[1]}px`;
 					tickNumbers[i][j].style.display = '';
 				}
 			}
