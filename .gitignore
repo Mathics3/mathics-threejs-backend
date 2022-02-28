@@ -1,6 +1,4 @@
 /node_modules
 /tmp
-backstop_data/bitmaps_test
-backstop_data/engine_scripts
-backstop_data/html_report
 package-lock.json
+/reference_images/__diff_output__

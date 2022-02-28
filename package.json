@@ -24,19 +24,23 @@
 	},
 	"homepage": "https://github.com/Mathics3/mathics-threejs-backend",
 	"scripts": {
-		"approve": "backstop approve",
+		"approve": "(npm start &) && jest -u && fuser -k 8080/tcp",
 		"build": "rollup src/index.js --file docs/tmp.js --format iife && minify docs/tmp.js > docs/build.js && rm docs/tmp.js",
 		"build-fast": "rollup src/index.js --file docs/build.js --format iife",
 		"lint": "eslint src --fix",
 		"start": "node scripts/server.js",
-		"test": "eslint src && node scripts/test.js"
+		"test": "(npm start &) && eslint src && jest src && fuser -k 8080/tcp"
 	},
 	"dependencies": {
 		"express": "^4"
 	},
 	"devDependencies": {
-		"backstopjs": "^6",
+		"@babel/preset-env": "^7",
 		"eslint": "^8",
+		"eslint-plugin-jest": "^26",
+		"jest": "^27",
+		"jest-image-snapshot": "^4",
+		"jest-puppeteer": "^6",
 		"minify": "^8",
 		"rollup": "^2"
 	}
