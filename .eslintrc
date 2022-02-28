@@ -1,7 +1,9 @@
 {
 	"env": {
 		"browser": true,
-		"es2021": true
+		"es2021": true,
+		"node": true,
+		"jest/globals": true
 	},
 	"extends": [
 		"eslint:recommended"
@@ -10,6 +12,9 @@
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
+	"plugins": [
+		"jest"
+	],
 	"rules": {
 		"indent": [
 			"error",
@@ -59,7 +64,12 @@
 		],
 		"newline-before-return": "error",
 		"no-trailing-spaces": "error",
-		"prefer-const": "error"
+		"prefer-const": "error",
+		"jest/no-disabled-tests": "error",
+		"jest/no-focused-tests": "error",
+		"jest/no-identical-title": "error",
+		"jest/prefer-to-have-length": "error",
+		"jest/valid-expect": "error"
 	},
 	"ignorePatterns": [
 		"**/pkg/*"
