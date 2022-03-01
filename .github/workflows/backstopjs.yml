@@ -18,15 +18,14 @@ jobs:
         with:
           node-version: 16.x
 
-      - name: Install BackstopJS dependencies if testing locally
+      - name: Install Puppeteer dependencies if testing locally
         if: ${{ env.ACT }}
         run: |
           sudo apt update
           sudo apt install libnss3-dev libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev libasound2 -y
 
-      - name: Install BackstopJS
-        # express is already isntalled
-        run: npm install backstopjs
+      - name: Install dependencies
+        run: npm install
 
       - name: Run the tests
         run: npm test
