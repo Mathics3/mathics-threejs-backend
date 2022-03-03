@@ -1,8 +1,8 @@
 CHANGES
 =======
 
-dev
----
+1.1.3
+-----
 
 Improvements:
 - Update three.js to r138 (#96)
@@ -10,6 +10,9 @@ Improvements:
 
 Internals:
 - Rename branch master to main
+
+Bug fixes:
+- Position the axes ticks correctly in scenes with width/height different than 400 pixels (#101)
 
 1.1.2
 -----
