@@ -14,7 +14,7 @@ export function testScreenshot(name, file) {
 			const image = await page.screenshot();
 
 			expect(image).toMatchImageSnapshot({
-				customSnapshotsDir: resolve(__dirname, "reference_images")
+				customSnapshotsDir: resolve(__dirname, 'reference_images')
 			});
 
 			await browser.close();
