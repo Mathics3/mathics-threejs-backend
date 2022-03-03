@@ -24,9 +24,7 @@ export default function (
 		elements = [],
 		lighting = [],
 		viewpoint = [1.3, -2.4, 2]
-	},
-	maxSize = 400,
-	innerWidthMultiplier = 0.65
+	}
 ) {
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
@@ -41,15 +39,24 @@ export default function (
 		onMouseDownTheta,
 		phi,
 		onMouseDownPhi,
-		onTouchStartFingersDistance,
-		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier);
+		onTouchStartFingersDistance;
 
 	const onMouseDownPosition = new Int16Array(2);
 
-	container.style.width = canvasSize + 'px';
-	// to avoid overflow when a tick numbers is out of the parent element
-	container.style.height = canvasSize + 10 + 'px';
-
+	container.style.display ||= 'block';
+	container.style.width ||= '65vw';
+	container.style.maxWidth ||= '400px';
+	container.style.height ||= '65vw';
+	container.style.maxHeight ||= '400px';
+	// Avoid overflow when a tick numbers is out of the parent element.
+	container.style.paddingTop ||= '5px';
+	container.style.paddingBottom ||= '5px';
+	// Currently the axes labels are drawn using HTML elements with
+	// `position: absolute` so the graphics container must have
+	// `position: relative` to draw the axes labels.
+	// We don't overwrite it because the user may want to make the container
+	// have an absolute position.
+	container.style.position ||= 'relative';
 	container.style.cursor ||= 'pointer';
 	const defaultCursor = container.style.cursor;
 
@@ -241,7 +248,7 @@ export default function (
 
 	// plot the primitives
 	elements.forEach(
-		(element) => scene.add(primitiveFunctions[element.type](element, uniforms, extent, canvasSize))
+		(element) => scene.add(primitiveFunctions[element.type](element, uniforms, extent, container))
 	);
 
 	const renderer = new WebGLRenderer({
@@ -249,8 +256,13 @@ export default function (
 		alpha: true
 	});
 
-	renderer.setSize(canvasSize, canvasSize);
+	renderer.setSize(
+		parseInt(getComputedStyle(container).width),
+		parseInt(getComputedStyle(container).height)
+	);
 	renderer.setPixelRatio(window.devicePixelRatio);
+	renderer.domElement.style.width = '100%';
+	renderer.domElement.style.height = '100%';
 	container.appendChild(renderer.domElement);
 
 	function render() {
@@ -316,7 +328,7 @@ export default function (
 		const clientX = touch ? event.touches[0].clientX : event.clientX;
 		const clientY = touch ? event.touches[0].clientY : event.clientY;
 
-		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 
 		if (event.shiftKey) { // pan with mouse
 			if (!isShiftDown) {
@@ -338,9 +350,11 @@ export default function (
 				.normalize()
 				.cross(cameraX);
 
-			focus.x = onMouseDownFocus.x + (radius / canvasSize) * (cameraX.x * (onMouseDownPosition[0] - clientX) + cameraY.x * (onMouseDownPosition[1] - clientY));
-			focus.y = onMouseDownFocus.y + (radius / canvasSize) * (cameraX.y * (onMouseDownPosition[0] - clientX) + cameraY.y * (onMouseDownPosition[1] - clientY));
-			focus.z = onMouseDownFocus.z + (radius / canvasSize) * (cameraY.z * (onMouseDownPosition[1] - clientY));
+			const { width } = getComputedStyle(container);
+
+			focus.x = onMouseDownFocus.x + (radius / parseInt(width)) * (cameraX.x * (onMouseDownPosition[0] - clientX) + cameraY.x * (onMouseDownPosition[1] - clientY));
+			focus.y = onMouseDownFocus.y + (radius / parseInt(width)) * (cameraX.y * (onMouseDownPosition[0] - clientX) + cameraY.y * (onMouseDownPosition[1] - clientY));
+			focus.z = onMouseDownFocus.z + (radius / parseInt(width)) * (cameraY.z * (onMouseDownPosition[1] - clientY));
 
 			updateCameraPosition();
 		} else if (event.ctrlKey || (touch && event.touches.length === 2)) { // zoom
@@ -385,8 +399,11 @@ export default function (
 
 			container.style.cursor = 'grabbing';
 
-			phi = onMouseDownPhi + 2 * Math.PI * (onMouseDownPosition[0] - clientX) / canvasSize;
-			theta = onMouseDownTheta + 2 * Math.PI * (onMouseDownPosition[1] - clientY) / canvasSize;
+			const { width, height } = getComputedStyle(container);
+
+			phi = onMouseDownPhi + 2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / parseInt(width);
+
+			theta = onMouseDownTheta + 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / parseInt(height);
 
 			// 1e-12 prevents spinnging from getting stuck
 			theta = Math.max(
@@ -412,7 +429,7 @@ export default function (
 
 		if (autoRescale) {
 			scaleInView();
-			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+			positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 			render();
 		}
 	}
@@ -428,18 +445,15 @@ export default function (
 	container.addEventListener('touchend', onMouseUp);
 
 	window.addEventListener('resize', () => {
-		canvasSize = Math.min(maxSize, window.innerWidth * innerWidthMultiplier);
-		container.style.width = canvasSize + 'px';
-		// to avoid overflow when a tick numbers is out of the parent element
-		container.style.height = canvasSize + 10 + 'px';
+		const { width, height } = getComputedStyle(container);
 
-		renderer.setSize(canvasSize, canvasSize);
+		renderer.setSize(parseInt(width), parseInt(height));
 
-		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 	});
 
 	updateCameraPosition();
 	scaleInView();
 	render();
-	positionTickNumbers(hasAxes, tickNumbers, ticks, camera, canvasSize, maxSize);
+	positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 }
