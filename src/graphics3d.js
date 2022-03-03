@@ -414,10 +414,7 @@ export default function (
 
 			// 1e-12 prevents spinnging from getting stuck
 			theta = Math.max(
-				Math.min(
-					Math.PI - 1e-12,
-					2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / canvasSize + onMouseDownTheta
-				),
+				Math.min(Math.PI - 1e-12, theta),
 				1e-12
 			);
 
