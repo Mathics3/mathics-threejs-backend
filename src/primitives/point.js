@@ -13,7 +13,7 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 // for the high-level description of what is being rendered.
 // Differently from WL's Point, our points aren't affected by
 // lightning and therefore don't have VertexNormals.
-export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, uniforms, extent, canvasSize) {
+export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, uniforms, extent, container) {
 	return new Points(
 		new BufferGeometry().setAttribute(
 			'position',
@@ -32,7 +32,7 @@ export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, 
 				uniform mat4 modelViewMatrix;
 
 				void main() {
-					gl_PointSize = ${(pointSize * canvasSize).toFixed(4)};
+					gl_PointSize = ${(pointSize * parseInt(getComputedStyle(container).width)).toFixed(4)};
 					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 				}
 			`,
