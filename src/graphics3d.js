@@ -15,6 +15,26 @@ import primitiveFunctions from './primitives/index.js';
 import { getBasicMaterial } from './shader.js';
 import { getUniformsBuffer } from './uniforms.js';
 
+function setDefaultContainerStyle(container) {
+	const style = getComputedStyle(container);
+
+	if (!style.display) container.style.display = 'block';
+	if (!style.width) container.style.width = '65vw';
+	if (!style.maxWidth) container.style.maxWidth = '400px';
+	if (!style.height) container.style.height = '65vw';
+	if (!style.maxHeight) container.style.maxHeight = '400px';
+	// Avoid overflow when a tick numbers is out of the parent element.
+	if (!style.paddingTop) container.style.paddingTop = '5px';
+	if (!style.paddingBottom) container.style.paddingBottom = '5px';
+	// Currently the axes labels are drawn using HTML elements with
+	// `position: absolute` so the graphics container must have
+	// `position: relative` to draw the axes labels.
+	// We don't overwrite it because the user may want to make the container
+	// have an absolute position.
+	if (!style.position) container.style.position = 'relative';
+	if (!style.cursor) container.style.cursor = 'pointer';
+}
+
 export default function (
 	container,
 	{
@@ -43,21 +63,8 @@ export default function (
 
 	const onMouseDownPosition = new Int16Array(2);
 
-	container.style.display ||= 'block';
-	container.style.width ||= '65vw';
-	container.style.maxWidth ||= '400px';
-	container.style.height ||= '65vw';
-	container.style.maxHeight ||= '400px';
-	// Avoid overflow when a tick numbers is out of the parent element.
-	container.style.paddingTop ||= '5px';
-	container.style.paddingBottom ||= '5px';
-	// Currently the axes labels are drawn using HTML elements with
-	// `position: absolute` so the graphics container must have
-	// `position: relative` to draw the axes labels.
-	// We don't overwrite it because the user may want to make the container
-	// have an absolute position.
-	container.style.position ||= 'relative';
-	container.style.cursor ||= 'pointer';
+	setDefaultContainerStyle(container);
+
 	const defaultCursor = container.style.cursor;
 
 	// where the camera is looking (initialized on center of the scene)
