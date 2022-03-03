@@ -2,7 +2,10 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.static(__dirname + '/../'));
+app.use('/docs', express.static(__dirname + '/../docs'));
+app.use('/examples', express.static(__dirname + '/../examples'));
+app.use('/src', express.static(__dirname + '/../src'));
+app.use('/vendors', express.static(__dirname + '/../vendors'));
 
 const PORT = process.argv[2] ?? 8080;
 
