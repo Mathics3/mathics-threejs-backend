@@ -18,7 +18,9 @@ import { getUniformsBuffer } from './uniforms.js';
 function setDefaultContainerStyle(container) {
 	const style = getComputedStyle(container);
 
-	if (!style.display) container.style.display = 'block';
+	// This must be block, otherwise the height will be 0 and nothing will be
+	// shown.
+	container.style.display = 'block';
 	if (!style.width || style.width === '0px') container.style.width = '65vw';
 	if (!style.maxWidth) container.style.maxWidth = '400px';
 	if (!style.height || style.height === '0px') container.style.height = '65vw';
