@@ -41,7 +41,7 @@ function translationLayer(container, object, maxSize, innerWidthMultiplier) {
 	container.style.maxWidth = maxSize + 'px';
 	container.style.width = (100 * innerWidthMultiplier) + 'vw';
 	container.style.maxHeight = maxSize + 'px';
-	container.style.width = 100 * innerWidthMultiplier + 'vw';
+	container.style.height = 100 * innerWidthMultiplier + 'vw';
 
 	return drawGraphics3d(container, object);
 }

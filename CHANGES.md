@@ -8,6 +8,9 @@ Improvements:
 - Overwrite the width/height if its computed value is `0px`
 - Force the display of the container to be `block`, if it is not `block`, its height will be 0 and nothing will be shown
 
+Bug fixes:
+- Set height correctly in the translation layer
+
 1.2.0
 -----
 
