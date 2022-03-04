@@ -19,9 +19,9 @@ function setDefaultContainerStyle(container) {
 	const style = getComputedStyle(container);
 
 	if (!style.display) container.style.display = 'block';
-	if (!style.width) container.style.width = '65vw';
+	if (!style.width || style.width === '0px') container.style.width = '65vw';
 	if (!style.maxWidth) container.style.maxWidth = '400px';
-	if (!style.height) container.style.height = '65vw';
+	if (!style.height || style.height === '0px') container.style.height = '65vw';
 	if (!style.maxHeight) container.style.maxHeight = '400px';
 	// Avoid overflow when a tick numbers is out of the parent element.
 	if (!style.paddingTop) container.style.paddingTop = '5px';

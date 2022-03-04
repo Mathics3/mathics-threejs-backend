@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+dev
+---
+
+Improvements:
+- Overwrite the width/height if its computed value is `0px`
+
 1.0.6
 -----
 
