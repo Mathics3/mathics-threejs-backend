@@ -91,12 +91,10 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
           ],
           viewpoint: [2, -4, 4],
           protocol: '1.1'
-      },
-      600, // maxSize
-      0.75 // innerWidthMultiplier
+      }
   );
   ```
-  <div style='position: relative;' class='center' id='graphics-container-1'></div>
+  <div style='width: 75vw; height: 75vw; max-width: 500px; max-height: 500px;' class='center' id='graphics-container-1'></div>
   <script>
       drawGraphics3d(
           document.getElementById('graphics-container-1'),
