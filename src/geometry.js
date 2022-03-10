@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	BufferAttribute,
 	BufferGeometry,
@@ -7,7 +9,11 @@ import {
 
 import { copyArray3IntoBuffer, copyVector3IntoBuffer } from './bufferUtils.js';
 
-// Modified from three.js' BufferGeometryUtils.
+/**
+ * Modified from three.js' BufferGeometryUtils.
+ * @param {BufferAttribute[]} attributes
+ * @returns a new attribute with the values from all attributes.
+ */
 function mergeBufferAttributes(attributes) {
 	let arrayLength = 0;
 
@@ -26,9 +32,13 @@ function mergeBufferAttributes(attributes) {
 	return new BufferAttribute(array, 3);
 }
 
-// Modified from three.js' BufferGeometryUtils.
+/**
+ * Modified from three.js' BufferGeometryUtils.
+ * @param {BufferGeometry[]} geometries
+ */
 export function mergeBufferGeometries(geometries) {
 	const mergedIndex = [];
+	/** @type {{ [key: string]: BufferAttribute[] }} */
 	const attributes = {};
 	const mergedGeometry = new BufferGeometry();
 
@@ -36,6 +46,8 @@ export function mergeBufferGeometries(geometries) {
 		for (const name in geometries[i].attributes) {
 			if (attributes[name] === undefined) attributes[name] = [];
 
+			// @ts-expect-error: name is in attributes, so we can use it as an
+			// index.
 			attributes[name].push(geometries[i].attributes[name]);
 		}
 
@@ -43,6 +55,8 @@ export function mergeBufferGeometries(geometries) {
 			mergedIndex.push(geometries[i].index.getX(j) + indexOffset);
 		}
 
+		// @ts-expect-error: we expect the geometry to have the
+		// position attribute.
 		indexOffset += geometries[i].attributes.position.count;
 	}
 
@@ -58,7 +72,12 @@ export function mergeBufferGeometries(geometries) {
 	return mergedGeometry;
 }
 
-// This is used in spheres and in tubes' end caps.
+/**
+ * This is used in spheres and in tubes' end caps.
+ * @param {number} radius
+ * @param {boolean} instanced
+ * @param {boolean} halfSphere
+ */
 export function getSphereGeometry(radius, instanced = false, halfSphere = false) {
 	const phiEnd = halfSphere ? Math.PI : Math.PI * 2;
 
@@ -128,6 +147,11 @@ export function getSphereGeometry(radius, instanced = false, halfSphere = false)
 }
 
 // TODO: add cache
+/**
+ * @param {number} radius
+ * @param {ReturnType<import('curve.js').getCentripetalCurve>} path
+ * @returns {BufferGeometry} the geometry of a tube passing through the path.
+ */
 export function getTubeGeometry(radius, path) {
 	// tubularSegments
 	const frames = path.computeFrenetFrames(64);

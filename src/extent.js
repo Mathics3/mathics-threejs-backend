@@ -1,6 +1,16 @@
+// @ts-check
+
 import { scaleCoordinate } from './coordinateUtils.js';
 
-export default function (elements) {
+/** @typedef {import('./coordinateUtils.js').Coordinate} Coordinate */
+
+/** @typedef {ReturnType<extent>} Extent */
+
+/**
+ * Get the extent (bounding box size) for the elements
+ * @param {import('./primitives/index.js').PrimitiveElement[]} elements
+ */
+export default function extent(elements) {
 	const extent = {
 		xmin: 0,
 		ymin: 0,
@@ -116,27 +126,66 @@ export default function (elements) {
 
 				element.coords.forEach(((coordinate) => {
 					if (!coordinate[0]) {
-						coordinate[0] = scaleCoordinate(coordinate[1], extent);
+						// We are changing the type of coordinate[0] from null
+						// to Coordinate, TypeScript gives a warning here if we
+						// don't cast coordinate[0] to unknown.
+						/** @type {unknown} */(coordinate[0]) = scaleCoordinate(coordinate[1], extent);
 
-						if (coordinate[0][0] - radius < extent.xmin) {
-							extent.xmin = coordinate[0][0] - radius;
+						if (
+							/** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[0] - radius < extent.xmin
+						) {
+							extent.xmin = /** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[0] - radius;
 						}
-						if (coordinate[0][0] + radius > extent.xmax) {
-							extent.xmax = coordinate[0][0] + radius;
+						if (
+							/** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[0] + radius > extent.xmax
+						) {
+							extent.xmax = /** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[0] + radius;
 						}
 
-						if (coordinate[0][1] - radius < extent.ymin) {
-							extent.ymin = coordinate[0][1] - radius;
+						if (
+							/** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[1] - radius < extent.ymin
+						) {
+							extent.ymin = /** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[1] - radius;
 						}
-						if (coordinate[0][1] + radius > extent.ymax) {
-							extent.ymax = coordinate[0][1] + radius;
+						if (
+							/** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[1] + radius > extent.ymax
+						) {
+							extent.ymax = /** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[1] + radius;
 						}
 
-						if (coordinate[0][2] - radius < extent.zmin) {
-							extent.zmin = coordinate[0][2] - radius;
+						if (
+							/** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[2] - radius < extent.zmin
+						) {
+							extent.zmin = /** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[2] - radius;
 						}
-						if (coordinate[0][2] + radius > extent.zmax) {
-							extent.zmax = coordinate[0][2] + radius;
+						if (
+							/** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[2] + radius > extent.zmax
+						) {
+							extent.zmax = /** @type {Coordinate} */(
+								/** @type {unknown} */(coordinate[0])
+							)[2] + radius;
 						}
 					}
 				}));

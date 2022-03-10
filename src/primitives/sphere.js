@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	InstancedBufferAttribute,
 	Mesh,
@@ -7,10 +9,13 @@ import {
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 import { getSphereGeometry } from '../geometry.js';
 
-// See the comments from primitives/index.js for more information about the
-// shape of a primitive function.
-// See https://mathics3.github.io/mathics-threejs-backend/primitives/sphere
-// for the high-level description of what is being rendered.
+/**
+ * See {@link PrimitiveFunction} for more information about the
+ * shape of a primitive function.
+ * See {@link https://mathics3.github.io/mathics-threejs-backend/primitives/sphere}
+ * for the high-level description of what is being rendered.
+ * @type {import('./index.js').PrimitiveFunction}
+ */
 export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, uniforms, extent) {
 	const sphereGeometry = getSphereGeometry(radius, true)
 		// Set the spheres centers.
@@ -22,10 +27,12 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 			)
 		);
 
+	// @ts-expect-error: InstancedBufferGeometry have that attribute
 	sphereGeometry.instanceCount = coords.length;
 
 	const spheres = new Mesh(
 		sphereGeometry,
+		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,

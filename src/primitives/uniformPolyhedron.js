@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	BufferAttribute,
 	Group,
@@ -10,10 +12,13 @@ import {
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
-// See the comments from primitives/index.js for more information about the
-// shape of a primitive function.
-// See https://mathics3.github.io/mathics-threejs-backend/primitives/uniformPolyhedron
-// for the high-level description of what is being rendered.
+/**
+ * See {@link PrimitiveFunction} for more information about the
+ * shape of a primitive function.
+ * See {@link https://mathics3.github.io/mathics-threejs-backend/primitives/uniformPolyhedron}
+ * for the high-level description of what is being rendered.
+ * @type {import('./index.js').PrimitiveFunction}
+ */
 export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength = 1, opacity = 1, subType }, uniforms, extent) {
 	const polyhedronGeometry = new InstancedBufferGeometry();
 
@@ -351,6 +356,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 	const polyhedrons = new Mesh(
 		polyhedronGeometry,
+		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,

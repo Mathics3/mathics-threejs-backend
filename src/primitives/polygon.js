@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	BufferAttribute,
 	BufferGeometry,
@@ -16,13 +18,19 @@ import {
 } from '../bufferUtils.js';
 import { scaleCoordinate } from '../coordinateUtils.js';
 
-// Get the unit normal vector from the 1st, 2nd and last coordinate
-// (these numbers were choosen because the vectors 1st->2nd and last->2nd
-// have different directions, what is necessary for some calculations)
-// Note: a "better" way to do this is compute an approximation plane
-// by taking linear least squares, but that would be way slower and
-// there would be only difference for very specific polygons.
-// (see https://en.wikipedia.org/wiki/Linear_least_squares)
+/** @typedef {import('../coordinateUtils.js').Coordinate} Coordinate */
+
+/**
+ * Get the unit normal vector from the 1st, 2nd and last coordinate
+ * (these numbers were choosen because the vectors 1st->2nd and last->2nd
+ * have different directions, what is necessary for some calculations)
+ * Note: a "better" way to do this is compute an approximation plane
+ * by taking linear least squares, but that would be way slower and
+ * there would be only difference for very specific polygons.
+ * (see https://en.wikipedia.org/wiki/Linear_least_squares)
+ * @param {Array<[Coordinate, null] | [null, Coordinate]>} coordinates
+ * @param {import('../extent.js').Extent} extent
+ */
 function getNormalVector(coordinates, extent) {
 	const vectorA = new Vector3(
 		...coordinates[0][0] ?? scaleCoordinate(coordinates[0][1], extent)
@@ -31,7 +39,10 @@ function getNormalVector(coordinates, extent) {
 		...coordinates[1][0] ?? scaleCoordinate(coordinates[1][1], extent)
 	);
 	const vectorC = new Vector3(
-		...coordinates[coordinates.length - 1][0] ?? scaleCoordinate(coordinates[coordinates.length - 1][1], extent)
+		...coordinates[coordinates.length - 1][0] ?? scaleCoordinate(
+			/** @type {Coordinate} */(coordinates[coordinates.length - 1][1]),
+			extent
+		)
 	);
 
 	// cross product of 2 vectors with different directions in the plane
@@ -39,11 +50,16 @@ function getNormalVector(coordinates, extent) {
 	return vectorA.sub(vectorB).cross(vectorC.sub(vectorB)).normalize();
 }
 
-// Test if the coordinates are coplanar by checking if the distance
-// of each coordinate to the plane is less than a threshold.
-// We don't need to do `coordinate -= distance to the plane`
-// because earcut returns the same indices for small differences.
-// (the indices of different objects are the same if they have the same shape)
+/**
+ * Test if the coordinates are coplanar by checking if the distance
+ * of each coordinate to the plane is less than a threshold.
+ * We don't need to do `coordinate -= distance to the plane`
+ * because earcut returns the same indices for small differences.
+ * (the indices of different objects are the same if they have the same shape)
+ * @param {Array<[Coordinate, null] | [null, Coordinate]>} coordinates
+ * @param {import('../extent.js').Extent} extent
+ * @returns {boolean} whether the coordinates are coplanar.
+ */
 function isCoplanar(coordinates, extent) {
 	// normal = ⟨A, B, C⟩
 	const normalVector = getNormalVector(coordinates, extent);
@@ -59,7 +75,10 @@ function isCoplanar(coordinates, extent) {
 	const threshold = 1e-2;
 
 	for (let i = 0; i < coordinates.length; i++) {
-		const [x, y, z] = coordinates[i][0] ?? scaleCoordinate(coordinates[i][1], extent);
+		const [x, y, z] = coordinates[i][0] ?? scaleCoordinate(
+			/** @type {Coordinate} */(coordinates[i][1]),
+			extent
+		);
 
 		// Given a point ⟨x, y, z⟩, the distance between the point
 		// and the plane is: A x + B y + C z - D
@@ -73,11 +92,14 @@ function isCoplanar(coordinates, extent) {
 	return true;
 }
 
-// See the comments from primitives/index.js for more information about the
-// shape of a primitive function.
-// See https://mathics3.github.io/mathics-threejs-backend/primitives/polygon
-// for the high-level description of what is being rendered.
-export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1, vertexNormals = {} }, uniforms, extent) {
+/**
+ * See {@link PrimitiveFunction} for more information about the
+ * shape of a primitive function.
+ * See {@link https://mathics3.github.io/mathics-threejs-backend/primitives/polygon}
+ * for the high-level description of what is being rendered.
+ * @type {import('./index.js').PrimitiveFunction}
+ */
+export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1, vertexNormals = [] }, uniforms, extent) {
 	let geometry;
 
 	if (coords.length === 3) { // triangle
@@ -137,6 +159,8 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	// When the value is NaN, it is going to be re-calculated
 	// in the vertex shader (we can't do it here because each pixel
 	// may have a different normal value).
+	// @ts-expect-error: we already set the position attribute, so we are
+	// sure it is there.
 	const normals = new Float32Array(geometry.attributes.position.count * 3);
 
 	for (let i = 0; i < normals.length / 3; i++) {
@@ -151,6 +175,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	const polygon = new Mesh(
 		geometry,
+		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			side: DoubleSide,
 			depthWrite: opacity === 1,
@@ -284,6 +309,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	// (LineSegments don't support indexed BufferGeometries).
 	group.add(new Mesh(
 		geometry,
+		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			wireframe: true,
 			vertexShader: `#version 300 es
