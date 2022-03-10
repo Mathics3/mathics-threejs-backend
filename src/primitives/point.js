@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	BufferAttribute,
 	BufferGeometry,
@@ -7,13 +9,17 @@ import {
 
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 
-// See the comments from primitives/index.js for more information about the
-// shape of a primitive function.
-// See https://mathics3.github.io/mathics-threejs-backend/primitives/point
-// for the high-level description of what is being rendered.
-// Differently from WL's Point, our points aren't affected by
-// lightning and therefore don't have VertexNormals.
-export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, uniforms, extent, container) {
+/**
+ * See {@link PrimitiveFunction} for more information about the
+ * shape of a primitive function.
+ * See {@link https://mathics3.github.io/mathics-threejs-backend/primitives/point}
+ * for the high-level description of what is being rendered.
+ * Differently from WL's Point, our points aren't affected by
+ * lightning and therefore don't have VertexNormals.
+ *
+ * @type {import('./index.js').PrimitiveFunction}
+ */
+export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize = 1 }, uniforms, extent, container) {
 	return new Points(
 		new BufferGeometry().setAttribute(
 			'position',
@@ -22,6 +28,7 @@ export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize }, 
 				3
 			)
 		),
+		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			transparent: true,
 			depthWrite: false,

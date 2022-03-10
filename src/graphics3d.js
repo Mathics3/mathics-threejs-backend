@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	BufferAttribute,
 	BufferGeometry,
@@ -14,7 +16,19 @@ import lightFunctions from './lights.js';
 import primitiveFunctions from './primitives/index.js';
 import { getBasicMaterial } from './shader.js';
 import { getUniformsBuffer } from './uniforms.js';
+import { clamp } from './math.js';
 
+/**
+ * @typedef {import('./index.js').AxesTicks} AxesTicks
+ * @typedef {import('./index.js').Axes} Axes
+ * @typedef {import('./index.js').ConcreteAxes} ConcreteAxes
+ * @typedef {import('./index.js').TicksStyle} TicksStyle
+ */
+
+/**
+ * Set the default CSS for the container
+ * @param {HTMLElement} container
+ */
 function setDefaultContainerStyle(container) {
 	const style = getComputedStyle(container);
 
@@ -37,6 +51,18 @@ function setDefaultContainerStyle(container) {
 	if (!style.cursor) container.style.cursor = 'pointer';
 }
 
+/**
+ * Plot the data
+ * @param {HTMLElement} container
+ * @param {{
+ *     axes?: Axes,
+ *     autoRescale?: boolean,
+ *     extent?: import('./extent.js').Extent,
+ *     elements?: import('./primitives/index.js').PrimitiveElement[],
+ *     lighting?: { type: import('./lights.js').LightType }[],
+ *     viewpoint?: import('./coordinateUtils.js').Coordinate
+ * }} data
+ */
 export default function (
 	container,
 	{
@@ -51,17 +77,17 @@ export default function (
 	axes.hasaxes ??= false;
 	extent ??= calculateExtent(elements);
 
-	let isCtrlDown,
-		isShiftDown,
-		onMouseDownFocus,
-		onCtrlDownFov,
-		hasAxes,
-		isMouseDown = false,
-		theta,
-		onMouseDownTheta,
-		phi,
-		onMouseDownPhi,
-		onTouchStartFingersDistance;
+	let /** @type {boolean} */ isCtrlDown,
+		/** @type {boolean} */ isShiftDown,
+		/** @type {Vector3} */ onMouseDownFocus,
+		/** @type {number} */ onCtrlDownFov,
+		/** @type {[boolean, boolean, boolean]} */ hasAxes,
+		/** @type {boolean} */ isMouseDown = false,
+		/** @type {number} */ theta,
+		/** @type {number} */ onMouseDownTheta,
+		/** @type {number} */ phi,
+		/** @type {number} */ onMouseDownPhi,
+		/** @type {number} */ onTouchStartFingersDistance;
 
 	const onMouseDownPosition = new Int16Array(2);
 
@@ -101,6 +127,7 @@ export default function (
 		);
 
 	function updateCameraPosition() {
+		// @ts-expect-error: bad three.js typing
 		camera.position.set(
 			radius * Math.sin(theta) * Math.cos(phi),
 			radius * Math.sin(theta) * Math.sin(phi),
@@ -178,7 +205,8 @@ export default function (
 	}
 
 	// axes ticks
-	const ticks = new Array(3), ticksSmall = new Array(3);
+	const ticks = /** @type {[LineSegments, LineSegments, LineSegments]} */(new Array(3)),
+		ticksSmall = /** @type {[LineSegments, LineSegments, LineSegments]} */(new Array(3));
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
@@ -186,7 +214,9 @@ export default function (
 				new BufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(
-						new Float32Array(6 * axes.ticks[i][0].length),
+						new Float32Array(
+							6 * /** @type {AxesTicks} */(axes.ticks)[i][0].length
+						),
 						3
 					)
 				),
@@ -199,7 +229,9 @@ export default function (
 				new BufferGeometry().setAttribute(
 					'position',
 					new BufferAttribute(
-						new Float32Array(6 * axes.ticks[i][1].length),
+						new Float32Array(
+							6 * /** @type {AxesTicks} */(axes.ticks)[i][1].length
+						),
 						3
 					)
 				),
@@ -212,38 +244,46 @@ export default function (
 
 	setTicksInitialPosition(
 		hasAxes,
-		axes,
+		/** @type {ConcreteAxes} */(axes),
 		ticks,
 		ticksSmall,
+		// @ts-expect-error: we are sure this attribute is in there
 		boundingBox.geometry.attributes.position.array,
 		radius,
 		extent
 	);
 
-	// axes numbering using divs
-	const tickNumbers = new Array(3);
+	const tickNumbers = /** @type {[HTMLElement[], HTMLElement[], HTMLElement[]]} */(new Array(3));
 
 	for (let i = 0; i < 3; i++) {
 		if (hasAxes[i]) {
-			tickNumbers[i] = new Array(axes.ticks[i][0].length);
+			tickNumbers[i] = new Array(
+				/** @type {AxesTicks} */(axes.ticks)[i][0].length
+			);
 
 			for (let j = 0; j < tickNumbers[i].length; j++) {
 				let color = 'black';
 
-				if (i < axes.ticks_style?.length) {
-					color = `rgb(${axes.ticks_style[i][0] * 255}, ${axes.ticks_style[i][1] * 255}, ${axes.ticks_style[i][2] * 255})`;
+				if (i < (axes.ticks_style?.length ?? 0)) {
+					color = `rgb(
+						${/** @type {TicksStyle} */(axes.ticks_style)[i][0] * 255},
+						${/** @type {TicksStyle} */(axes.ticks_style)[i][1] * 255},
+						${/** @type {TicksStyle} */(axes.ticks_style)[i][2] * 255}
+					)`;
 				}
 
 				tickNumbers[i][j] = document.createElement('div');
-				tickNumbers[i][j].innerHTML = axes.ticks[i][2][j].startsWith('0.')
-					? axes.ticks[i][2][j].replace('0.', '.')
-					: axes.ticks[i][2][j];
+				tickNumbers[i][j].innerHTML =
+					/** @type {AxesTicks} */(axes.ticks)[i][2][j]
+						.startsWith('0.')
+						? /** @type {AxesTicks} */(axes.ticks)[i][2][j].replace('0.', '.')
+						: /** @type {AxesTicks} */(axes.ticks)[i][2][j];
 
 				// handle minus signs
-				if (axes.ticks[i][0][j] >= 0) {
+				if (/** @type {AxesTicks} */(axes.ticks)[i][0][j] >= 0) {
 					tickNumbers[i][j].style.paddingLeft = '0.5em';
 				} else {
-					tickNumbers[i][j].style.paddingLeft = 0;
+					tickNumbers[i][j].style.paddingLeft = '0px';
 				}
 
 				tickNumbers[i][j].style.position = 'absolute';
@@ -257,7 +297,12 @@ export default function (
 
 	// plot the primitives
 	elements.forEach(
-		(element) => scene.add(primitiveFunctions[element.type](element, uniforms, extent, container))
+		(element) => scene.add(primitiveFunctions[element.type](
+			element,
+			uniforms,
+			/** @type {import('./extent.js').Extent} */(extent),
+			container
+		))
 	);
 
 	const renderer = new WebGLRenderer({
@@ -298,8 +343,11 @@ export default function (
 		// bounding box to be fully shown.
 		for (let i = 0; i < 8; i++) {
 			proj2d.set(
+				// @ts-expect-error: we are sure this attribute is in there
 				boundingBox.geometry.attributes.position.array[i * 3],
+				// @ts-expect-error: the same as above
 				boundingBox.geometry.attributes.position.array[i * 3 + 1],
+				// @ts-expect-error: the same as above
 				boundingBox.geometry.attributes.position.array[i * 3 + 2]
 			).applyMatrix4(camera.matrixWorldInverse);
 
@@ -313,6 +361,10 @@ export default function (
 		camera.updateProjectionMatrix();
 	}
 
+	/**
+	 * @param {MouseEvent | TouchEvent} event
+	 * @param {boolean} touch whether the event is with touch instead of mouse.
+	 */
 	function onMouseDown(event, touch) {
 		event.preventDefault();
 
@@ -323,19 +375,31 @@ export default function (
 		onMouseDownTheta = theta;
 		onMouseDownPhi = phi;
 
-		onMouseDownPosition[0] = touch ? event.touches[0].clientX : event.clientX;
-		onMouseDownPosition[1] = touch ? event.touches[0].clientY : event.clientY;
+		onMouseDownPosition[0] = touch
+			? /** @type {TouchEvent} */(event).touches[0].clientX
+			: /** @type {MouseEvent} */(event).clientX;
+		onMouseDownPosition[1] = touch
+			? /** @type {TouchEvent} */(event).touches[0].clientY
+			: /** @type {MouseEvent} */(event).clientY;
 
 		onMouseDownFocus = focus.clone();
 	}
 
+	/**
+	 * @param {MouseEvent | TouchEvent} event
+	 * @param {boolean} touch whether the event is with touch instead of mouse.
+	 */
 	function onMouseMove(event, touch) {
 		event.preventDefault();
 
 		if (!isMouseDown) return;
 
-		const clientX = touch ? event.touches[0].clientX : event.clientX;
-		const clientY = touch ? event.touches[0].clientY : event.clientY;
+		const clientX = touch
+			? /** @type {TouchEvent} */(event).touches[0].clientX
+			: /** @type {MouseEvent} */(event).clientX;
+		const clientY = touch
+			? /** @type {TouchEvent} */(event).touches[0].clientY
+			: /** @type {MouseEvent} */(event).clientY;
 
 		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
 
@@ -355,6 +419,7 @@ export default function (
 			).normalize();
 
 			const cameraY = new Vector3()
+				// @ts-expect-error: bad three.js typing
 				.subVectors(focus, camera.position)
 				.normalize()
 				.cross(cameraX);
@@ -366,7 +431,10 @@ export default function (
 			focus.z = onMouseDownFocus.z + (radius / parseInt(width)) * (cameraY.z * (onMouseDownPosition[1] - clientY));
 
 			updateCameraPosition();
-		} else if (event.ctrlKey || (touch && event.touches.length === 2)) { // zoom
+		} else if (
+			event.ctrlKey
+			|| (touch && /** @type {TouchEvent} */(event).touches.length === 2)
+		) { // zoom
 			if (!isCtrlDown) {
 				isCtrlDown = true;
 				onCtrlDownFov = camera.fov;
@@ -377,8 +445,8 @@ export default function (
 
 				if (touch) {
 					onTouchStartFingersDistance = Math.hypot(
-						clientX - event.touches[1].clientX,
-						clientY - event.touches[1].clientY
+						clientX - /** @type {TouchEvent} */(event).touches[1].clientX,
+						clientY - /** @type {TouchEvent} */(event).touches[1].clientY
 					);
 				}
 			}
@@ -387,8 +455,8 @@ export default function (
 
 			if (touch) {
 				fov -= (Math.hypot(
-					clientX - event.touches[1].clientX,
-					clientY - event.touches[1].clientY
+					clientX - /** @type {TouchEvent} */(event).touches[1].clientX,
+					clientY - /** @type {TouchEvent} */(event).touches[1].clientY
 				) - onTouchStartFingersDistance) / 25;
 			} else {
 				fov += 20 * Math.atan((clientY - onMouseDownPosition[1]) / 50);
@@ -410,17 +478,18 @@ export default function (
 
 			const { width, height } = getComputedStyle(container);
 
-			phi = onMouseDownPhi + 2 * Math.PI * (onMouseDownPosition[0] - event.clientX) / parseInt(width);
+			phi = onMouseDownPhi + 2 * Math.PI * (
+				onMouseDownPosition[0] - /** @type {MouseEvent} */(event).clientX
+			) / parseInt(width);
 
-			theta = onMouseDownTheta + 2 * Math.PI * (onMouseDownPosition[1] - event.clientY) / parseInt(height);
+			theta = onMouseDownTheta + 2 * Math.PI * (
+				onMouseDownPosition[1] - /** @type {MouseEvent} */(event).clientY
+			) / parseInt(height);
 
 			// This prevents spinning over the poles by keeping the angle
 			// in the range [1e-12, Pi - 1e-12].
 			// Angles too close to 0 or Pi problems.
-			theta = Math.max(
-				Math.min(theta, Math.PI - 1e-12),
-				1e-12
-			);
+			theta = clamp(theta, 1e-12, Math.PI - 1e-12);
 
 			updateCameraPosition();
 		}
@@ -428,6 +497,9 @@ export default function (
 		render();
 	}
 
+	/**
+	 * @param {MouseEvent | TouchEvent} event
+	 */
 	function onMouseUp(event) {
 		event.preventDefault();
 

@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	BufferAttribute,
 	BufferGeometry,
@@ -12,10 +14,15 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 import { scaleCoordinate } from '../coordinateUtils.js';
 import { getBasicMaterial } from '../shader.js';
 
-// See the comments from primitives/index.js for more information about the
-// shape of a primitive function.
-// See https://mathics3.github.io/mathics-threejs-backend/primitives/arrow
-// for the high-level description of what is being rendered.
+/** @typedef {import('../coordinateUtils.js').Coordinate} Coordinate */
+
+/**
+ * See {@link PrimitiveFunction} for more information about the
+ * shape of a primitive function.
+ * See {@link https://mathics3.github.io/mathics-threejs-backend/primitives/arrow}
+ * for the high-level description of what is being rendered.
+ * @type {import('./index.js').PrimitiveFunction}
+ */
 export default function ({ color = [0, 0, 0], coords, opacity = 1 }, uniforms, extent) {
 	const material = getBasicMaterial(color, opacity);
 
@@ -23,12 +30,18 @@ export default function ({ color = [0, 0, 0], coords, opacity = 1 }, uniforms, e
 
 	// last coordinate but one
 	const startCoordinate = new Vector3(
-		...(coords[coords.length - 2][0] ?? scaleCoordinate(coords[coords.length - 2][1], extent))
+		...(coords[coords.length - 2][0] ?? scaleCoordinate(
+			/** @type {Coordinate} */(coords[coords.length - 2][1]),
+			extent
+		))
 	);
 
 	// last coordinate
 	const endCoordinate = new Vector3(
-		...(coords[coords.length - 1][0] ?? scaleCoordinate(coords[coords.length - 1][1], extent))
+		...(coords[coords.length - 1][0] ?? scaleCoordinate(
+			/** @type {Coordinate} */(coords[coords.length - 1][1]),
+			extent
+		))
 	);
 
 	const arrowHeadHeight = 0.2 * startCoordinate.distanceTo(endCoordinate);
@@ -84,6 +97,7 @@ export default function ({ color = [0, 0, 0], coords, opacity = 1 }, uniforms, e
 				0, 7, 8,
 				0, 8, 1
 			]),
+		// @ts-expect-error: bad three.js typing
 		material
 	));
 
@@ -97,6 +111,7 @@ export default function ({ color = [0, 0, 0], coords, opacity = 1 }, uniforms, e
 					3
 				)
 			),
+			// @ts-expect-error: bad three.js typing
 			material
 		)
 	);

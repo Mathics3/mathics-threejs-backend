@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	Matrix4,
 	Vector3
@@ -8,7 +10,13 @@ import { clamp, CubicPoly } from './math.js';
 
 const temporaryVector = new Vector3();
 
-// Modified from three.js CatmullRomCurve3
+/** @typedef {import('./coordinateUtils.js').Coordinate} Coordinate */
+
+/**
+ * Modified from three.js CatmullRomCurve3
+ * @param {Array<[Coordinate, null] | [null, Coordinate]>} coordinates
+ * @param {import('./extent.js').Extent} extent
+ */
 export function getCentripetalCurve(coordinates, extent) {
 	const points = coordinates.map((coordinate) => new Vector3(
 		...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
@@ -26,8 +34,11 @@ export function getCentripetalCurve(coordinates, extent) {
 		last = current;
 	}
 
+	/**
+	 * @param {number} t
+	 */
 	function getPoint(t) {
-		const px = new CubicPoly(), py = new CubicPoly(), pz = new CubicPoly();
+		const px = CubicPoly(), py = CubicPoly(), pz = CubicPoly();
 
 		const p = (points.length - 1) * t;
 		let intPoint = Math.floor(p);
@@ -84,10 +95,13 @@ export function getCentripetalCurve(coordinates, extent) {
 		);
 	}
 
-	// Returns a unit vector tangent at t.
-	// In case any sub curve does not implement its tangent derivation,
-	// 2 points a small delta apart will be used to find its gradient
-	// which seems to give a reasonable approximation.
+	/**
+	 * In case any sub curve does not implement its tangent derivation,
+	 * 2 points a small delta apart will be used to find its gradient
+	 * which seems to give a reasonable approximation.
+	 * @param {number} t
+	 * @returns a unit vector tangent at t
+	 */
 	function getTangent(t) {
 		const delta = 0.0001;
 		let t1 = t - delta;
@@ -103,6 +117,9 @@ export function getCentripetalCurve(coordinates, extent) {
 		return pt2.clone().sub(pt1).normalize();
 	}
 
+	/**
+	 * @param {number} u
+	 */
 	function getUtoTmapping(u) {
 		let i = 0;
 
@@ -149,9 +166,15 @@ export function getCentripetalCurve(coordinates, extent) {
 
 	return {
 		getPoint,
+		/**
+		 * @param {number} u
+		 */
 		getPointAt(u) {
 			return getPoint(getUtoTmapping(u));
 		},
+		/**
+		 * @param {number} segments
+		 */
 		computeFrenetFrames(segments) {
 			const vector = new Vector3();
 			const matrix = new Matrix4();

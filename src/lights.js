@@ -1,3 +1,5 @@
+// @ts-check
+
 // Unlike the primitives, all lights are in the same file.
 // Each light function takes 2 parameters and returns a three.js object.
 // The 1st parameter is the light object (an element of the lighting array)
@@ -19,17 +21,34 @@ import { scaleCoordinate } from './coordinateUtils.js';
 
 // The 3rd parameter is the extent, it is used in e.g. scaleCoordinate.
 
+/** @typedef {import('./coordinateUtils.js').Coordinate} Coordinate */
+
+/** @typedef {'ambient' | 'directional' | 'point' | 'spot'} LightType */
+
+/** @type {{ [key in LightType]: Function }} */
 export default {
-	// See https://mathics3.github.io/mathics-threejs-backend/lights/ambient
-	// for the high-level description of what is being rendered.
-	ambient: ({ color = [1, 1, 1] }, lights) => {
-		lights.ambientLightColor.value[0] += color[0];
-		lights.ambientLightColor.value[1] += color[1];
-		lights.ambientLightColor.value[2] += color[2];
+	/**
+	 * See {@link https://mathics3.github.io/mathics-threejs-backend/lights/ambient}
+	 * for the high-level description of what is being rendered.
+	 * @param {{ color: [number, number, number] }} light
+	 * @param {import('./uniforms.js').UniformsBuffer} uniforms
+	 */
+	ambient: ({ color = [1, 1, 1] }, uniforms) => {
+		uniforms.ambientLightColor.value[0] += color[0];
+		uniforms.ambientLightColor.value[1] += color[1];
+		uniforms.ambientLightColor.value[2] += color[2];
 	},
-	// See https://mathics3.github.io/mathics-threejs-backend/lights/directional
-	// for the high-level description of what is being rendered.
-	directional: ({ color = [1, 1, 1], coords }, lights, extent) => {
+	/**
+	 * See {@link https://mathics3.github.io/mathics-threejs-backend/lights/directional}
+	 * for the high-level description of what is being rendered.
+	 * @param {{
+	 *     color: [number, number, number],
+	 *     coords: [Coordinate, null] | [null, Coordinate]
+	 * }} light
+	 * @param {import('./uniforms.js').UniformsBuffer} uniforms
+	 * @param {import('./extent.js').Extent} extent
+	 */
+	directional: ({ color = [1, 1, 1], coords }, uniforms, extent) => {
 		const direction = new Vector3(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
 		).sub(new Vector3(
@@ -38,23 +57,41 @@ export default {
 			(extent.zmax + extent.zmin) / 2
 		)).normalize();
 
-		lights.directionalLights.value.push({
+		uniforms.directionalLights.value.push({
 			color,
 			direction
 		});
 	},
-	// See https://mathics3.github.io/mathics-threejs-backend/lights/point
-	// for the high-level description of what is being rendered.
-	point: ({ color = [1, 1, 1], coords }, lights, extent) => {
-		lights.pointLights.value.push({
+	/**
+	 * See {@link https://mathics3.github.io/mathics-threejs-backend/lights/point}
+	 * for the high-level description of what is being rendered.
+	 * @param {{
+	 *     color: [number, number, number],
+	 *     coords: [Coordinate, null] | [null, Coordinate]
+	 * }} light
+	 * @param {import('./uniforms.js').UniformsBuffer} uniforms
+	 * @param {import('./extent.js').Extent} extent
+	 */
+	point: ({ color = [1, 1, 1], coords }, uniforms, extent) => {
+		uniforms.pointLights.value.push({
 			color,
 			basePosition: new Vector3(...coords[0] ?? scaleCoordinate(coords[1], extent))
 		});
 	},
-	// See https://mathics3.github.io/mathics-threejs-backend/lights/spot
-	// for the high-level description of what is being rendered.
-	// The default angle is π/2.
-	spot: ({ angle = 1.57079632679, color = [1, 1, 1], coords, target }, lights, extent) => {
+	/**
+	 * See {@link https://mathics3.github.io/mathics-threejs-backend/lights/spot}
+	 * for the high-level description of what is being rendered.
+	 * The default angle is π/2.
+	 * @param {{
+	 *     angle: number,
+	 *     color: [number, number, number],
+	 *     coords: [Coordinate, null] | [null, Coordinate],
+	 *     target: [Coordinate, null] | [null, Coordinate]
+	 * }} light
+	 * @param {import('./uniforms.js').UniformsBuffer} uniforms
+	 * @param {import('./extent.js').Extent} extent
+	 */
+	spot: ({ angle = 1.57079632679, color = [1, 1, 1], coords, target }, uniforms, extent) => {
 		const basePosition = new Vector3(
 			...(coords[0] ?? scaleCoordinate(coords[1], extent))
 		);
@@ -63,7 +100,7 @@ export default {
 			...(target[0] ?? scaleCoordinate(target[1], extent))
 		)).normalize();
 
-		lights.spotLights.value.push({
+		uniforms.spotLights.value.push({
 			color,
 			baseDirection,
 			basePosition,

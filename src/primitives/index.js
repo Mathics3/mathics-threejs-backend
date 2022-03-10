@@ -1,23 +1,65 @@
+// @ts-check
+
 // This file exports implmentations using three.js of Mathematica and
 // Mathics Graphics3D primitives like "Sphere", or "Cuboid, etc.
 
 // A full list of primitives that this might grow to can be found at:
 // https://reference.wolfram.com/language/ref/Graphics3D.html
 
-// Each primitive function takes 4 parameters and returns a three.js
-// object.
-
-// The 1st parameter is the primitive object (an element of
-// the elements array).
-
-// The 2nd parameter is the uniforms buffer, read the comments from
-// src/uniforms.js for more information.
-
-// The 3rd parameter is the extent, it is used in scaleCoordinate,
-// but it can be used for calculating border size, radius, ...
-
-// The 4th parameter is the canvasSize, it is used for e.g. calculating the
-// points size.
+/**
+ * Each primitive function takes 4 parameters and returns a three.js object
+ *
+ * The 1st parameter is the primitive object (an element of
+ * the elements array).
+ *
+ * The 2nd parameter is the uniforms buffer, @see {@link src/uniforms.js}
+ * for more information.
+ *
+ * The 3rd parameter is the extent, it is used in scaleCoordinate,
+ * but it can be used for calculating border size, radius, ...
+ *
+ * The 4th parameter is the container, its style (CSS) is used for e.g.
+ * calculating the points size.
+ * 
+ * @typedef { 'arrow'
+ *          | 'cone'
+ *          | 'cuboid'
+ *          | 'cylinder'
+ *          | 'line'
+ *          | 'point'
+ *          | 'polygon'
+ *          | 'sphere'
+ *          | 'tube'
+ *          | 'uniformPolyhedron'
+ * } PrimitiveType
+ * 
+ * @typedef {import('../coordinateUtils.js').Coordinate} Coordinate
+ * 
+ * @typedef {{
+ *     type: PrimitiveType,
+ *     color?: [number, number, number],
+ *     coords: Array<[Coordinate, null] | [null, Coordinate]>,
+ *     dashed?: boolean,
+ *     edgeForm?: {
+ *         color?: [number, number, number],
+ *         showEdges?: boolean
+ *     },
+ *     edgeLength?: number,
+ *     gapSize?: number,
+ *     opacity?: number,
+ *     pointSize?: number,
+ *     radius?: number,
+ *     subType?: 'tetrahedron' | 'octahedron' | 'dodecahedron' | 'icosahedron',
+ *     vertexNormals?: [number, number, number][]
+ * }} PrimitiveElement
+ *
+ * @typedef {(
+ *     primitive: PrimitiveElement,
+ *     uniforms: import('../uniforms.js').UniformsBuffer,
+ *     extent: import('../extent.js').Extent,
+ *     container: HTMLElement
+ * ) => import('../../vendors/three.js').Object3D } PrimitiveFunction
+ */
 
 // Note that Graphics3D includes a number of 1D and 2D kinds of
 // objects, like Point, Line, Arrow, or Polygon which are extended
