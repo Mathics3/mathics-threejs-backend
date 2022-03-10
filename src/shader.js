@@ -1,8 +1,16 @@
+// @ts-check
+
 import { RawShaderMaterial } from '../vendors/three.js';
 
-// returns a material with a shader that uses 2 attributes:
-// objectBegin and objectEnd.
-// In the case of the cones, objectEnd must be the cone tip.
+/**
+ * Create a material with a shader that uses 2 attributes:
+ * objectBegin and objectEnd.
+ * In the case of the cones, objectEnd must be the cone tip.
+ * @param {[number, number, number]} color
+ * @param {number} opacity
+ * @param {import('./uniforms.js').UniformsBuffer} uniforms
+ * @returns the created material
+ */
 export function get2CoordinatesMaterial(color, opacity, uniforms) {
 	return new RawShaderMaterial({
 		transparent: opacity !== 1,
@@ -135,8 +143,12 @@ export function get2CoordinatesMaterial(color, opacity, uniforms) {
 	});
 }
 
-// returns a material that ignores lighting and
-// has the same color for all its pixels.
+/**
+ * @param {[number, number, number]} color
+ * @param {number} opacity
+ * @returns a material that ignores lighting so have all pixels
+ * of the same color.
+ */
 export function getBasicMaterial(color, opacity) {
 	return new RawShaderMaterial({
 		opacity,

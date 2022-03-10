@@ -1,3 +1,5 @@
+// @ts-check
+
 import {
 	BufferAttribute,
 	BufferGeometry,
@@ -8,12 +10,16 @@ import {
 import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
 import { getBasicMaterial } from '../shader.js';
 
-// See the comments from primitives/index.js for more information about the
-// shape of a primitive function.
-// See https://mathics3.github.io/mathics-threejs-backend/primitives/line
-// for the high-level description of what is being rendered.
-// Differently from WL's Line, our lines aren't affected by
-// lightning and therefore don't have VertexNormals.
+/**
+ * See {@link PrimitiveFunction} for more information about the
+ * shape of a primitive function.
+ * See {@link https://mathics3.github.io/mathics-threejs-backend/primitives/line}
+ * for the high-level description of what is being rendered.
+ * Differently from WL's Line, our lines aren't affected by
+ * lightning and therefore don't have VertexNormals.
+ *
+ * @type {import('./index.js').PrimitiveFunction}
+ */
 export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 10, opacity = 1 }, uniforms, extent, container) {
 	return new Line(
 		new BufferGeometry().setAttribute(
@@ -23,6 +29,7 @@ export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 
 				3
 			)
 		),
+		// @ts-expect-error: bad three.js typing
 		dashed
 			? new RawShaderMaterial({
 				opacity,
