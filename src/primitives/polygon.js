@@ -124,8 +124,13 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			const coordinates2d = new Float32Array(coords.length * 2);
 
 			for (let i = 0; i < coords.length; i++) {
-				coordinates2d[i * 2] = coords[i * 3];
-				coordinates2d[i * 2 + 1] = coords[i * 3 + 1];
+				let coordinate = coords[i][0] ?? scaleCoordinate(
+					/** @type {Coordinate} */(coords[i][1]),
+					extent
+				);
+
+				coordinates2d[i * 2] = coordinate[0];
+				coordinates2d[i * 2 + 1] = coordinate[1];
 			}
 
 			geometry = new BufferGeometry()
