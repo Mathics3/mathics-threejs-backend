@@ -84,17 +84,17 @@ export function positionTickNumbers(
 					// The code bellow moves the tick numbers so they aren't
 					// over the tick marks.
 					new Vector3(
-						// @ts-ignore: we are sure this attribute is there
+						// @ts-expect-error: we are sure this attribute is there
 						ticks[i].geometry.attributes.position.array[j * 6] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 3] * 6,
 
-						// @ts-ignore: same as above
+						// @ts-expect-error: same as above
 						ticks[i].geometry.attributes.position.array[j * 6 + 1] * 7 - ticks[i].geometry.attributes.position.array[j * 6 + 4] * 6,
 
 						// tickDirection.z is always 0, so
 						// position.array[j * 6] is the same as
 						// position.array[j * 6 + 5].
 						// x * 7 - x * 6 = x
-						// @ts-ignore: same as above
+						// @ts-expect-error: same as above
 						ticks[i].geometry.attributes.position.array[j * 6 + 2]
 					),
 					camera,
@@ -146,39 +146,39 @@ export function setTicksInitialPosition(
 				);
 
 				// Initialize the "position" buffer.
-				// @ts-ignore: we are sure this attribute is there
+				// @ts-expect-error: we are sure this attribute is there
 				ticks[i].geometry.attributes.position.array[j * 6] = axesVerticesPosition[0];
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticks[i].geometry.attributes.position.array[j * 6 + 1] = axesVerticesPosition[1];
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticks[i].geometry.attributes.position.array[j * 6 + 2] = axesVerticesPosition[2];
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticks[i].geometry.attributes.position.array[j * 6 + 3] = axesVerticesPosition[0] + tickDirection[0];
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticks[i].geometry.attributes.position.array[j * 6 + 4] = axesVerticesPosition[1] + tickDirection[1];
 
 				// tickDirection.z is always 0.
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticks[i].geometry.attributes.position.array[j * 6 + 5] = axesVerticesPosition[2];
 
 				if (i === 0) {
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticks[i].geometry.attributes.position.array[j * 6] = partialCoordinate;
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticks[i].geometry.attributes.position.array[j * 6 + 3] = partialCoordinate;
 				} else if (i === 1) {
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticks[i].geometry.attributes.position.array[j * 6 + 1] = partialCoordinate;
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticks[i].geometry.attributes.position.array[j * 6 + 4] = partialCoordinate;
 				} else {
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticks[i].geometry.attributes.position.array[j * 6 + 2] = partialCoordinate;
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticks[i].geometry.attributes.position.array[j * 6 + 5] = partialCoordinate;
 				}
 			});
@@ -191,39 +191,39 @@ export function setTicksInitialPosition(
 				);
 
 				// Initialize the "position" buffer.
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticksSmall[i].geometry.attributes.position.array[j * 6] = axesVerticesPosition[0];
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = axesVerticesPosition[1];
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = axesVerticesPosition[2];
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = axesVerticesPosition[0] + tickDirection[0] / 2;
 
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = axesVerticesPosition[1] + tickDirection[1] / 2;
 
 				// tickDirection.z is always 0.
-				// @ts-ignore: same as above
+				// @ts-expect-error: same as above
 				ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = axesVerticesPosition[2];
 
 				if (i === 0) {
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticksSmall[i].geometry.attributes.position.array[j * 6] = partialCoordinate;
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 3] = partialCoordinate;
 				} else if (i === 1) {
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 1] = partialCoordinate;
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 4] = partialCoordinate;
 				} else {
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 2] = partialCoordinate;
-					// @ts-ignore: same as above
+					// @ts-expect-error: same as above
 					ticksSmall[i].geometry.attributes.position.array[j * 6 + 5] = partialCoordinate;
 				}
 			});
