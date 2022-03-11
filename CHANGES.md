@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+dev
+---
+
+Improvements:
+- Type check the code with TypeScript in JSDocs (#101)
+
+Bug fixes:
+- Popoulate coordinates2d correctly in coplanar polygons (#101)
+
 1.2.1
 -----
 
