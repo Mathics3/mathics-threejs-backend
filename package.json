@@ -29,7 +29,7 @@
 		"build-fast": "rollup src/index.js --file docs/build.js --format iife",
 		"lint": "eslint src --fix",
 		"start": "node scripts/server.js",
-		"test": "(npm start &) && eslint src && jest src && fuser -k 8080/tcp"
+		"test": "(npm start &) && eslint src && tsc && jest src && fuser -k 8080/tcp"
 	},
 	"dependencies": {
 		"express": "^4"
