@@ -124,7 +124,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			const coordinates2d = new Float32Array(coords.length * 2);
 
 			for (let i = 0; i < coords.length; i++) {
-				let coordinate = coords[i][0] ?? scaleCoordinate(
+				const coordinate = coords[i][0] ?? scaleCoordinate(
 					/** @type {Coordinate} */(coords[i][1]),
 					extent
 				);

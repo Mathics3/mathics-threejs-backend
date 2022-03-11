@@ -20,7 +20,7 @@
  *
  * The 4th parameter is the container, its style (CSS) is used for e.g.
  * calculating the points size.
- * 
+ *
  * @typedef { 'arrow'
  *          | 'cone'
  *          | 'cuboid'
@@ -32,9 +32,9 @@
  *          | 'tube'
  *          | 'uniformPolyhedron'
  * } PrimitiveType
- * 
+ *
  * @typedef {import('../coordinateUtils.js').Coordinate} Coordinate
- * 
+ *
  * @typedef {{
  *     type: PrimitiveType,
  *     color?: [number, number, number],
