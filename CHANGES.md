@@ -7,9 +7,6 @@ dev
 Improvements:
 - Type check the code with TypeScript in JSDocs (#103)
 
-Bug fixes:
-- Popoulate coordinates2d correctly in coplanar polygons (#103)
-
 1.2.1
 -----
 
