@@ -6,6 +6,7 @@ import {
 	DoubleSide,
 	Group,
 	Mesh,
+	Quaternion,
 	RawShaderMaterial,
 	Vector3
 } from '../../vendors/three.js';
@@ -118,15 +119,23 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			// The problem is that earcut doesn't deals well with
 			// coplanar polygons.
 			// The good news is that it has a 2d mode.
-			// The really good news is that if we pass just pass the x and y
-			// values from the coordinates earcut returns the correct indices.
+			const quaternion = new Quaternion().setFromUnitVectors(
+				getNormalVector(coords, extent),
+				new Vector3(0, 0, 1)
+			);
 
 			const coordinates2d = new Float32Array(coords.length * 2);
 
-			for (let i = 0; i < coords.length; i++) {
-				coordinates2d[i * 2] = coords[i * 3];
-				coordinates2d[i * 2 + 1] = coords[i * 3 + 1];
-			}
+			coords.forEach((coordinate, index) => {
+				// apply the quaternion "zero" all z values, we can't draw a shape with non-zero z values
+				const vector = new Vector3(
+					...(coordinate[0] ?? scaleCoordinate(coordinate[1], extent))
+				).applyQuaternion(quaternion);
+
+				coordinates2d[index * 2] = vector.x;
+				coordinates2d[index * 2 + 1] = vector.y;
+			});
+
 
 			geometry = new BufferGeometry()
 				.setAttribute(

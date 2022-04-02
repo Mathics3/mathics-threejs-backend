@@ -7,6 +7,9 @@ dev
 Improvements:
 - Type check the code with TypeScript in JSDocs (#103)
 
+Bug fixes:
+- Fix coplanar polygons
+
 1.2.1
 -----
 
