@@ -1,11 +1,12 @@
 CHANGES
 =======
 
-dev
----
+1.2.2
+-----
 
 Improvements:
 - Type check the code with TypeScript in JSDocs (#103)
+- Update jest to version 28
 
 Bug fixes:
 - Fix coplanar polygons

@@ -1,6 +1,6 @@
 {
 	"name": "@mathicsorg/mathics-threejs-backend",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"threejs_revision": 138,
 	"description": "Mathics 3D Graphics backend using three.js",
 	"source": "src/index.js",
@@ -38,7 +38,7 @@
 		"@babel/preset-env": "^7",
 		"eslint": "^8",
 		"eslint-plugin-jest": "^26",
-		"jest": "^27",
+		"jest": "^28",
 		"jest-image-snapshot": "^4",
 		"jest-puppeteer": "^6",
 		"minify": "^8",
