@@ -35,6 +35,9 @@ import drawGraphics3d from './graphics3d.js';
  * @param {number} innerWidthMultiplier
  */
 function translationLayer(container, data, maxSize, innerWidthMultiplier) {
+	maxSize ??= 400;
+	innerWidthMultiplier ??= 0.65;
+
 	if (data.protocol) {
 		// protocol version is X.Y, so it is an array of two elements: major version and minor version
 		const versionArray = data.protocol.match(/\d/g);
@@ -73,7 +76,7 @@ function translationLayer(container, data, maxSize, innerWidthMultiplier) {
 	});
 
 	container.style.maxWidth = maxSize + 'px';
-	container.style.width = (100 * innerWidthMultiplier) + 'vw';
+	container.style.width = 100 * innerWidthMultiplier + 'vw';
 	container.style.maxHeight = maxSize + 'px';
 	container.style.height = 100 * innerWidthMultiplier + 'vw';
 
