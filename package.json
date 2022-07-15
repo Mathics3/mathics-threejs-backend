@@ -41,7 +41,7 @@
 		"jest": "^27",
 		"jest-image-snapshot": "^4",
 		"jest-puppeteer": "^6",
-		"minify": "^8",
+		"minify": "^9",
 		"rollup": "^2",
 		"typescript": "^4"
 	}
