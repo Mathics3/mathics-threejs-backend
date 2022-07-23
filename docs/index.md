@@ -6,6 +6,8 @@ This can be used in Mathics front ends like [Mathics-Django](https://pypi.org/pr
 
 See [our gallery](examples).
 
+See [the live benchmarks](benchmarks).
+
 See [the documentation](documentation).
 
 [View the project on GitHub](https://github.com/Mathics3/mathics-threejs-backend).

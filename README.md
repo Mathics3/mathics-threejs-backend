@@ -76,7 +76,7 @@ drawGraphics3D(document.getElementById('main'), {
 ```
 <p align="center"><a href="https://mathics3.github.io/mathics-threejs-backend/examples/tube-dodecahedrons-and-spheres"><img alt="demonstration" src="https://user-images.githubusercontent.com/62714153/155851002-13b0200b-7835-40f9-8780-97aefb12bac5.gif" /></a></p>
 
-Lots of other examples can be found in the [examples](https://github.com/Mathics3/mathics-threejs-backend/tree/main/examples) folder of this repository and in the [documentation](https://mathics3.github.io/mathics-threejs-backend/examples).
+Lots of other examples can be found in the [tests](https://github.com/Mathics3/mathics-threejs-backend/tree/main/tests) folder of this repository and in the [documentation](https://mathics3.github.io/mathics-threejs-backend/examples).
 
 ## Displaying Examples
 Install an HTTP server and run it:
@@ -98,12 +98,12 @@ Otherwise, start the HTTP server that was just installed:
 $ npm start  # Do this once per session
 ...
 Server running at http://localhost:8080/
-See our gallery in http://localhost:8080/examples/
+See our gallery in http://localhost:8080/tests/
 
 Hit CTRL-C to stop the server
 ```
 
-Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/examples/test/cone.html
+Finally, look at a file that you want to see rendered, e.g. http://127.0.0.1:8080/tests/cone.html
 
 For installing the development version from GitHub, see the [documentation](https://mathics3.github.io/mathics-threejs-backend/documentation).
 

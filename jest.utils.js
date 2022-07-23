@@ -10,7 +10,7 @@ export function testScreenshot(name, file) {
 
 		try {
 			const page = await browser.newPage();
-			await page.goto(`http://localhost:8080/examples/test/${file}`);
+			await page.goto(`http://localhost:8080/tests/${file}`);
 			const image = await page.screenshot();
 
 			expect(image).toMatchImageSnapshot({

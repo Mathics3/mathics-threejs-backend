@@ -1,9 +1,5 @@
 See our gallery:
-<!--
-in the examples you'll see that the path to the build file is 'build.js',
-not '../build.js'. This happens because Jekyll "copy all files to the root
-folder of the documentation (/docs)".
--->
+
 <!-- each graphics container MUST have an UNIQUE id -->
 <!-- filename aplhabetic order -->
 - [Black point](examples/black-point)
