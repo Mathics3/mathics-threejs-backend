@@ -36,11 +36,6 @@ export function get2CoordinatesMaterial(color, opacity, uniforms) {
 				vec3 direction;
 			};
 
-			struct GeometricContext {
-				vec3 position;
-				vec3 normal;
-			};
-
 			${uniforms.directionalLights.value.length > 0 ? `
 				uniform IncidentLight directionalLights[${uniforms.directionalLights.value.length}];
 			` : ''}
@@ -51,11 +46,6 @@ export function get2CoordinatesMaterial(color, opacity, uniforms) {
 				};
 
 				uniform PointLight pointLights[${uniforms.pointLights.value.length}];
-
-				void getPointLightInfo(const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight light) {
-					light.direction = normalize(pointLight.position - geometry.position);
-					light.color = pointLight.color;
-				}
 			` : ''}
 
 			${uniforms.spotLights.value.length > 0 ? `
@@ -67,12 +57,6 @@ export function get2CoordinatesMaterial(color, opacity, uniforms) {
 				};
 
 				uniform SpotLight spotLights[${uniforms.spotLights.value.length}];
-
-				void getSpotLightInfo(const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light) {
-					light.direction = normalize(spotLight.position - geometry.position);
-
-					light.color = spotLight.color * max(dot(light.direction, spotLight.direction), 0.0);
-				}
 			` : ''}
 
 			void main() {
@@ -97,34 +81,35 @@ export function get2CoordinatesMaterial(color, opacity, uniforms) {
 
 				gl_Position = projectionMatrix * mvPosition;
 
-				GeometricContext geometry = GeometricContext(
-					mvPosition.xyz,
-					normalize(normalMatrix * normal)
-				);
+				vec3 position = mvPosition.xyz;
+				vec3 normal = normalize(normalMatrix * normal);
 
 				vec3 light = ambientLightColor;
 
-				IncidentLight directLight;
-
 				${uniforms.directionalLights.value.length > 0 ? `
 					for (int i = 0; i < ${uniforms.directionalLights.value.length}; i++) {
-						light += saturate(dot(geometry.normal, directionalLights[i].direction)) * directionalLights[i].color;
+						light += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
 					}
 				` : ''}
 
 				${uniforms.pointLights.value.length > 0 ? `
 					for (int i = 0; i < ${uniforms.pointLights.value.length}; i++) {
-						getPointLightInfo(pointLights[i], geometry, directLight);
-
-						light += saturate(dot(geometry.normal, directLight.direction)) * directLight.color;
+						light += saturate(dot(
+							normal,
+							normalize(pointLights[i].position - position))
+						) * pointLights[i].color;
 					}
 				` : ''}
 
 				${uniforms.spotLights.value.length > 0 ? `
-					for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
-						getSpotLightInfo(spotLights[i], geometry, directLight);
+					vec3 direction;
 
-						light += saturate(dot(geometry.normal, directLight.direction)) * directLight.color;
+					for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
+						direction = normalize(spotLights[i].position - position);
+
+						light += saturate(dot(normal, direction))
+						* spotLights[i].color
+						* max(dot(direction, spotLights[i].direction), 0.0);
 					}
 				` : ''}
 
