@@ -178,7 +178,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
 						light.direction = normalize(pointLight.position + vViewPosition);
-						light.color = pointLight.color + 1.0;
+						light.color = pointLight.color;
 					}
 				` : ''}
 
@@ -197,11 +197,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 						float angleCos = dot(light.direction, spotLight.direction);
 
-						if (angleCos > 0.0) {
-							light.color = spotLight.color * angleCos + 1.0;
-						} else {
-							light.color = vec3(0.0);
-						}
+						light.color = spotLight.color * max(angleCos, 0.0);
 					}
 				` : ''}
 
