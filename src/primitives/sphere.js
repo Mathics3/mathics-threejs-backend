@@ -53,17 +53,12 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 
 				#define saturate(a) clamp(a, 0.0, 1.0)
 
-				struct IncidentLight {
-					vec3 color;
-					vec3 direction;
-				};
-
-				struct GeometricContext {
-					vec3 position;
-					vec3 normal;
-				};
-
 				${uniforms.directionalLights.value.length > 0 ? `
+					struct IncidentLight {
+						vec3 color;
+						vec3 direction;
+					};
+
 					uniform IncidentLight directionalLights[${uniforms.directionalLights.value.length}];
 				` : ''}
 
@@ -74,11 +69,6 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 					};
 
 					uniform PointLight pointLights[${uniforms.pointLights.value.length}];
-
-					void getPointLightInfo(const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight light) {
-						light.direction = normalize(pointLight.position - geometry.position);
-						light.color = pointLight.color;
-					}
 				` : ''}
 
 				${uniforms.spotLights.value.length > 0 ? `
@@ -90,12 +80,6 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 					};
 
 					uniform SpotLight spotLights[${uniforms.spotLights.value.length}];
-
-					void getSpotLightInfo(const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light) {
-						light.direction = normalize(spotLight.position - geometry.position);
-
-						light.color = spotLight.color * max(smoothstep(spotLight.coneCos, spotLight.coneCos, dot(light.direction, spotLight.direction)), 0.0);
-					}
 				` : ''}
 
 				void main() {
@@ -103,34 +87,39 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 
 					gl_Position = projectionMatrix * mvPosition;
 
-					GeometricContext geometry = GeometricContext(
-						mvPosition.xyz,
-						normalize(normalMatrix * normal)
-					);
+					vec3 position = mvPosition.xyz;
+					vec3 normal = normalize(normalMatrix * normal);
 
 					vec3 light = ambientLightColor;
 
-					IncidentLight directLight;
-
 					${uniforms.directionalLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.directionalLights.value.length}; i++) {
-							light += saturate(dot(geometry.normal, directionalLights[i].direction)) * directionalLights[i].color;
+							light += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
 						}
 					` : ''}
 					
 					${uniforms.pointLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.pointLights.value.length}; i++) {
-							getPointLightInfo(pointLights[i], geometry, directLight);
-
-							light += saturate(dot(geometry.normal, directLight.direction)) * directLight.color;
+							light += saturate(dot(normal, normalize(pointLights[i].position - position))) * pointLights[i].color;
 						}
 					` : ''}
 					
 					${uniforms.spotLights.value.length > 0 ? `
-						for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
-							getSpotLightInfo(spotLights[i], geometry, directLight);
+						vec3 direction;
 
-							light += saturate(dot(geometry.normal, directLight.direction)) * directLight.color;
+						for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
+							direction = normalize(spotLights[i].position - position);
+
+							light += saturate(dot(normal, direction))
+							* spotLights[i].color
+							* max(
+								smoothstep(
+									spotLights[i].coneCos,
+									spotLights[i].coneCos,
+									dot(direction, spotLights[i].direction)
+								),
+								0.0
+							);
 						}
 					` : ''}
 

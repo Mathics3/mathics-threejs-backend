@@ -225,12 +225,12 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 				#define saturate(a) clamp(a, 0.0, 1.0)
 
-				struct IncidentLight {
-					vec3 color;
-					vec3 direction;
-				};
-
 				${uniforms.directionalLights.value.length > 0 ? `
+					struct IncidentLight {
+						vec3 color;
+						vec3 direction;
+					};
+
 					uniform IncidentLight directionalLights[${uniforms.directionalLights.value.length}];
 				` : ''}
 				${uniforms.pointLights.value.length > 0 ? `
@@ -258,8 +258,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					vec3 normal = isnan(vNormal.x) ? normalize(cross(dFdx(vViewPosition), dFdy(vViewPosition))) : vNormal;
 
 					vec3 reflectedLight = ambientLightColor;
-
-					IncidentLight directLight;
 
 					${uniforms.directionalLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.directionalLights.value.length}; i++) {

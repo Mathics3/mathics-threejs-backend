@@ -389,12 +389,12 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 				#define saturate(a) clamp(a, 0.0, 1.0)
 
-				struct IncidentLight {
-					vec3 color;
-					vec3 direction;
-				};
-
 				${uniforms.directionalLights.value.length > 0 ? `
+					struct IncidentLight {
+						vec3 color;
+						vec3 direction;
+					};
+
 					uniform IncidentLight directionalLights[${uniforms.directionalLights.value.length}];
 				` : ''}
 
@@ -405,11 +405,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 					};
 
 					uniform PointLight pointLights[${uniforms.pointLights.value.length}];
-
-					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
-						light.direction = normalize(spotLight.position + vViewPosition);
-						light.color = pointLight.color;
-					}
 				` : ''}
 
 				${uniforms.spotLights.value.length > 0 ? `
@@ -434,8 +429,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 					vec3 reflectedLight = ambientLightColor;
 
-					IncidentLight directLight;
-
 					${uniforms.directionalLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.directionalLights.value.length}; i++) {
 							reflectedLight += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
@@ -444,16 +437,29 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 					${uniforms.pointLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.pointLights.value.length}; i++) {
-							getPointLightInfo(pointLights[i], directLight);
-							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
+							reflectedLight += saturate(dot(
+								normal,
+								normalize(spotLights[i].position + vViewPosition)
+							)) * pointLights[i].color;
 						}
 					` : ''}
 
 					${uniforms.spotLights.value.length > 0 ? `
-						SpotLight spotLight;
+						vec3 direction;
+
 						for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
-							getSpotLightInfo(spotLights[i], directLight);
-							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
+							direction = normalize(spotLights[i].position + vViewPosition);
+
+							reflectedLight += saturate(dot(normal, direction))
+							* spotLights[i].color
+							* max(
+								smoothstep(
+									spotLights[i].coneCos,
+									spotLights[i].coneCos,
+									dot(direction, spotLights[i].direction)
+								),
+								0.0
+							);
 						}
 					` : ''}
 
