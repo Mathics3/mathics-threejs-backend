@@ -240,11 +240,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					};
 
 					uniform PointLight pointLights[${uniforms.pointLights.value.length}];
-
-					void getPointLightInfo(const in PointLight pointLight, out IncidentLight light) {
-						light.direction = normalize(pointLight.position + vViewPosition);
-						light.color = pointLight.color;
-					}
 				` : ''}
 
 				${uniforms.spotLights.value.length > 0 ? `
@@ -256,12 +251,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					};
 
 					uniform SpotLight spotLights[${uniforms.spotLights.value.length}];
-
-					void getSpotLightInfo(const in SpotLight spotLight, out IncidentLight light) {
-						light.direction = normalize(spotLight.position + vViewPosition);
-
-						light.color = spotLight.color * max(smoothstep(spotLight.coneCos, spotLight.coneCos, dot(light.direction, spotLight.direction)), 0.0);
-					}
 				` : ''}
 
 				void main() {
@@ -279,14 +268,28 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					` : ''}
 					${uniforms.pointLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.pointLights.value.length}; i++) {
-							getPointLightInfo(pointLights[i], directLight);
-							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
+							reflectedLight += saturate(dot(
+								normal,
+								normalize(pointLights[i].position + vViewPosition))
+							) * pointLights[i].color;
 						}
 					` : ''}
 					${uniforms.spotLights.value.length > 0 ? `
+					  vec3 direction;
+
 						for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
-							getSpotLightInfo(spotLight, spotLights[i]);
-							reflectedLight += saturate(dot(normal, directLight.direction)) * directLight.color;
+							direction = normalize(spotLight.position + vViewPosition);
+
+							reflectedLight += saturate(dot(normal, direction))
+							* spotLights[i].color
+							* max(
+								smoothstep(
+									spotLights[i].coneCos,
+									spotLights[i].coneCos,
+									dot(direction, spotLights[i].direction)
+								),
+								0.0
+							);
 						}
 					` : ''}
 
