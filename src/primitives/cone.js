@@ -200,11 +200,17 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	group.add(cones);
 
-	// Differently from cuboid's edges, the cones' ones are in a different object. It is very hard or maybe impossible to draw edges with complex shapes in the fragment shader.
+	// Differently from cuboid's edges, the cones' ones are in a
+	// different object. It is very hard or maybe impossible to draw
+	// edges with complex shapes in the fragment shader.
 
 	// The lines below are the cone base edges' vertices' positions.
-	// The magic numbers below are modified from the position attribute of a three.js EdgesGeometry of the cone.
-	// Differently from cylinders' edges, the cones' ones are drawed through Line, now LineSegments, so before putting them in the code we need to remove the repeated numbers. This saves RAM and increases the performance.
+	// The magic numbers below are modified from the position attribute
+	// of a three.js EdgesGeometry of the cone.
+	// Differently from cylinders' edges, the cones' ones are drawn
+	// through Line, now LineSegments, so before putting them in the
+	// code we need to remove the repeated numbers. This saves RAM and
+	// increases the performance.
 	// To get them: console.log(new EdgesGeometry(coneGeometry).attributes.position.array)
 
 	const edgesGeometry = new InstancedBufferGeometry()

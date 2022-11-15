@@ -112,7 +112,7 @@ export default function extent(elements) {
 	});
 
 	if (needs2ndPass) {
-		// 2nd pass, necesary for primitives with scaled coordinates and
+		// 2nd pass, necessary for primitives with scaled coordinates and
 		// radius > extent.
 		elements.forEach((element) => {
 			if (

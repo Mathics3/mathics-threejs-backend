@@ -1,6 +1,6 @@
 // @ts-check
 
-// This file exports implmentations using three.js of Mathematica and
+// This file exports implementations using three.js of Mathematica and
 // Mathics Graphics3D primitives like "Sphere", or "Cuboid, etc.
 
 // A full list of primitives that this might grow to can be found at:
@@ -68,7 +68,7 @@
 // Also note that in contrast to he Mathematica/Mathics name, we
 // downcase the first letter of the corresponding name.  For example,
 // we use the function name "sphere" and "uniformPolyhedron", not
-// "Sphere" and "UnformPolyhedron".
+// "Sphere" and "UniformPolyhedron".
 
 // Usually the vertices are stored in the attribute "position".
 

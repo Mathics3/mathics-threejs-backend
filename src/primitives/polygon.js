@@ -23,8 +23,9 @@ import { scaleCoordinate } from '../coordinateUtils.js';
 
 /**
  * Get the unit normal vector from the 1st, 2nd and last coordinate
- * (these numbers were choosen because the vectors 1st->2nd and last->2nd
- * have different directions, what is necessary for some calculations)
+ * (these numbers were chosen because the vectors 1st->2nd and
+ * last->2nd have different directions, what is necessary for some
+ * calculations)
  * Note: a "better" way to do this is compute an approximation plane
  * by taking linear least squares, but that would be way slower and
  * there would be only difference for very specific polygons.
@@ -314,7 +315,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	edgeForm.color ??= [0, 0, 0];
 
 	// Differently from polyhedrons, polygons use a Mesh and a material
-	// with "wirefram: true". This is slower than LineSegments, but
+	// with "wireframe: true". This is slower than LineSegments, but
 	// creating a new BufferGeometry is also slow and uses more RAM
 	// (LineSegments don't support indexed BufferGeometries).
 	group.add(new Mesh(

@@ -137,7 +137,7 @@ export default function (
 		camera.lookAt(focus);
 	}
 
-	// Without this the initial axes postion is wrong.
+	// Without this the initial axes position is wrong.
 	updateCameraPosition();
 	camera.up.set(0, 0, 1);
 

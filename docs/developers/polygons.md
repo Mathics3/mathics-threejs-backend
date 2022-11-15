@@ -59,9 +59,9 @@ for (let i = 0; i < coords.length; i++) {
 }
 ```
 
-To test the coplanarity of the polygon we create a
+To test whether a polygon is coplanar we create a
 [plane](https://en.wikipedia.org/wiki/Plane_(geometry)) using the 1st, 2nd
-and last coordinates of the polygon (these coordinates are choosen
+and last coordinates of the polygon (these coordinates are chosen
 because the vectors 1st->2nd and last->2nd have different directions,
 what is necessary to build the
 [plane](https://en.wikipedia.org/wiki/Plane_(geometry))).  

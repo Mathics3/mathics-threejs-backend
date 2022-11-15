@@ -1,7 +1,7 @@
 Welcome to the mathics-threejs-backend documentation!
 
 You can use mathics-threejs-backend in 2 ways:
-- **production** — a stable release. To use either use the content-development network (CDN) or host the files in your own webserver:
+- **production** — a stable release. To use either use the content-development network (CDN) or host the files in your own web-server:
   - to use the CDN:
     ```html
     <script src="https://cdn.jsdelivr.net/npm/@mathicsorg/mathics-threejs-backend"></script>
@@ -36,7 +36,7 @@ The main function of mathics-threejs-backend is `drawGraphics3d`, takes the foll
     - `ticks` (type: [number[], number[], string[]][3]) — array containing the ticks' information for, respectively, x, y and z axes. The ticks' information is an array of three elements: big ticks' 0-1 coordinates, small ticks' 0-1 coordinates, big ticks' labels. Default: `[]`
     - `ticks_style` (type: [color[3]](/mathics-threejs-backend/types/color)) — array containing the ticks' colors for, respectively, x, y and z axes. Default: `[[0, 0, 0], [0, 0, 0], [0, 0, 0]]` (all ticks are black)
   - `elements` (type: [element[]](/mathics-threejs-backend/types/color) — array of primitives, default: `[]`
-  - `extent` (type: object) — the size of the bounding box. This is optional, only use this if you don't want the default behaviour. This is an object with the following properties:
+  - `extent` (type: object) — the size of the bounding box. This is optional, only use this if you don't want the default behavior. This is an object with the following properties:
     - `xmin` (type: number)
     - `ymin` (type: number)
     - `zmin` (type: number)
