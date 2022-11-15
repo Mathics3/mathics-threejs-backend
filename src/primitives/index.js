@@ -29,6 +29,7 @@
  *          | 'point'
  *          | 'polygon'
  *          | 'sphere'
+ *          | 'text'
  *          | 'tube'
  *          | 'uniformPolyhedron'
  * } PrimitiveType
@@ -50,6 +51,8 @@
  *     pointSize?: number,
  *     radius?: number,
  *     subType?: 'tetrahedron' | 'octahedron' | 'dodecahedron' | 'icosahedron',
+ *     texts?: Array<string>,
+ *     textSize?: number,
  *     vertexNormals?: [number, number, number][]
  * }} PrimitiveElement
  *
@@ -96,6 +99,7 @@ import line from './line.js';
 import point from './point.js';
 import polygon from './polygon.js';
 import sphere from './sphere.js';
+import text from './text.js';
 import tube from './tube.js';
 import uniformPolyhedron from './uniformPolyhedron.js';
 
@@ -108,6 +112,7 @@ export default {
 	point,
 	polygon,
 	sphere,
+	text,
 	tube,
 	uniformPolyhedron
 };
