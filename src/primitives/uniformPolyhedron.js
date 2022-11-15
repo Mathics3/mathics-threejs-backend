@@ -483,7 +483,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 	group.add(polyhedrons);
 
-	// The polyhedrons' edges are basicaly the same as the cylinders' ones.
+	// The polyhedrons' edges are basically the same as the cylinders' ones.
 
 	const edgesGeometry = new InstancedBufferGeometry();
 

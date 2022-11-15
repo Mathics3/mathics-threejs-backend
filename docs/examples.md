@@ -1,7 +1,7 @@
 See our gallery:
 
 <!-- each graphics container MUST have an UNIQUE id -->
-<!-- description aplhabetic order -->
+<!-- description alphabetic order -->
 - [☆ 2 connected cones with edges](examples/cones-with-edges)
 - [☆ 2 connected cylinders](examples/connected-cylinders)
 - [● Black point](examples/black-point)
@@ -24,7 +24,7 @@ See our gallery:
 - [☆ Simple tube](examples/simple-tube)
 - [● Sine points](examples/sine-points)
 - [○ Sphere with yellow spotlight](examples/yellow-spotlight)
-- [○ Spheres with center pointlight](examples/spheres-with-center-pointlight)
+- [○ Spheres with center point light](examples/spheres-with-center-pointlight)
 - [⬠ Tetrahedron](examples/tetrahedron)
 - [△ Triangle with edges](examples/triangle-with-edges)
 - [☆ Tube, dodecahedrons and spheres](examples/tube-dodecahedrons-and-spheres)

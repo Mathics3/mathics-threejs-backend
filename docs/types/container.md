@@ -1,4 +1,4 @@
-A HTML element obtained with `document.getElementById` or similars.
+A HTML element obtained with `document.getElementById` or similar.
 
 The canvas will occupy the whole container.
 

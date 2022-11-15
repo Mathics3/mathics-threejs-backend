@@ -70,7 +70,7 @@ export function getPopulatedCoordinateBuffer(coords, extent) {
 /**
  * Create 2 coordinate buffers and copy the even-numbered coordinates from
  * coords to the 1st coordinate buffer and the odd-numbered ones to the 2nd.
- * This is usuful when the primitive have a begin and a end coordinate.
+ * This is useful when the primitive have a begin and a end coordinate.
  * Both can't be in the same BufferAttribute.
  * @param {Array<[Coordinate, null] | [null, Coordinate]>} coords
  * @param {import('./extent.js').Extent} extent

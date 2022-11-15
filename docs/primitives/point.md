@@ -96,4 +96,4 @@ Draw points with the point size being canvas' size times `pointSize`.
   ![1000 points](https://user-images.githubusercontent.com/62714153/124356523-ce9b9680-dbec-11eb-87e0-d200ea93f4c0.png)
 
 ## Notes
--  Our behavor is different from Wolframs Language's Point, our points aren't affected by lighting and therefore don't have VertexNormals.
+-  Our behavior is different from Wolframs Language's Point, our points aren't affected by lighting and therefore don't have VertexNormals.
