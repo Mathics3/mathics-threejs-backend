@@ -58,7 +58,7 @@
  *     uniforms: import('../uniforms.js').UniformsBuffer,
  *     extent: import('../extent.js').Extent,
  *     container: HTMLElement
- * ) => import('../../vendors/three.js').Object3D } PrimitiveFunction
+ * ) => import('../../vendors/three.js').Object3D | null } PrimitiveFunction
  */
 
 // Note that Graphics3D includes a number of 1D and 2D kinds of
