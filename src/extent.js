@@ -63,7 +63,9 @@ export default function extent(elements) {
 					}
 				}
 			}));
-		} else {
+		} else if (element.type !== 'text') {
+			// Texts don't change the extent.
+
 			// The comments bellow are also valid for the 2nd pass.
 			// The extent isn't calculated correctly for cylinders, their extent should be transformationVector * radius.
 			// The calculated extent for polyhedrons is approximated.
