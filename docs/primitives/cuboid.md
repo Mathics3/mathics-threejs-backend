@@ -1,8 +1,8 @@
 Properties:
-- `color` (type: [color](documentation/types/color)) — default: white
-- `coords` (type: [coord[]](documentation/types/coord)) — array of the cuboids' begins and ends
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
+- `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of the cuboids' begins and ends
 - `edgeForm` (type: object) — default: `{}`, object with the following properties:
-  - `color` (type: [color](documentation/types/color)) — edges' color, default: black
+  - `color` (type: [color](/mathics-threejs-backend/types/color)) — edges' color, default: black
   - `showEdges` (type: bool) — default: `true`
 - `opacity` (type: number) — default: `1`
 

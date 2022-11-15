@@ -1,8 +1,8 @@
 Properties:
-- `color` (type: [color/mathics-threejs-backend/types/color)) — default: white
-- `coords` (type: [coord[]/mathics-threejs-backend/types/coord)) — array of cylinders' centers
+- `color` (type: [color](/mathics-threejs-backend/types/color)) — default: white
+- `coords` (type: [coord[]](/mathics-threejs-backend/types/coord)) — array of cylinders' centers
 - `edgeForm` (type: object) — default: `{}`, object with the following properties:
-  - `color` (type: [color/mathics-threejs-backend/types/color)) — edges' color, default: black
+  - `color` (type: [color](/mathics-threejs-backend/types/color)) — edges' color, default: black
   - `showEdges` (type: bool) — default: `true`
 - `radius` (type: number) — default: `1`
 - `opacity` (type: number) — default: `1`
