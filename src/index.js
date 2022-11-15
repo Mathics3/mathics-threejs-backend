@@ -49,11 +49,11 @@ function translationLayer(container, data, maxSize, innerWidthMultiplier) {
 			warning.innerText = `The major revision version of mathics-threejs-backend is 1, but it was expected to be ${/** @type {RegExpMatchArray} */(versionArray)[0]}. Trying to draw the graphics.`;
 
 			container.appendChild(warning);
-		} else if (parseInt(/** @type {RegExpMatchArray} */(versionArray)[1]) > 2) {
+		} else if (parseInt(/** @type {RegExpMatchArray} */(versionArray)[1]) > 3) {
 			const warning = document.createElement('p');
 
 			warning.style.color = 'yellow';
-			warning.innerText = `The minor revision version of mathics-threejs-backend is 1, but it was expected to be at least ${/** @type {RegExpMatchArray} */(versionArray)[1]}. Trying to draw the graphics.`;
+			warning.innerText = `The minor revision version of mathics-threejs-backend is 3, but it was expected to be at least ${/** @type {RegExpMatchArray} */(versionArray)[1]}. Trying to draw the graphics.`;
 
 			container.appendChild(warning);
 		}
