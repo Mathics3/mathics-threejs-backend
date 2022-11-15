@@ -296,14 +296,17 @@ export default function (
 	}
 
 	// plot the primitives
-	elements.forEach(
-		(element) => scene.add(primitiveFunctions[element.type](
+	elements.forEach((element) => {
+		const sceneElement = primitiveFunctions[element.type](
 			element,
 			uniforms,
 			/** @type {import('./extent.js').Extent} */(extent),
 			container
-		))
-	);
+		);
+		// Primitives like https://mathics3.github.io/mathics-threejs-backend/primitives/text
+		// don't add anything to the scene, but to the container.
+		if (sceneElement) scene.add(sceneElement);
+	});
 
 	const renderer = new WebGLRenderer({
 		antialias: true,
