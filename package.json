@@ -37,12 +37,12 @@
 	"devDependencies": {
 		"@babel/preset-env": "^7",
 		"eslint": "^8",
-		"eslint-plugin-jest": "^26",
-		"jest": "^28",
-		"jest-image-snapshot": "^5",
+		"eslint-plugin-jest": "^27",
+		"jest": "^29",
+		"jest-image-snapshot": "^6",
 		"jest-puppeteer": "^6",
 		"minify": "^9",
-		"rollup": "^2",
+		"rollup": "^3",
 		"typescript": "^4"
 	}
 }
