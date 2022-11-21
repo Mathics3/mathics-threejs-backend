@@ -8,13 +8,25 @@ on:
 
 jobs:
   tagged-release:
-    name: Tagged release
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the exact commit tagged on the release.
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+
+      - name: Use NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
       # If we can't build the release will be canceled.
-      - name: Build
-        run: npm run build
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
 
       - uses: marvinpinto/action-automatic-releases@latest
         with:
