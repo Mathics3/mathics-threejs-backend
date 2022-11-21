@@ -21,7 +21,7 @@ Add 2d text captions to the scene.
       ]
   }
   ```
-  <div class='center' id='graphics-container-1'></div>
+  <div style='position: relative' class='center' id='graphics-container-1'></div>
   <script>
       drawGraphics3d(
           document.getElementById('graphics-container-1'),
@@ -44,3 +44,8 @@ Add 2d text captions to the scene.
           }
       );
   </script>
+
+## Notes
+- Currently the text use HTML elements with
+  `position: absolute` so the graphics container must have
+  `position: relative` if you want to show the text.
