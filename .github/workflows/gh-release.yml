@@ -1,0 +1,22 @@
+name: GitHub release
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - "*"
+
+jobs:
+  tagged-release:
+    name: Tagged release
+    runs-on: ubuntu-latest
+
+    steps:
+      # If we can't build the release will be canceled.
+      - name: Build
+        run: npm run build
+
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
