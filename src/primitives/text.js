@@ -18,7 +18,7 @@
  */
 export default function ({
 	color = [0, 0, 0],
-	coords = [[[null, [0, 0, 0]]]],
+	coords,
 	texts,
 	textSize = 20
 }, uniforms, extent, container) {
