@@ -53,5 +53,6 @@ The current list of primitives supported:
 - [point](point)
 - [polygon](polygon)
 - [sphere](sphere)
+- [text](text)
 - [tube](tube)
 - [uniformPolyhedron](uniformPolyhedron)
