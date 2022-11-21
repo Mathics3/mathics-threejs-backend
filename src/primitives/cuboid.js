@@ -220,7 +220,10 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					` : ''}
 					${uniforms.spotLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.spotLights.value.length}; i++) {
-							float angleCos = dot(light.direction, spotLight.direction);
+							float angleCos = dot(
+								normalize(spotLights[i].position + vViewPosition),
+								spotLights[i].direction
+							);
 	
 							reflectedLight += saturate(dot(
 								normal,
