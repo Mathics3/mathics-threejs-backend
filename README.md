@@ -1,5 +1,7 @@
 # mathics-threejs-backend
 
+[![jsdelivr](https://data.jsdelivr.com/v1/package/npm/@mathicsorg/mathics-threejs-backend/badge)](https://www.jsdelivr.com/package/npm/@mathicsorg/mathics-threejs-backend)
+
 A JavaScript library for rendering [Mathics](https://mathics.org) (and eventually Wolfram Language) [Graphics3D](https://reference.wolfram.com/language/ref/Graphics3D.html) objects.
 
 This can be used in Mathics front ends like [Mathics-Django](https://pypi.org/project/Mathics-Django/) and [Symja](https://github.com/axkr/symja_android_library) to handle 3D graphics. The code may also be useful as a guide for other kinds of Mathics/WL frontends to other kinds of JavaScript graphics engines.
