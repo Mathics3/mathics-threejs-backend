@@ -526,13 +526,15 @@ export default function (
 	container.addEventListener('mouseup', onMouseUp);
 	container.addEventListener('touchend', onMouseUp);
 
-	window.addEventListener('resize', () => {
+	new ResizeObserver(() => {
 		const { width, height } = getComputedStyle(container);
 
 		renderer.setSize(parseInt(width), parseInt(height));
 
+		render();
+
 		positionTickNumbers(hasAxes, tickNumbers, ticks, camera, container);
-	});
+	}).observe(container);
 
 	updateCameraPosition();
 	scaleInView();
