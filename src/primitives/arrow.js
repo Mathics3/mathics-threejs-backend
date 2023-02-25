@@ -23,7 +23,7 @@ import { getBasicMaterial } from '../shader.js';
  * for the high-level description of what is being rendered.
  * @type {import('./index.js').PrimitiveFunction}
  */
-export default function ({ color = [0, 0, 0], coords, opacity = 1 }, uniforms, extent) {
+export default function ({ color = /** @type {[number, number, number]} */([0, 0, 0]), coords, opacity = 1 }, uniforms, extent) {
 	const material = getBasicMaterial(color, opacity);
 
 	const group = new Group();
