@@ -20,7 +20,7 @@ import { getBasicMaterial } from '../shader.js';
  *
  * @type {import('./index.js').PrimitiveFunction}
  */
-export default function ({ color = [0, 0, 0], coords, dashed = false, gapSize = 10, opacity = 1 }, uniforms, extent, container) {
+export default function ({ color = /** @type {[number, number, number]} */([0, 0, 0]), coords, dashed = false, gapSize = 10, opacity = 1 }, uniforms, extent, container) {
 	return new Line(
 		new BufferGeometry().setAttribute(
 			'position',
