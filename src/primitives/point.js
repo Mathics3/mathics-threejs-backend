@@ -20,24 +20,35 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
  * @type {import('./index.js').PrimitiveFunction}
  */
 
-export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize = 1 }, uniforms, extent, container) {
+export default function (
+	{ color = [0, 0, 0], coords, opacity = 1, pointSize = 1 },
+	uniforms,
+	extent,
+	container
+) {
+	const containerWidth = parseInt(getComputedStyle(container).width);
+	const safeWidth =
+		isNaN(containerWidth) || containerWidth <= 0 ? 500 : containerWidth;
 
-    const containerWidth = parseInt(getComputedStyle(container).width);
-    const safeWidth = (isNaN(containerWidth) || containerWidth <= 0) ? 500 : containerWidth;
+	const validatedSize = isNaN(pointSize) || pointSize <= 0 ? 1.0 : pointSize;
+	const finalPointSize = (validatedSize * safeWidth).toFixed(4);
 
-    const validatedSize = (isNaN(pointSize) || pointSize <= 0) ? 1.0 : pointSize;
-    const finalPointSize = (validatedSize * safeWidth).toFixed(4);
-
-    return new Points(
-        new BufferGeometry().setAttribute(
-            'position',
-            new BufferAttribute(getPopulatedCoordinateBuffer(coords, extent), 3)
-        ),
-        new RawShaderMaterial({
-            transparent: true,
-            depthWrite: false,
-            // 2. THE SHADER SHOULD ONLY RECEIVE THE FINAL NUMBER
-            vertexShader: `#version 300 es
+	// We are passing a PointsMaterial when we should be passing a RawShaderMaterial.
+	// rocky doesn't know how to properly fix this. So...
+	// @ts-ignore
+	return new Points(
+		new BufferGeometry().setAttribute(
+			'position',
+			new BufferAttribute(
+				getPopulatedCoordinateBuffer(coords, extent),
+				3
+			)
+		),
+		new RawShaderMaterial({
+			transparent: true,
+			depthWrite: false,
+			// 2. THE SHADER SHOULD ONLY RECEIVE THE FINAL NUMBER
+			vertexShader: `#version 300 es
                 in vec3 position;
                 uniform mat4 projectionMatrix;
                 uniform mat4 modelViewMatrix;
@@ -47,13 +58,13 @@ export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize = 1
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
                 }
             `,
-            fragmentShader: `#version 300 es
+			fragmentShader: `#version 300 es
                 out lowp vec4 pc_fragColor;
                 void main() {
                     if (length(gl_PointCoord - 0.5) > 0.5) discard;
                     pc_fragColor = vec4(${color[0]}, ${color[1]}, ${color[2]}, ${opacity});
                 }
             `
-        })
-    );
+		})
+	);
 }
