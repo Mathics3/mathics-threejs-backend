@@ -33,9 +33,6 @@ export default function (
 	const validatedSize = isNaN(pointSize) || pointSize <= 0 ? 1.0 : pointSize;
 	const finalPointSize = (validatedSize * safeWidth).toFixed(4);
 
-	// We are passing a PointsMaterial when we should be passing a RawShaderMaterial.
-	// rocky doesn't know how to properly fix this. So...
-	// @ts-ignore
 	return new Points(
 		new BufferGeometry().setAttribute(
 			'position',
@@ -44,10 +41,12 @@ export default function (
 				3
 			)
 		),
+		// We are passing a PointsMaterial when we should be passing a RawShaderMaterial.
+		// rocky doesn't know how to properly fix this. So...
+		// @ts-ignore
 		new RawShaderMaterial({
 			transparent: true,
 			depthWrite: false,
-			// 2. THE SHADER SHOULD ONLY RECEIVE THE FINAL NUMBER
 			vertexShader: `#version 300 es
                 in vec3 position;
                 uniform mat4 projectionMatrix;
