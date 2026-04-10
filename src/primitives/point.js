@@ -19,44 +19,41 @@ import { getPopulatedCoordinateBuffer } from '../bufferUtils.js';
  *
  * @type {import('./index.js').PrimitiveFunction}
  */
+
 export default function ({ color = [0, 0, 0], coords, opacity = 1, pointSize = 1 }, uniforms, extent, container) {
-	return new Points(
-		new BufferGeometry().setAttribute(
-			'position',
-			new BufferAttribute(
-				getPopulatedCoordinateBuffer(coords, extent),
-				3
-			)
-		),
-		// @ts-expect-error: bad three.js typing
-		new RawShaderMaterial({
-			transparent: true,
-			depthWrite: false,
-			vertexShader: `#version 300 es
-				in vec3 position;
 
-				uniform mat4 projectionMatrix;
-				uniform mat4 modelViewMatrix;
+    const containerWidth = parseInt(getComputedStyle(container).width);
+    const safeWidth = (isNaN(containerWidth) || containerWidth <= 0) ? 500 : containerWidth;
 
-				void main() {
-					gl_PointSize = ${(pointSize * parseInt(getComputedStyle(container).width)).toFixed(4)};
-					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
-				}
-			`,
-			fragmentShader: `#version 300 es
-				out lowp vec4 pc_fragColor;
+    const validatedSize = (isNaN(pointSize) || pointSize <= 0) ? 1.0 : pointSize;
+    const finalPointSize = (validatedSize * safeWidth).toFixed(4);
 
-				void main() {
-					if (length(gl_PointCoord - 0.5) > 0.5) discard;
+    return new Points(
+        new BufferGeometry().setAttribute(
+            'position',
+            new BufferAttribute(getPopulatedCoordinateBuffer(coords, extent), 3)
+        ),
+        new RawShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            // 2. THE SHADER SHOULD ONLY RECEIVE THE FINAL NUMBER
+            vertexShader: `#version 300 es
+                in vec3 position;
+                uniform mat4 projectionMatrix;
+                uniform mat4 modelViewMatrix;
 
-					pc_fragColor = vec4(
-						${color[0]},
-						${color[1]},
-						${color[2]},
-						${opacity}
-					);
-				}
-			`
-		})
-	);
+                void main() {
+                    gl_PointSize = ${finalPointSize};
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
+                }
+            `,
+            fragmentShader: `#version 300 es
+                out lowp vec4 pc_fragColor;
+                void main() {
+                    if (length(gl_PointCoord - 0.5) > 0.5) discard;
+                    pc_fragColor = vec4(${color[0]}, ${color[1]}, ${color[2]}, ${opacity});
+                }
+            `
+        })
+    );
 }
