@@ -11,7 +11,7 @@ jobs:
     steps:
       # Checkout the exact commit tagged on the release.
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.release.target_commitish }}
 
@@ -20,10 +20,10 @@ jobs:
         uses: manovotny/github-releases-for-automated-package-publishing-action@v2.0.1
 
       - name: Use NodeJS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           always-auth: true
-          node-version: 18.x
+          node-version: 20.x
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies and build
