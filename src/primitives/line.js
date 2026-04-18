@@ -20,7 +20,7 @@ import { getBasicMaterial } from '../shader.js';
  *
  * @type {import('./index.js').PrimitiveFunction}
  */
-export default function ({ color = /** @type {[number, number, number]} */([0, 0, 0]), coords, dashed = false, gapSize = 10, opacity = 1 }, uniforms, extent, container) {
+export default function ({ color = /** @type {[number, number, number]} */([0, 0, 0]), coords, dashed = false, gapSize = 10, opacity = 1 }, uniforms, extent) {
 	return new Line(
 		new BufferGeometry().setAttribute(
 			'position',
@@ -34,6 +34,7 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 			? new RawShaderMaterial({
 				opacity,
 				transparent: opacity !== 1,
+				uniforms,
 				vertexShader: `#version 300 es
 					in vec3 position;
 
@@ -53,6 +54,8 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 				fragmentShader: `#version 300 es
 					precision mediump float;
 
+					uniform vec2 viewportSize;
+
 					flat in vec2 startPosition;
 					in vec2 vertexPosition;
 
@@ -60,10 +63,7 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 
 					void main() {
 						float doubleDistance = length(
-							(vertexPosition - startPosition) * vec2(
-								${parseInt(getComputedStyle(container).width)},
-								${parseInt(getComputedStyle(container).height)}
-							)
+							(vertexPosition - startPosition) * viewportSize
 						);
 
 						float quadrupleGapInverse = ${(1 / (4 * gapSize)).toFixed(4)};

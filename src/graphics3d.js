@@ -10,13 +10,13 @@ import {
 	WebGLRenderer
 } from '../vendors/three.js';
 
-import calculateExtent from './extent.js';
 import { positionTickNumbers, setTicksInitialPosition } from './axes.js';
+import calculateExtent from './extent.js';
 import lightFunctions from './lights.js';
+import { clamp } from './math.js';
 import primitiveFunctions from './primitives/index.js';
 import { getBasicMaterial } from './shader.js';
 import { getUniformsBuffer } from './uniforms.js';
-import { clamp } from './math.js';
 
 /**
  * @typedef {import('./index.js').AxesTicks} AxesTicks
@@ -49,6 +49,19 @@ function setDefaultContainerStyle(container) {
 	// have an absolute position.
 	if (!style.position) container.style.position = 'relative';
 	if (!style.cursor) container.style.cursor = 'pointer';
+}
+
+/**
+ * Read the container size. Returns 0 in case the inputs are invalid.
+ * @param {HTMLElement} container
+ */
+function getContainerSize(container) {
+	const { width, height } = getComputedStyle(container);
+
+	return {
+		width: parseFloat(width) || 0,
+		height: parseFloat(height) || 0
+	};
 }
 
 /**
@@ -144,6 +157,9 @@ export default function (
 	scene.add(camera);
 
 	const uniforms = getUniformsBuffer();
+	const containerSize = getContainerSize(container);
+
+	uniforms.viewportSize.value = [containerSize.width, containerSize.height];
 
 	lighting.forEach(
 		(element) => lightFunctions[element.type](element, uniforms, extent)
@@ -313,10 +329,7 @@ export default function (
 		alpha: true
 	});
 
-	renderer.setSize(
-		parseInt(getComputedStyle(container).width),
-		parseInt(getComputedStyle(container).height)
-	);
+	renderer.setSize(containerSize.width, containerSize.height);
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.domElement.style.width = '100%';
 	renderer.domElement.style.height = '100%';
@@ -527,9 +540,11 @@ export default function (
 	container.addEventListener('touchend', onMouseUp);
 
 	new ResizeObserver(() => {
-		const { width, height } = getComputedStyle(container);
+		const { width, height } = getContainerSize(container);
 
-		renderer.setSize(parseInt(width), parseInt(height));
+		uniforms.viewportSize.value = [width, height];
+
+		renderer.setSize(width, height);
 
 		render();
 

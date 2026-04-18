@@ -19,7 +19,8 @@
  *         coneCos: number,
  *         direction?: import('../vendors/three.js').Vector3,
  *         position?: import('../vendors/three.js').Vector3
- *     }[] }
+ *     }[] },
+ *     viewportSize: { value: [number, number] }
  * }} UniformsBuffer
  */
 
@@ -33,6 +34,7 @@ export function getUniformsBuffer() {
 		ambientLightColor: { value: [0, 0, 0] },
 		directionalLights: { value: [] },
 		pointLights: { value: [] },
-		spotLights: { value: [] }
+		spotLights: { value: [] },
+		viewportSize: { value: [0, 0] }
 	};
 }
