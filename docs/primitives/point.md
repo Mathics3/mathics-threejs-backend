@@ -85,7 +85,7 @@ Draw points with the point size being canvas' size times `pointSize`.
           }
       );
   </script>
-- Mathics code:
+- Mathics3 code:
   ```wl
   Graphics3D[{
       Red,

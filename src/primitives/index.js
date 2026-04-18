@@ -1,7 +1,7 @@
 // @ts-check
 
 // This file exports implementations using three.js of Mathematica and
-// Mathics Graphics3D primitives like "Sphere", or "Cuboid, etc.
+// Mathics3 Graphics3D primitives like "Sphere", or "Cuboid, etc.
 
 // A full list of primitives that this might grow to can be found at:
 // https://reference.wolfram.com/language/ref/Graphics3D.html
@@ -68,7 +68,7 @@
 // objects, like Point, Line, Arrow, or Polygon which are extended
 // into 3D.
 
-// Also note that in contrast to he Mathematica/Mathics name, we
+// Also note that in contrast to he Mathematica/Mathics3 name, we
 // downcase the first letter of the corresponding name.  For example,
 // we use the function name "sphere" and "uniformPolyhedron", not
 // "Sphere" and "UniformPolyhedron".
