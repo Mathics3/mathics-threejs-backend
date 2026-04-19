@@ -3,6 +3,7 @@
 import {
 	BufferAttribute,
 	BufferGeometry,
+	GLSL3,
 	Line,
 	RawShaderMaterial
 } from '../../vendors/three.js';
@@ -33,8 +34,9 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 			? new RawShaderMaterial({
 				opacity,
 				transparent: opacity !== 1,
+				glslVersion: GLSL3,
 				uniforms,
-				vertexShader: `#version 300 es
+				vertexShader: `
 					in vec3 position;
 
 					uniform mat4 projectionMatrix;
@@ -50,7 +52,7 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 						startPosition = vertexPosition;
 					}
 				`,
-				fragmentShader: `#version 300 es
+				fragmentShader: `
 					precision mediump float;
 
 					uniform vec2 viewportSize;

@@ -23,6 +23,9 @@ import { getUniformsBuffer } from './uniforms.js';
  * @typedef {import('./index.js').Axes} Axes
  * @typedef {import('./index.js').ConcreteAxes} ConcreteAxes
  * @typedef {import('./index.js').TicksStyle} TicksStyle
+ * @typedef {PerspectiveCamera & {
+ *     position: import('../vendors/three.js').Vector3
+ * }} GraphicsCamera
  */
 
 /**
@@ -132,12 +135,12 @@ export default function (
 	phi = Math.atan2(viewPoint.y, viewPoint.x);
 
 	const scene = new Scene(),
-		camera = new PerspectiveCamera(
+		camera = /** @type {GraphicsCamera} */(new PerspectiveCamera(
 			35,           // field of view
 			1,            // aspect ratio
 			0.1 * radius, // near plane
 			1000 * radius // far plane
-		);
+		));
 
 	function updateCameraPosition() {
 		camera.position.set(
@@ -326,12 +329,13 @@ export default function (
 		antialias: true,
 		alpha: true
 	});
+	const canvas = /** @type {HTMLCanvasElement} */(renderer.domElement);
 
 	renderer.setSize(containerSize.width, containerSize.height);
 	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.domElement.style.width = '100%';
-	renderer.domElement.style.height = '100%';
-	container.appendChild(renderer.domElement);
+	canvas.style.width = '100%';
+	canvas.style.height = '100%';
+	container.appendChild(canvas);
 
 	function render() {
 		uniforms.pointLights.value.forEach((light) => {

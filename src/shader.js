@@ -1,6 +1,6 @@
 // @ts-check
 
-import { RawShaderMaterial } from '../vendors/three.js';
+import { GLSL3, RawShaderMaterial } from '../vendors/three.js';
 
 /**
  * Create a material with a shader that uses 2 attributes:
@@ -15,8 +15,9 @@ export function get2CoordinatesMaterial(color, opacity, uniforms) {
 	return new RawShaderMaterial({
 		transparent: opacity !== 1,
 		depthWrite: opacity === 1,
+		glslVersion: GLSL3,
 		uniforms,
-		vertexShader: `#version 300 es
+		vertexShader: `
 			in vec3 objectBegin;
 			in vec3 objectEnd;
 			in vec3 normal;
@@ -116,7 +117,7 @@ export function get2CoordinatesMaterial(color, opacity, uniforms) {
 				vColor = vec4(light * vec3(${color[0]}, ${color[1]}, ${color[2]}), ${opacity});
 			}
 		`,
-		fragmentShader: `#version 300 es
+		fragmentShader: `
 			in lowp vec4 vColor;
 
 			out lowp vec4 pc_fragColor;
@@ -138,7 +139,8 @@ export function getBasicMaterial(color, opacity) {
 	return new RawShaderMaterial({
 		opacity,
 		transparent: opacity !== 1,
-		vertexShader: `#version 300 es
+		glslVersion: GLSL3,
+		vertexShader: `
 			in vec3 position;
 
 			uniform mat4 projectionMatrix;
@@ -148,7 +150,7 @@ export function getBasicMaterial(color, opacity) {
 				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 			}
 		`,
-		fragmentShader: `#version 300 es
+		fragmentShader: `
 			out lowp vec4 pc_fragColor;
 
 			void main() {

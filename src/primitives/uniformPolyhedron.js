@@ -2,6 +2,7 @@
 
 import {
 	BufferAttribute,
+	GLSL3,
 	Group,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
@@ -359,8 +360,9 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
+			glslVersion: GLSL3,
 			uniforms,
-			vertexShader: `#version 300 es
+			vertexShader: `
 				in vec3 position;
 				in vec3 polyhedronCenter;
 
@@ -377,7 +379,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 					gl_Position = projectionMatrix * mvPosition;
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				precision mediump float;
 
 				in vec3 vViewPosition;
@@ -783,7 +785,8 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 	const edges = new LineSegments(
 		edgesGeometry,
 		new RawShaderMaterial({
-			vertexShader: `#version 300 es
+			glslVersion: GLSL3,
+			vertexShader: `
 				in vec3 position;
 				in vec3 polyhedronCenter;
 
@@ -794,7 +797,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 					gl_Position = projectionMatrix * modelViewMatrix * vec4(position + polyhedronCenter, 1);
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				out lowp vec4 pc_fragColor;
 
 				void main() {

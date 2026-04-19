@@ -46,11 +46,19 @@ export function mergeBufferGeometries(geometries) {
 		for (const name in geometries[i].attributes) {
 			if (attributes[name] === undefined) attributes[name] = [];
 
-			attributes[name].push(geometries[i].attributes[name]);
+			attributes[name].push(
+				/** @type {BufferAttribute} */(geometries[i].attributes[name])
+			);
 		}
 
-		for (let j = 0; j < geometries[i].index.count; ++j) {
-			mergedIndex.push(geometries[i].index.getX(j) + indexOffset);
+		const geometryIndex = geometries[i].index;
+
+		if (geometryIndex === null) {
+			throw new Error('mergeBufferGeometries expects indexed geometries.');
+		}
+
+		for (let j = 0; j < geometryIndex.count; ++j) {
+			mergedIndex.push(geometryIndex.getX(j) + indexOffset);
 		}
 
 		indexOffset += geometries[i].attributes.position.count;

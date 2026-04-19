@@ -2,12 +2,15 @@
 
 import {
 	BufferAttribute,
+	GLSL3,
 	Group,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
 	Line,
 	Mesh,
-	RawShaderMaterial
+	RawShaderMaterial,
+	Sphere,
+	Vector3
 } from '../../vendors/three.js';
 
 import { get2PopulatedCoordinateBuffers } from '../bufferUtils.js';
@@ -469,6 +472,14 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			)
 		);
 
+	// The edge geometry uses a NaN separator to break the polyline between both
+	// circles, so newer three.js versions must not auto-compute a bounding
+	// sphere from the raw position buffer.
+	edgesGeometry.boundingSphere = new Sphere(
+		new Vector3(0, 0, -0.5),
+		Math.hypot(radius, 0.5)
+	);
+
 	edgesGeometry.instanceCount = coords.length / 2;
 
 	edgesGeometry.setAttribute(
@@ -486,7 +497,8 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	const edges = new Line(
 		edgesGeometry,
 		new RawShaderMaterial({
-			vertexShader: `#version 300 es
+			glslVersion: GLSL3,
+			vertexShader: `
 				in vec3 position;
 				in vec3 cylinderBegin;
 				in vec3 cylinderEnd;
@@ -515,7 +527,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					gl_Position = projectionMatrix * modelViewMatrix * cylinderMatrix * vec4(position, 1);
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				out lowp vec4 pc_fragColor;
 
 				void main() {

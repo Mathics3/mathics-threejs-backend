@@ -2,6 +2,7 @@
 
 import {
 	BufferAttribute,
+	GLSL3,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
 	Mesh,
@@ -113,8 +114,9 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
+			glslVersion: GLSL3,
 			uniforms,
-			vertexShader: `#version 300 es
+			vertexShader: `
 				precision mediump float;
 
 				in vec3 cuboidBegin;
@@ -145,7 +147,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					vUv = uv;
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				precision mediump float;
 
 				in vec3 position;

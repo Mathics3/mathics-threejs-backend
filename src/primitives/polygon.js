@@ -4,6 +4,7 @@ import {
 	BufferAttribute,
 	BufferGeometry,
 	DoubleSide,
+	GLSL3,
 	Group,
 	Mesh,
 	Quaternion,
@@ -187,8 +188,9 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			side: DoubleSide,
 			depthWrite: opacity === 1,
 			transparent: opacity !== 1,
+			glslVersion: GLSL3,
 			uniforms,
-			vertexShader: `#version 300 es
+			vertexShader: `
 				precision mediump float;
 
 				in vec3 normal;
@@ -209,7 +211,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					vNormal = normal;
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				precision mediump float;
 
 				in vec3 vViewPosition;
@@ -319,7 +321,8 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 		geometry,
 		new RawShaderMaterial({
 			wireframe: true,
-			vertexShader: `#version 300 es
+			glslVersion: GLSL3,
+			vertexShader: `
 				in vec3 position;
 
 				uniform mat4 projectionMatrix;
@@ -329,7 +332,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				out lowp vec4 pc_fragColor;
 
 				void main() {

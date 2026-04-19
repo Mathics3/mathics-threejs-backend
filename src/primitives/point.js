@@ -3,6 +3,7 @@
 import {
 	BufferAttribute,
 	BufferGeometry,
+	GLSL3,
 	Points,
 	RawShaderMaterial
 } from '../../vendors/three.js';
@@ -36,8 +37,9 @@ export default function (
 		new RawShaderMaterial({
 			transparent: true,
 			depthWrite: false,
+			glslVersion: GLSL3,
 			uniforms,
-			vertexShader: `#version 300 es
+			vertexShader: `
                 in vec3 position;
                 uniform mat4 projectionMatrix;
                 uniform mat4 modelViewMatrix;
@@ -48,7 +50,7 @@ export default function (
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1);
                 }
             `,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
                 out lowp vec4 pc_fragColor;
                 void main() {
                     if (length(gl_PointCoord - 0.5) > 0.5) discard;

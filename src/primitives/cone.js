@@ -2,6 +2,7 @@
 
 import {
 	BufferAttribute,
+	GLSL3,
 	Group,
 	InstancedBufferAttribute,
 	InstancedBufferGeometry,
@@ -263,7 +264,8 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	const edges = new Line(
 		edgesGeometry,
 		new RawShaderMaterial({
-			vertexShader: `#version 300 es
+			glslVersion: GLSL3,
+			vertexShader: `
 				in vec3 position;
 				in vec3 coneBase;
 				in vec3 coneTip;
@@ -290,7 +292,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 					gl_Position = projectionMatrix * modelViewMatrix * coneMatrix * vec4(position, 1);
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				out lowp vec4 pc_fragColor;
 
 				void main() {

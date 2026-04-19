@@ -1,6 +1,7 @@
 // @ts-check
 
 import {
+	GLSL3,
 	Matrix4,
 	Mesh,
 	RawShaderMaterial,
@@ -10,9 +11,9 @@ import {
 import { scaleCoordinate } from '../coordinateUtils.js';
 import { getCentripetalCurve } from '../curve.js';
 import {
-	mergeBufferGeometries,
 	getSphereGeometry,
-	getTubeGeometry
+	getTubeGeometry,
+	mergeBufferGeometries
 } from '../geometry.js';
 
 /**
@@ -40,7 +41,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 				new Matrix4()
 					.setPosition(curve.getPoint(0))
 					// Rotate the end cap, so it "continues" the tube.
-					// If it don't be done, there'll be a half sphere floating by there and a hollow tube.
+					// If it isn't done, there'll be a half sphere floating by there and a hollow tube.
 					.lookAt(
 						curve.getPoint(0), // eye
 						new Vector3(...(coords[1][0] ?? scaleCoordinate(coords[1][1], extent))), // target
@@ -73,8 +74,9 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
+			glslVersion: GLSL3,
 			uniforms,
-			vertexShader: `#version 300 es
+			vertexShader: `
 				in vec3 normal;
 				in vec3 position;
 
@@ -163,7 +165,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 					vColor = vec4(light * vec3(${color[0]}, ${color[1]}, ${color[2]}), ${opacity});
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				in lowp vec4 vColor;
 
 				out lowp vec4 pc_fragColor;

@@ -1,6 +1,7 @@
 // @ts-check
 
 import {
+	GLSL3,
 	InstancedBufferAttribute,
 	Mesh,
 	RawShaderMaterial
@@ -17,7 +18,9 @@ import { getSphereGeometry } from '../geometry.js';
  * @type {import('./index.js').PrimitiveFunction}
  */
 export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, uniforms, extent) {
-	const sphereGeometry = getSphereGeometry(radius, true)
+	const sphereGeometry = /** @type {import('../../vendors/three.js').InstancedBufferGeometry} */(
+		getSphereGeometry(radius, true)
+	)
 		// Set the spheres centers.
 		.setAttribute(
 			'sphereCenter',
@@ -34,8 +37,9 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
+			glslVersion: GLSL3,
 			uniforms,
-			vertexShader: `#version 300 es
+			vertexShader: `
 				in vec3 normal;
 				in vec3 position;
 				in vec3 sphereCenter;
@@ -124,7 +128,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 					vColor = vec4(light * vec3(${color[0]}, ${color[1]}, ${color[2]}), ${opacity});
 				}
 			`,
-			fragmentShader: `#version 300 es
+			fragmentShader: `
 				in lowp vec4 vColor;
 
 				out lowp vec4 pc_fragColor;
