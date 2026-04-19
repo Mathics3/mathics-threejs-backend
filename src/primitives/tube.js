@@ -70,7 +70,6 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 
 	return new Mesh(
 		mergeBufferGeometries(geometries),
-		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,

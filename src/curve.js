@@ -121,15 +121,13 @@ export function getCentripetalCurve(coordinates, extent) {
 	 * @param {number} u
 	 */
 	function getUtoTmapping(u) {
-		let i = 0;
-
 		// the targeted u distance value to get
 		const targetArcLength = u * arcLengths[arcLengths.length - 1];
 
 		// Binary search for the index with largest value
 		// smaller than target u distance.
 
-		let low = 0, high = arcLengths.length - 1, comparison;
+		let i, low = 0, high = arcLengths.length - 1, comparison;
 
 		while (low <= high) {
 			i = Math.floor((low + high) / 2);
@@ -145,6 +143,8 @@ export function getCentripetalCurve(coordinates, extent) {
 				break;
 			}
 		}
+
+		i = high;
 
 		if (arcLengths[i] === targetArcLength) {
 			return i / (arcLengths.length - 1);

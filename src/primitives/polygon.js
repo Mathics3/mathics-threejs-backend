@@ -169,8 +169,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	// When the value is NaN, it is going to be re-calculated
 	// in the vertex shader (we can't do it here because each pixel
 	// may have a different normal value).
-	// @ts-expect-error: we already set the position attribute, so we are
-	// sure it is there.
 	const normals = new Float32Array(geometry.attributes.position.count * 3);
 
 	for (let i = 0; i < normals.length / 3; i++) {
@@ -185,7 +183,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	const polygon = new Mesh(
 		geometry,
-		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			side: DoubleSide,
 			depthWrite: opacity === 1,
@@ -214,14 +211,14 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			`,
 			fragmentShader: `#version 300 es
 				precision mediump float;
-		
+
 				in vec3 vViewPosition;
 				in vec3 vNormal;
 
 				uniform vec3 ambientLightColor;
 				uniform vec3 diffuse;
 				uniform float opacity;
-				
+
 				out vec4 pc_fragColor;
 
 				#define saturate(a) clamp(a, 0.0, 1.0)
@@ -320,7 +317,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	// (LineSegments don't support indexed BufferGeometries).
 	group.add(new Mesh(
 		geometry,
-		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			wireframe: true,
 			vertexShader: `#version 300 es

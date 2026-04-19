@@ -110,7 +110,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	const cuboids = new Mesh(
 		cuboidGeometry,
-		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
@@ -224,14 +223,14 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 								normalize(spotLights[i].position + vViewPosition),
 								spotLights[i].direction
 							);
-	
+
 							reflectedLight += saturate(dot(
 								normal,
 								normalize(spotLights[i].position + vViewPosition))
 							) * spotLights[i].color * max(angleCos, 0.0);
 						}
 					` : ''}
-	
+
 					pc_fragColor = vec4(
 						reflectedLight * diffuseColor,
 						${opacity}

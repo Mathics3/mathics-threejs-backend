@@ -140,7 +140,6 @@ export default function (
 		);
 
 	function updateCameraPosition() {
-		// @ts-expect-error: bad three.js typing
 		camera.position.set(
 			radius * Math.sin(theta) * Math.cos(phi),
 			radius * Math.sin(theta) * Math.sin(phi),
@@ -263,7 +262,6 @@ export default function (
 		/** @type {ConcreteAxes} */(axes),
 		ticks,
 		ticksSmall,
-		// @ts-expect-error: we are sure this attribute is in there
 		boundingBox.geometry.attributes.position.array,
 		radius,
 		extent
@@ -359,11 +357,8 @@ export default function (
 		// bounding box to be fully shown.
 		for (let i = 0; i < 8; i++) {
 			proj2d.set(
-				// @ts-expect-error: we are sure this attribute is in there
 				boundingBox.geometry.attributes.position.array[i * 3],
-				// @ts-expect-error: the same as above
 				boundingBox.geometry.attributes.position.array[i * 3 + 1],
-				// @ts-expect-error: the same as above
 				boundingBox.geometry.attributes.position.array[i * 3 + 2]
 			).applyMatrix4(camera.matrixWorldInverse);
 
@@ -435,7 +430,6 @@ export default function (
 			).normalize();
 
 			const cameraY = new Vector3()
-				// @ts-expect-error: bad three.js typing
 				.subVectors(focus, camera.position)
 				.normalize()
 				.cross(cameraX);

@@ -262,7 +262,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	const edges = new Line(
 		edgesGeometry,
-		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			vertexShader: `#version 300 es
 				in vec3 position;

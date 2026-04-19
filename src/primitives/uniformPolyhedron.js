@@ -356,7 +356,6 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 	const polyhedrons = new Mesh(
 		polyhedronGeometry,
-		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,

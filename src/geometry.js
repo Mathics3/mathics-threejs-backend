@@ -46,8 +46,6 @@ export function mergeBufferGeometries(geometries) {
 		for (const name in geometries[i].attributes) {
 			if (attributes[name] === undefined) attributes[name] = [];
 
-			// @ts-expect-error: name is in attributes, so we can use it as an
-			// index.
 			attributes[name].push(geometries[i].attributes[name]);
 		}
 
@@ -55,8 +53,6 @@ export function mergeBufferGeometries(geometries) {
 			mergedIndex.push(geometries[i].index.getX(j) + indexOffset);
 		}
 
-		// @ts-expect-error: we expect the geometry to have the
-		// position attribute.
 		indexOffset += geometries[i].attributes.position.count;
 	}
 
@@ -149,7 +145,7 @@ export function getSphereGeometry(radius, instanced = false, halfSphere = false)
 // TODO: add cache
 /**
  * @param {number} radius
- * @param {ReturnType<import('curve.js').getCentripetalCurve>} path
+ * @param {ReturnType<import('./curve.js').getCentripetalCurve>} path
  * @returns {BufferGeometry} the geometry of a tube passing through the path.
  */
 export function getTubeGeometry(radius, path) {

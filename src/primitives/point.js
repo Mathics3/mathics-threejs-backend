@@ -33,9 +33,6 @@ export default function (
 				3
 			)
 		),
-		// We are passing a PointsMaterial when we should be passing a RawShaderMaterial.
-		// rocky doesn't know how to properly fix this. So...
-		// @ts-ignore
 		new RawShaderMaterial({
 			transparent: true,
 			depthWrite: false,

@@ -27,12 +27,10 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 			)
 		);
 
-	// @ts-expect-error: InstancedBufferGeometry have that attribute
 	sphereGeometry.instanceCount = coords.length;
 
 	const spheres = new Mesh(
 		sphereGeometry,
-		// @ts-expect-error: bad three.js typing
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
 			depthWrite: opacity === 1,
@@ -97,13 +95,13 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 							light += saturate(dot(normal, directionalLights[i].direction)) * directionalLights[i].color;
 						}
 					` : ''}
-					
+
 					${uniforms.pointLights.value.length > 0 ? `
 						for (int i = 0; i < ${uniforms.pointLights.value.length}; i++) {
 							light += saturate(dot(normal, normalize(pointLights[i].position - position))) * pointLights[i].color;
 						}
 					` : ''}
-					
+
 					${uniforms.spotLights.value.length > 0 ? `
 						vec3 direction;
 

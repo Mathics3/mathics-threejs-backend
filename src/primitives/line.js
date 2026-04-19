@@ -29,7 +29,6 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 				3
 			)
 		),
-		// @ts-expect-error: bad three.js typing
 		dashed
 			? new RawShaderMaterial({
 				opacity,
