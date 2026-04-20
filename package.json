@@ -1,7 +1,7 @@
 {
 	"name": "@mathicsorg/mathics-threejs-backend",
 	"version": "1.3.3",
-	"threejs_revision": 146,
+	"threejs_revision": 184,
 	"description": "Mathics 3D Graphics backend using three.js",
 	"source": "src/index.js",
 	"main": "docs/build.js",
@@ -41,8 +41,8 @@
 		"jest": "^30",
 		"jest-image-snapshot": "^6",
 		"jest-puppeteer": "^11",
-		"minify": "^9",
-		"rollup": "^3",
-		"typescript": "^4"
+		"minify": "^15",
+		"rollup": "^4",
+		"typescript": "^6"
 	}
 }
