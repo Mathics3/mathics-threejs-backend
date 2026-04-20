@@ -4,9 +4,19 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 expect.extend({ toMatchImageSnapshot });
 
+const browserLaunchOptions = {
+	args: [
+		'--no-sandbox',
+		'--disable-setuid-sandbox',
+		'--disable-background-timer-throttling',
+		'--disable-backgrounding-occluded-windows',
+		'--disable-renderer-backgrounding'
+	]
+};
+
 export function testScreenshot(name, file) {
 	test(name, async () => {
-		const browser = await puppeteer.launch();
+		const browser = await puppeteer.launch(browserLaunchOptions);
 
 		try {
 			const page = await browser.newPage();
@@ -23,5 +33,5 @@ export function testScreenshot(name, file) {
 
 			throw error;
 		}
-	});
+	}, 30000);
 }

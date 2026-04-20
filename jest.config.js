@@ -1,4 +1,6 @@
 module.exports = {
-	preset: 'jest-puppeteer',
-	transform: { '^.+\\.js$': 'babel-jest' }
+	maxWorkers: 2,
+	testEnvironment: 'node',
+	transform: { '^.+\\.js$': 'babel-jest' },
+	watchman: false
 };
