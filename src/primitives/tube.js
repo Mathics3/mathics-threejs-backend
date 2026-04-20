@@ -39,7 +39,11 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 			.clone()
 			.applyMatrix4(
 				new Matrix4()
-					.setPosition(curve.getPoint(0))
+					.setPosition(
+						curve.getPoint(0).x,
+						curve.getPoint(0).y,
+						curve.getPoint(0).z
+					)
 					// Rotate the end cap, so it "continues" the tube.
 					// If it isn't done, there'll be a half sphere floating by there and a hollow tube.
 					.lookAt(
@@ -53,7 +57,11 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 			// We don't need to clone the geometry here.
 			.applyMatrix4(
 				new Matrix4()
-					.setPosition(curve.getPoint(1))
+					.setPosition(
+						curve.getPoint(1).x,
+						curve.getPoint(1).y,
+						curve.getPoint(1).z
+					)
 					.lookAt(
 						curve.getPoint(1),
 						new Vector3(
@@ -69,7 +77,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 			)
 	];
 
-	return new Mesh(
+	return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(new Mesh(
 		mergeBufferGeometries(geometries),
 		new RawShaderMaterial({
 			transparent: opacity !== 1,
@@ -175,5 +183,5 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 				}
 			`
 		})
-	);
+	)));
 }

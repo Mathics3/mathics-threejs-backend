@@ -304,12 +304,12 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	// DON'T have edges by default.
 	if (edgeForm.showEdges !== true) {
 		// If the edges aren't shown the work is done.
-		return polygon;
+		return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(polygon));
 	}
 
 	const group = new Group();
 
-	group.add(polygon);
+	group.add(/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(polygon)));
 
 	edgeForm.color ??= [0, 0, 0];
 
@@ -317,7 +317,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	// with "wireframe: true". This is slower than LineSegments, but
 	// creating a new BufferGeometry is also slow and uses more RAM
 	// (LineSegments don't support indexed BufferGeometries).
-	group.add(new Mesh(
+	group.add(/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(new Mesh(
 		geometry,
 		new RawShaderMaterial({
 			wireframe: true,
@@ -345,7 +345,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 				}
 			`
 		})
-	));
+	))));
 
 	return group;
 }

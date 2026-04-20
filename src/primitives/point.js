@@ -26,7 +26,7 @@ export default function (
 	uniforms,
 	extent
 ) {
-	return new Points(
+	return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(new Points(
 		new BufferGeometry().setAttribute(
 			'position',
 			new BufferAttribute(
@@ -58,5 +58,5 @@ export default function (
                 }
             `
 		})
-	);
+	)));
 }

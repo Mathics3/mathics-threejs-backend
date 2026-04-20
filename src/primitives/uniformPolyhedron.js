@@ -477,12 +477,12 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 	if (edgeForm.showEdges === false) {
 		// If the edges aren't shown the work is done.
-		return polyhedrons;
+		return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(polyhedrons));
 	}
 
 	const group = new Group();
 
-	group.add(polyhedrons);
+	group.add(/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(polyhedrons)));
 
 	// The polyhedrons' edges are basically the same as the cylinders' ones.
 
@@ -814,7 +814,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, edgeLength 
 
 	edges.frustumCulled = false;
 
-	group.add(edges);
+	group.add(/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(edges)));
 
 	return group;
 }

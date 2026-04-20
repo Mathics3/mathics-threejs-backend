@@ -18,9 +18,7 @@ import { getSphereGeometry } from '../geometry.js';
  * @type {import('./index.js').PrimitiveFunction}
  */
 export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 }, uniforms, extent) {
-	const sphereGeometry = /** @type {import('../../vendors/three.js').InstancedBufferGeometry} */(
-		getSphereGeometry(radius, true)
-	)
+	const sphereGeometry = /** @type {import('../../vendors/three.js').InstancedBufferGeometry} **/(getSphereGeometry(radius, true)
 		// Set the spheres centers.
 		.setAttribute(
 			'sphereCenter',
@@ -28,7 +26,7 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 				getPopulatedCoordinateBuffer(coords, extent),
 				3
 			)
-		);
+		));
 
 	sphereGeometry.instanceCount = coords.length;
 
@@ -142,5 +140,5 @@ export default function ({ color = [1, 1, 1], coords, opacity = 1, radius = 1 },
 
 	spheres.frustumCulled = false;
 
-	return spheres;
+	return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(spheres));
 }

@@ -22,7 +22,7 @@ import { getBasicMaterial } from '../shader.js';
  * @type {import('./index.js').PrimitiveFunction}
  */
 export default function ({ color = /** @type {[number, number, number]} */([0, 0, 0]), coords, dashed = false, gapSize = 10, opacity = 1 }, uniforms, extent) {
-	return new Line(
+	return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(new Line(
 		new BufferGeometry().setAttribute(
 			'position',
 			new BufferAttribute(
@@ -76,5 +76,5 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 				`
 			})
 			: getBasicMaterial(color, opacity)
-	);
+	)));
 }

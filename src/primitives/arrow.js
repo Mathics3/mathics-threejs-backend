@@ -50,7 +50,7 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 		vertexPosition1 = 0.1414 * arrowHeadHeight;
 
 	// arrow head
-	group.add(new Mesh(
+	group.add(/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(new Mesh(
 		new BufferGeometry()
 			.setAttribute(
 				'position',
@@ -71,7 +71,7 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 			)
 			.applyMatrix4(
 				new Matrix4()
-					.setPosition(endCoordinate)
+					.setPosition(endCoordinate.x, endCoordinate.y, endCoordinate.z)
 					.lookAt(
 						endCoordinate,
 						startCoordinate,
@@ -98,11 +98,11 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 				0, 8, 1
 			]),
 		material
-	));
+	))));
 
 	// arrow body
 	group.add(
-		new Line(
+		/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(new Line(
 			new BufferGeometry().setAttribute(
 				'position',
 				new BufferAttribute(
@@ -111,8 +111,7 @@ export default function ({ color = /** @type {[number, number, number]} */([0, 0
 				)
 			),
 			material
-		)
-	);
+		))));
 
 	return group;
 }

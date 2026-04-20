@@ -213,7 +213,7 @@ export default function (
 		grayBasicMaterial
 	);
 
-	scene.add(boundingBox);
+	scene.add(/** @type {import('../vendors/three.js').Object3D} **/(/**@type {unknown}**/(boundingBox)));
 
 	// draw the axes
 	if (axes.hasaxes instanceof Array) {
@@ -241,7 +241,7 @@ export default function (
 				grayBasicMaterial
 			);
 
-			scene.add(ticks[i]);
+			scene.add(/** @type {import('../vendors/three.js').Object3D} **/(/**@type {unknown}**/(ticks[i])));
 
 			ticksSmall[i] = new LineSegments(
 				new BufferGeometry().setAttribute(
@@ -256,7 +256,7 @@ export default function (
 				grayBasicMaterial
 			);
 
-			scene.add(ticksSmall[i]);
+			scene.add(/** @type {import('../vendors/three.js').Object3D} **/(/**@type {unknown}**/(ticksSmall[i])));
 		}
 	}
 
@@ -322,7 +322,7 @@ export default function (
 		);
 		// Primitives like https://mathics3.github.io/mathics-threejs-backend/primitives/text
 		// don't add anything to the scene, but to the container.
-		if (sceneElement) scene.add(sceneElement);
+		if (sceneElement) scene.add(/** @type {import('../vendors/three.js').Object3D} **/(/**@type {unknown}**/(sceneElement)));
 	});
 
 	const renderer = new WebGLRenderer({

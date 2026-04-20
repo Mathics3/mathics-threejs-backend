@@ -23,7 +23,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	const [cuboidsBegin, cuboidsEnd] = get2PopulatedCoordinateBuffers(coords, extent);
 
-	const cuboidGeometry = new InstancedBufferGeometry()
+	const cuboidGeometry = /** @type {InstancedBufferGeometry} **/(new InstancedBufferGeometry()
 		.setAttribute(
 			'position',
 			new BufferAttribute(new Float32Array([
@@ -103,7 +103,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			18, 19, 17,
 			20, 22, 21,
 			22, 23, 21
-		]);
+		]));
 
 	cuboidGeometry.instanceCount = coords.length / 2;
 
@@ -244,5 +244,5 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	cuboids.frustumCulled = false;
 
-	return cuboids;
+	return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(cuboids));
 }

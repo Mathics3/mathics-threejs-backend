@@ -30,7 +30,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 		vertexPosition3 = 0.866 * radius,
 		vertexPosition4 = 0.9659 * radius;
 
-	const coneGeometry = new InstancedBufferGeometry()
+	const coneGeometry = /** @type {InstancedBufferGeometry} **/(new InstancedBufferGeometry()
 		.setAttribute(
 			'position',
 			new BufferAttribute(new Float32Array([
@@ -180,7 +180,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 			0, 23, 22,
 			0, 24, 23,
 			0, 1, 24
-		]);
+		]));
 
 	coneGeometry.instanceCount = coords.length / 2;
 
@@ -194,12 +194,12 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	if (edgeForm.showEdges === false) {
 		// If the edges aren't shown the work is done.
-		return cones;
+		return /** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(cones));
 	}
 
 	const group = new Group();
 
-	group.add(cones);
+	group.add(/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(cones)));
 
 	// Differently from cuboid's edges, the cones' ones are in a
 	// different object. It is very hard or maybe impossible to draw
@@ -214,7 +214,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 	// increases the performance.
 	// To get them: console.log(new EdgesGeometry(coneGeometry).attributes.position.array)
 
-	const edgesGeometry = new InstancedBufferGeometry()
+	const edgesGeometry = /** @type {InstancedBufferGeometry} **/(new InstancedBufferGeometry()
 		.setAttribute(
 			'position',
 			new BufferAttribute(
@@ -255,7 +255,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 		.setAttribute(
 			'coneTip',
 			new InstancedBufferAttribute(coneTips, 3)
-		);
+		));
 
 	edgesGeometry.instanceCount = coords.length / 2;
 
@@ -309,7 +309,7 @@ export default function ({ color = [1, 1, 1], coords, edgeForm = {}, opacity = 1
 
 	edges.frustumCulled = false;
 
-	group.add(edges);
+	group.add(/** @type {import('../../vendors/three.js').Object3D} **/(/**@type {unknown}**/(edges)));
 
 	return group;
 }
